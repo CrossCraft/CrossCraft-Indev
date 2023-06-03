@@ -1,6 +1,7 @@
 #pragma once
 #include <Stardust-Celeste.hpp>
 #include <World/World.hpp>
+#include <Player/Player.hpp>
 
 using namespace Stardust_Celeste;
 
@@ -11,5 +12,8 @@ class GameState : public Core::ApplicationState {
         void on_update(Core::Application* app, double dt) override;
         void on_draw(Core::Application* app, double dt) override;
         void on_cleanup();
+
+      private:
+        RefPtr<Player> player;
     };
 }

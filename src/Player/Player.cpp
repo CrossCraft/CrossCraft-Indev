@@ -23,40 +23,44 @@ namespace CrossCraft {
 
     }
 
+
+    void Player::do_rotate(double dt) {
+        const auto rotSpeed = 500.0f;
+
+        double cX = Utilities::Input::get_axis("Mouse", "X") * 0.1; // TODO: Sensitivity
+        double cY = Utilities::Input::get_axis("Mouse", "Y") * 0.1; // TODO: Sensitivity
+
+        int rx, ry;
+        glfwGetWindowSize(GI::window, &rx, &ry);
+        cX *= (double)rx * dt;
+        cY *= (double)ry * dt;
+
+        rotation.y += cX * rotSpeed;
+        rotation.x += cY * rotSpeed;
+
+        if (rotation.y > 360.0f) {
+            rotation.y -= 360.0f;
+        }
+
+        if (rotation.y < 0.0f) {
+            rotation.y += 360.0f;
+        }
+
+        if (rotation.x < -89.9f) {
+            rotation.x = -89.9f;
+        }
+
+        if (rotation.x > 89.9f) {
+            rotation.x = 89.9f;
+        }
+
+        Utilities::Input::set_cursor_center();
+    }
+
     void Player::update(double dt) {
 
-        {
-            const auto rotSpeed = 500.0f;
-
-            double cX = Utilities::Input::get_axis("Mouse", "X") * 0.1; // TODO: Sensitivity
-            double cY = Utilities::Input::get_axis("Mouse", "Y") * 0.1; // TODO: Sensitivity
-            
-            int rx, ry;
-            glfwGetWindowSize(GI::window, &rx, &ry);
-            cX *= (double)rx * dt;
-            cY *= (double)ry * dt;
-
-            rotation.y += cX * rotSpeed;
-            rotation.x += cY * rotSpeed;
-
-            if (rotation.y > 360.0f) {
-                rotation.y -= 360.0f;
-            }
-
-            if (rotation.y < 0.0f) {
-                rotation.y += 360.0f;
-            }
-
-            if (rotation.x < -89.9f) {
-                rotation.x = -89.9f;
-            }
-
-            if (rotation.x > 89.9f) {
-                rotation.x = 89.9f;
-            }
-
-            Utilities::Input::set_cursor_center();
-        }
+        // Handle input updates
+        do_rotate(dt);
 
         float inputLen = sqrtf(horizInput * horizInput + vertInput * vertInput);
         if (inputLen > 0.0f) {
@@ -72,8 +76,8 @@ namespace CrossCraft {
         velocity.x = movementX * -sinf(-rotation.y);
         velocity.z = movementZ * -cosf(-rotation.y);
 
-        //position.x += velocity.x * dt;
-        //position.z += velocity.z * dt;
+        position.x += velocity.x * dt;
+        position.z += velocity.z * dt;
 
         horizInput = 0.0f;
         vertInput = 0.0f;
@@ -82,8 +86,7 @@ namespace CrossCraft {
         camera.pos = position;
         camera.rot = Math::Vector3<float>{rotation.x, rotation.y, 0.0f};
 
-        //SC_APP_INFO("Position: {} {} {}", position.x, position.y, position.z);
-        SC_APP_INFO("Rotation: {} {}", rotation.x, rotation.y);
+        SC_APP_INFO("Position: {} {} {}", position.x, position.y, position.z);
 
         camera.update();
     }

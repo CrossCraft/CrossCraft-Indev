@@ -15,5 +15,6 @@ class GameState : public Core::ApplicationState {
 
       private:
         RefPtr<Player> player;
+        Utilities::Controller *kb_controller;
     };
 }

@@ -14,6 +14,8 @@ namespace CrossCraft {
         Player();
         ~Player();
 
+        void do_rotate(double dt);
+
         void update(double dt);
         void draw(double dt);
 

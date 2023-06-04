@@ -25,10 +25,10 @@ namespace CrossCraft {
 
 
     void Player::do_rotate(double dt) {
-        const auto rotSpeed = 500.0f;
+        const auto rotSpeed = 100.0f;
 
-        double cX = Utilities::Input::get_axis("Mouse", "X") * 0.1; // TODO: Sensitivity
-        double cY = Utilities::Input::get_axis("Mouse", "Y") * 0.1; // TODO: Sensitivity
+        double cX = Utilities::Input::get_axis("Mouse", "X"); // TODO: Sensitivity
+        double cY = Utilities::Input::get_axis("Mouse", "Y"); // TODO: Sensitivity
 
         int rx, ry;
         glfwGetWindowSize(GI::window, &rx, &ry);
@@ -70,11 +70,11 @@ namespace CrossCraft {
 
         const float moveSpeed = 5.0f;
 
-        float movementX = horizInput * moveSpeed;
-        float movementZ = vertInput * moveSpeed;
+        float movementX = horizInput * cosf(Math::toRadians(rotation.y)) + vertInput * sinf(Math::toRadians(rotation.y));
+        float movementZ = horizInput * sinf(Math::toRadians(rotation.y)) - vertInput * cosf(Math::toRadians(rotation.y));
 
-        velocity.x = movementX * -sinf(-rotation.y);
-        velocity.z = movementZ * -cosf(-rotation.y);
+        velocity.x = movementX * moveSpeed;
+        velocity.z = movementZ * moveSpeed;
 
         position.x += velocity.x * dt;
         position.z += velocity.z * dt;
@@ -84,7 +84,7 @@ namespace CrossCraft {
 
         //CC_Event_Push_PlayerUpdate(PLAYER_SELF, position.x, position.y, position.z, rotation.x, rotation.y, on_ground);
         camera.pos = position;
-        camera.rot = Math::Vector3<float>{rotation.x, rotation.y, 0.0f};
+        camera.rot = Math::Vector3<float>{Math::toRadians(rotation.x), Math::toRadians(rotation.y), 0.0f};
 
         SC_APP_INFO("Position: {} {} {}", position.x, position.y, position.z);
 

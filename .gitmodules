@@ -4,3 +4,6 @@
 [submodule "ext/SDC"]
 	path = ext/SDC
 	url = https://github.com/Iridescence-Technologies/Stardust-Celeste.git
+[submodule "resourcepacks"]
+	path = resourcepacks
+	url = https://github.com/CrossCraft/CrossCraft-Resources.git

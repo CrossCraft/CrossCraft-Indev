@@ -27,16 +27,18 @@ namespace CrossCraft {
     void Player::do_rotate(double dt) {
         const auto rotSpeed = 100.0f;
 
-        double cX = Utilities::Input::get_axis("Mouse", "X"); // TODO: Sensitivity
-        double cY = Utilities::Input::get_axis("Mouse", "Y"); // TODO: Sensitivity
+        float cX = Utilities::Input::get_axis("Mouse", "X") * 0.1; // TODO: Sensitivity
+        float cY = Utilities::Input::get_axis("Mouse", "Y") * 0.1; // TODO: Sensitivity
 
-        int rx, ry;
+        int rx = 0, ry = 0;
         glfwGetWindowSize(GI::window, &rx, &ry);
-        cX *= (double)rx * dt;
-        cY *= (double)ry * dt;
+        cX *= rx;
+        cY *= ry;
 
-        rotation.y += cX * rotSpeed;
-        rotation.x += cY * rotSpeed;
+        SC_APP_INFO("{} {}", cX, cY);
+
+        rotation.y += cX;
+        rotation.x += cY;
 
         if (rotation.y > 360.0f) {
             rotation.y -= 360.0f;

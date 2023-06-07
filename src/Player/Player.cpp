@@ -82,11 +82,9 @@ namespace CrossCraft {
         horizInput = 0.0f;
         vertInput = 0.0f;
 
-        //CC_Event_Push_PlayerUpdate(PLAYER_SELF, position.x, position.y, position.z, rotation.x, rotation.y, on_ground);
+        CC_Event_Push_PlayerUpdate(PLAYER_SELF, position.x, position.y, position.z, rotation.x, rotation.y, on_ground);
         camera.pos = position;
         camera.rot = Math::Vector3<float>{Math::toRadians(rotation.x), Math::toRadians(rotation.y), 0.0f};
-
-        SC_APP_INFO("Position: {} {} {}", position.x, position.y, position.z);
 
         camera.update();
     }

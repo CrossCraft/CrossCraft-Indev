@@ -38,10 +38,20 @@ namespace CrossCraft {
         Rendering::TextureManager::get().bind_texture(terrainTexID);
     }
 
+    double fpsTimer = 0.0;
+    int totalFPS = 0;
+
     void GameState::on_update(Core::Application* app, double dt) {
         Input::update();
 
         player->update(dt);
+
+        fpsTimer += dt;
+        if(fpsTimer > 1.0) {
+            SC_APP_INFO("FPS: {}", totalFPS);
+            totalFPS = 0;
+            fpsTimer = 0.0;
+        }
 
         CC_Core_Update(dt);
     }
@@ -49,6 +59,7 @@ namespace CrossCraft {
     void GameState::on_draw(Core::Application* app, double dt) {
         player->draw(dt);
         chunk_mesh->draw(ChunkMeshSelection::Opaque);
+        totalFPS++;
     }
 
     void GameState::on_cleanup() {

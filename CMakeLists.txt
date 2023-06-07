@@ -24,5 +24,3 @@ add_subdirectory(Core CC-Core)
 target_include_directories(CC-Classic PRIVATE src Core/include)
 target_compile_options(CC-Classic PRIVATE -Wall)
 target_link_libraries(CC-Classic PRIVATE Stardust-Celeste SC-Entry CC-Core)
-
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")

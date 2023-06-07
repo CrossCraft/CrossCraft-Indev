@@ -22,6 +22,7 @@ public:
         Rendering::Color color;
         color.color = 0xFFFFFFFF;
 
+        Rendering::RenderContext::get().vsync = false;
         Rendering::RenderContext::get().set_color(color);
     }
 };

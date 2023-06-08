@@ -25,8 +25,6 @@ namespace CrossCraft {
 
 
     void Player::do_rotate(double dt) {
-        const auto rotSpeed = 100.0f;
-
         float cX = Utilities::Input::get_axis("Mouse", "X") * 0.1; // TODO: Sensitivity
         float cY = Utilities::Input::get_axis("Mouse", "Y") * 0.1; // TODO: Sensitivity
 
@@ -257,7 +255,7 @@ namespace CrossCraft {
     const float PLACE_DISTANCE = 4.0f;
 
     auto path_trace(Math::Vector3<float> pos, Math::Vector3<float> step, float max, Math::Vector3<float>& output) -> bool {
-        pos.y += 1.625f; // TODO: This is a hack to make the ray trace work properly
+        pos.y += 1.625f; // This is a hack to make the ray trace work properly
 
         for(int i = 0; i < max * 10; i++) {
             pos += step;

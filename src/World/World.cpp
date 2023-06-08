@@ -11,13 +11,14 @@ namespace CrossCraft {
     }
 
     const int CHUNK_RADIUS_OPTION = 4;
+    constexpr int CHUNK_RADIUS_REAL = CHUNK_RADIUS_OPTION + 1;
 
     void World::update_chunks_list() {
-        int startX = player_chunk.x - CHUNK_RADIUS_OPTION;
-        int startZ = player_chunk.y - CHUNK_RADIUS_OPTION;
+        int startX = player_chunk.x - CHUNK_RADIUS_REAL;
+        int startZ = player_chunk.y - CHUNK_RADIUS_REAL;
 
-        int endX = player_chunk.x + CHUNK_RADIUS_OPTION + 1;
-        int endZ = player_chunk.y + CHUNK_RADIUS_OPTION + 1;
+        int endX = player_chunk.x + CHUNK_RADIUS_REAL + 1;
+        int endZ = player_chunk.y + CHUNK_RADIUS_REAL + 1;
 
         std::map<uint64_t, ChunkStack*> new_chunks;
 
@@ -30,7 +31,7 @@ namespace CrossCraft {
         if(endX > maxX) endX = maxX;
         if(endZ > maxZ) endZ = maxZ;
 
-        SC_APP_INFO("SCANNING CHUNKS {0}, {1} -> {2}, {3}", startX, startZ, endX, endZ);
+        SC_APP_DEBUG("SCANNING CHUNKS {0}, {1} -> {2}, {3}", startX, startZ, endX, endZ);
 
         for(int x = startX; x < endX; x++) {
             for(int z = startZ; z < endZ; z++) {
@@ -39,7 +40,7 @@ namespace CrossCraft {
                 uint64_t id = ((uint64_t)pos.x) << 32 | (uint64_t)pos.y;
 
                 if(chunks.find(id) == chunks.end()) {
-                    SC_APP_INFO("NEW CHUNK {0}, {1}", x, z);
+                    SC_APP_DEBUG("NEW CHUNK {0}, {1}", x, z);
                     new_chunks.emplace(id, new ChunkStack(x, z));
                 } else {
                     new_chunks.emplace(id, chunks[id]);
@@ -65,8 +66,8 @@ namespace CrossCraft {
 
         if(cX != player_chunk.x || cZ != player_chunk.y) {
 
-            SC_APP_INFO("PPOS {0}, {1}, {2}", x, y, z);
-            SC_APP_INFO("PCHUNK {0}, {1}", cX, cZ);
+            SC_APP_DEBUG("PPOS {0}, {1}, {2}", x, y, z);
+            SC_APP_DEBUG("PCHUNK {0}, {1}", cX, cZ);
 
             player_chunk.x = cX;
             player_chunk.y = cZ;

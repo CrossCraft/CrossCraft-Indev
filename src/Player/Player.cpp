@@ -35,8 +35,6 @@ namespace CrossCraft {
         cX *= rx;
         cY *= ry;
 
-        SC_APP_INFO("{} {}", cX, cY);
-
         rotation.y += cX;
         rotation.x += cY;
 
@@ -59,11 +57,8 @@ namespace CrossCraft {
         Utilities::Input::set_cursor_center();
     }
 
-    void Player::update(double dt) {
-
-        // Handle input updates
-        do_rotate(dt);
-
+    const double GRAVITY = 28.0f;
+    void Player::calculate_velocity(double dt) {
         float inputLen = sqrtf(horizInput * horizInput + vertInput * vertInput);
         if (inputLen > 0.0f) {
             horizInput /= inputLen;
@@ -78,17 +73,124 @@ namespace CrossCraft {
         velocity.x = movementX * moveSpeed;
         velocity.z = movementZ * moveSpeed;
 
-        position.x += velocity.x * dt;
-        position.z += velocity.z * dt;
+        velocity.y -= GRAVITY * dt;
+    }
+
+    void Player::do_move(double dt) {
+        position += velocity * dt;
 
         horizInput = 0.0f;
         vertInput = 0.0f;
 
-        CC_Event_Push_PlayerUpdate(PLAYER_SELF, position.x, position.y, position.z, rotation.x, rotation.y, on_ground);
+        CC_Event_Push_PlayerUpdate(PLAYER_SELF, position.x, position.y + 1.625f, position.z, rotation.x, rotation.y, on_ground);
         camera.pos = position;
+        camera.pos.y += 1.5f;
         camera.rot = Math::Vector3<float>{Math::toRadians(rotation.x), Math::toRadians(rotation.y), 0.0f};
 
         camera.update();
+    }
+
+
+    Math::Vector3<float> Player::size = Math::Vector3<float>{0.6f, 1.8f, 0.6f};
+
+    bool test_block(Math::Vector3<int> pos) {
+        block_t block;
+        CC_World_GetBlock(pos.x, pos.y, pos.z, &block);
+
+        return block != BLK_Air;
+    }
+
+    void Player::test_collide(double dt) {
+        int worldX, worldY, worldZ;
+
+        bool testX = false;
+        bool testY = false;
+        bool testZ = false;
+
+        position.y += 1.8f;
+
+        int xMin = static_cast<int>(position.x - size.x / 2.0f);
+        int xMax = static_cast<int>(position.x + size.x / 2.0f);
+        int yMin = static_cast<int>(position.y - 1.625f);
+        int yMax = static_cast<int>(position.y);
+        int zMin = static_cast<int>(position.z - size.z / 2.0f);
+        int zMax = static_cast<int>(position.z + size.z / 2.0f);
+
+        if(velocity.x < 0.0) {
+            worldX = (int) (position.x - size.x / 2.0f + velocity.x * dt);
+            testX = true;
+        } else if(velocity.x > 0.0) {
+            worldX = (int) (position.x + size.x / 2.0f + velocity.x * dt);
+            testX = true;
+        }
+
+        if(velocity.y < 0.0) {
+            worldY = (int) (position.y - size.y + velocity.y * dt);
+            testY = true;
+        } else if(velocity.y > 0.0) {
+            worldY = (int) (position.y + velocity.y * dt);
+            testY = true;
+        }
+
+        if(velocity.z < 0.0) {
+            worldZ = (int) (position.z - size.z / 2.0f + velocity.z * dt);
+            testZ = true;
+        } else if(velocity.z > 0.0) {
+            worldZ = (int) (position.z + size.z / 2.0f + velocity.z * dt);
+            testZ = true;
+        }
+
+        if(testX) {
+            for(int y = yMin; y <= yMax; y++) {
+                for(int z = zMin; z <= zMax; z++) {
+                    Math::Vector3<int> pos = Math::Vector3<int>{worldX, y, z};
+                    if(test_block(pos)) {
+                        velocity.x = 0.0f;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if(testY) {
+            Math::Vector3<int> pos = Math::Vector3<int>{static_cast<int>(position.x), worldY, static_cast<int>(position.z)};
+            if(test_block(pos)) {
+                velocity.y = 0.0f;
+            }
+        }
+
+        if(testZ) {
+            for(int y = yMin; y <= yMax; y++) {
+                for(int x = xMin; x <= xMax; x++) {
+                    Math::Vector3<int> pos = Math::Vector3<int>{x, y, worldZ};
+                    if(test_block(pos)) {
+                        velocity.z = 0.0f;
+                        break;
+                    }
+                }
+            }
+        }
+
+        position.y -= 1.8f;
+
+    }
+
+    void Player::update(double dt) {
+        // Handle input updates
+        do_rotate(dt);
+
+        // Calculate velocity
+        calculate_velocity(dt);
+
+        // Test for collisions
+        test_collide(dt);
+
+        // Check on Ground
+        Math::Vector3 testPos = position;
+        testPos.y -= 0.1f;
+        on_ground = test_block(Math::Vector3<int>{static_cast<int>(testPos.x), static_cast<int>(testPos.y), static_cast<int>(testPos.z)});
+
+        do_move(dt);
     }
 
     void Player::draw(double dt) {
@@ -110,6 +212,14 @@ namespace CrossCraft {
     auto Player::move_right(std::any p) -> void {
         auto player = std::any_cast<Player*>(p);
         player->horizInput = 1.0f;
+    }
+    auto Player::jump(std::any p) -> void {
+        auto player = std::any_cast<Player*>(p);
+
+        if(player->on_ground) {
+            player->velocity.y = 8.367f;
+            player->on_ground = false;
+        }
     }
 
 }

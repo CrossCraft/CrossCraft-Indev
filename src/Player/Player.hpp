@@ -15,6 +15,9 @@ namespace CrossCraft {
         ~Player();
 
         void do_rotate(double dt);
+        void do_move(double dt);
+        void calculate_velocity(double dt);
+        void test_collide(double dt);
 
         void update(double dt);
         void draw(double dt);
@@ -24,10 +27,14 @@ namespace CrossCraft {
         static auto move_left(std::any p) -> void;
         static auto move_right(std::any p) -> void;
 
+        static auto jump(std::any p) -> void;
+
     private:
         Math::Vector3<float> position;
         Math::Vector3<float> velocity;
         Math::Vector2<float> rotation;
+
+        static Math::Vector3<float> size;
 
         float horizInput;
         float vertInput;

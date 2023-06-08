@@ -10,7 +10,7 @@ namespace CrossCraft {
         CC_Core_Init();
 
         // Send initial player position.
-        CC_Event_Push_PlayerUpdate(PLAYER_SELF, 0.0f, 2.625f, 0.0f, 0.0f, 0.0f, false);
+        CC_Event_Push_PlayerUpdate(PLAYER_SELF, 8.0f, 1.0f, 8.0f, 0.0f, 0.0f, false);
 
         // Make sure player position is handled.
         CC_Core_Update(0.0);
@@ -25,6 +25,7 @@ namespace CrossCraft {
         kb_controller->add_command({(int)Input::Keys::S, KeyFlag::Press | KeyFlag::Held}, {Player::move_backward, player.get()});
         kb_controller->add_command({(int)Input::Keys::A, KeyFlag::Press | KeyFlag::Held}, {Player::move_left, player.get()});
         kb_controller->add_command({(int)Input::Keys::D, KeyFlag::Press | KeyFlag::Held}, {Player::move_right, player.get()});
+        kb_controller->add_command({(int)Input::Keys::Space, KeyFlag::Press | KeyFlag::Held}, {Player::jump, player.get()});
 
         Input::add_controller(kb_controller);
         Input::set_differential_mode("Mouse", true);

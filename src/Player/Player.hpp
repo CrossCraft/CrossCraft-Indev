@@ -24,6 +24,9 @@ namespace CrossCraft {
 
         static auto jump(std::any p) -> void;
 
+        static auto break_block(std::any p) -> void;
+        static auto place_block(std::any p) -> void;
+
     private:
         Math::Vector3<float> position;
         Math::Vector3<float> velocity;
@@ -42,6 +45,8 @@ namespace CrossCraft {
         void calculate_velocity(double dt);
         void test_collide(double dt);
         void perform_checks();
+
+        bool safety_check_place(Math::Vector3<int> position);
 
         Rendering::Camera camera;
     };

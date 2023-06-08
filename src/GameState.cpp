@@ -1,6 +1,7 @@
 #include <GameState.hpp>
 #include <CC/core.h>
 #include <Utilities/Controllers/KeyboardController.hpp>
+#include <Utilities/Controllers/MouseController.hpp>
 
 namespace CrossCraft {
 
@@ -27,7 +28,12 @@ namespace CrossCraft {
         kb_controller->add_command({(int)Input::Keys::D, KeyFlag::Press | KeyFlag::Held}, {Player::move_right, player.get()});
         kb_controller->add_command({(int)Input::Keys::Space, KeyFlag::Press | KeyFlag::Held}, {Player::jump, player.get()});
 
+        mb_controller = new Utilities::Input::MouseController();
+        mb_controller->add_command({(int)Input::MouseButtons::Left, KeyFlag::Press}, {Player::break_block, player.get()});
+        mb_controller->add_command({(int)Input::MouseButtons::Right, KeyFlag::Press}, {Player::place_block, player.get()});
+
         Input::add_controller(kb_controller);
+        Input::add_controller(mb_controller);
         Input::set_differential_mode("Mouse", true);
         Input::set_cursor_center();
 
@@ -46,6 +52,20 @@ namespace CrossCraft {
         world->update(dt);
 
         CC_Core_Update(dt);
+
+        CC_Event* event;
+        while((event = CC_Event_Poll()) != NULL) {
+            switch(event->type) {
+                case CC_EVENT_SET_BLOCK: {
+                    world->handle_block_update(event->data.set_block.x, event->data.set_block.y, event->data.set_block.z);
+                    break;
+                }
+
+                default:
+                    SC_APP_INFO("Unhandled event type: {}", event->type);
+                    break;
+            }
+        }
     }
 
     void GameState::on_draw(Core::Application* app, double dt) {

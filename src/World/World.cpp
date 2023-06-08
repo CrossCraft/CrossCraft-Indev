@@ -1,4 +1,6 @@
 #include <World/World.hpp>
+#include <vector>
+#include <algorithm>
 
 namespace CrossCraft {
 
@@ -58,12 +60,14 @@ namespace CrossCraft {
 
     void World::check_chunk_update() {
         float x, y, z;
+        // Get the player position
         CC_Player_GetPosition(&x, &y, &z);
 
 
         int cX = static_cast<int>(x) >> 4;
         int cZ = static_cast<int>(z) >> 4;
 
+        // If the player has moved to a new chunk, update the chunks list
         if(cX != player_chunk.x || cZ != player_chunk.y) {
 
             SC_APP_DEBUG("PPOS {0}, {1}, {2}", x, y, z);
@@ -72,7 +76,6 @@ namespace CrossCraft {
             player_chunk.x = cX;
             player_chunk.y = cZ;
 
-            //Oopsie!
             update_chunks_list();
         }
     }
@@ -86,8 +89,47 @@ namespace CrossCraft {
             chunk->draw(ChunkMeshSelection::Opaque);
         }
 
+        // This is done to ensure that the transparent blocks are drawn after the opaque blocks
         for(auto& [val, chunk] : chunks) {
             chunk->draw(ChunkMeshSelection::Transparent);
         }
+    }
+
+    // This function generates a chunk vector from a block position
+    auto generate_chunk_vector(uint32_t x, uint32_t y, uint32_t z) -> Math::Vector3<int> {
+        return Math::Vector3<int>(x >> 4, y >> 4, z >> 4);
+    }
+
+    template<typename T>
+    void removeDuplicates(std::vector<T>& vec) {
+        std::sort(vec.begin(), vec.end());
+        vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
+    }
+
+    void World::handle_block_update(uint32_t x, uint32_t y, uint32_t z) {
+        std::vector<Math::Vector3<int>> chunks_to_update_vec;
+        chunks_to_update_vec.reserve(7);
+
+        // This updates the chunk that the block is in, and checks the 6 possible surrounding chunks
+        chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y, z));
+        chunks_to_update_vec.emplace_back(generate_chunk_vector(x + 1, y, z));
+        chunks_to_update_vec.emplace_back(generate_chunk_vector(x - 1, y, z));
+        chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y + 1, z));
+        chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y - 1, z));
+        chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y, z + 1));
+        chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y, z - 1));
+
+        // Remove duplicates
+        removeDuplicates(chunks_to_update_vec);
+
+        // Update the chunks
+        for(auto& chunk : chunks_to_update_vec) {
+            uint64_t id = ((uint64_t)chunk.x) << 32 | (uint64_t)chunk.z;
+
+            if(chunks.find(id) != chunks.end()) {
+                chunks[id]->chunks[chunk.y]->dirty = true;
+            }
+        }
+
     }
 }

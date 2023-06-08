@@ -253,4 +253,73 @@ namespace CrossCraft {
         }
     }
 
+    const float BREAK_DISTANCE = 5.0f;
+    const float PLACE_DISTANCE = 4.0f;
+
+    auto path_trace(Math::Vector3<float> pos, Math::Vector3<float> step, Math::Vector3<float>& output) -> bool {
+        for(int i = 0; i < BREAK_DISTANCE * 10; i++) {
+            pos += step;
+
+            block_t out;
+            bool res = CC_World_TryGetBlock(pos.x, pos.y, pos.z, &out);
+            if(res && out != BLK_Air) {
+                output = pos;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    auto Player::break_block(std::any p) -> void {
+        auto player = std::any_cast<Player*>(p);
+
+        auto rx = Math::Matrix::Rotate(Math::toRadians(player->rotation.x), Math::Vector3<float>(1, 0, 0));
+        auto ry = Math::Matrix::Rotate(Math::toRadians(-player->rotation.y + 180.0f), Math::Vector3<float>(0, 1, 0));
+
+        Math::Vector3<float> view = Math::Vector3<float>(0, 0, 1);
+        view = rx.mul(view);
+        view = ry.mul(view);
+
+        Math::Vector3<float> pos = player->position;
+        pos.y += 1.625f;
+        Math::Vector3<float> step = view * 0.1f;
+
+        Math::Vector3<float> out;
+        if(path_trace(pos, step, out)) {
+            CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_BREAK, 0);
+        }
+    }
+
+
+    bool Player::safety_check_place(Math::Vector3<int> updatePosition) {
+        Math::Vector3<int> currentPosition = Math::Vector3<int>{static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(position.z)};
+        Math::Vector3<int> currentPositionY = Math::Vector3<int>{static_cast<int>(position.x), static_cast<int>(position.y + 1), static_cast<int>(position.z)};
+
+        return currentPosition != updatePosition && currentPositionY != updatePosition;
+    }
+
+    auto Player::place_block(std::any p) -> void {
+        auto player = std::any_cast<Player*>(p);
+
+        auto rx = Math::Matrix::Rotate(Math::toRadians(player->rotation.x), Math::Vector3<float>(1, 0, 0));
+        auto ry = Math::Matrix::Rotate(Math::toRadians(-player->rotation.y + 180.0f), Math::Vector3<float>(0, 1, 0));
+
+        Math::Vector3<float> view = Math::Vector3<float>(0, 0, 1);
+        view = rx.mul(view);
+        view = ry.mul(view);
+
+        Math::Vector3<float> pos = player->position;
+        pos.y += 1.625f;
+        Math::Vector3<float> step = view * 0.1f;
+
+        Math::Vector3<float> out;
+        if(path_trace(pos, step, out)) {
+            out -= step;
+            if(player->safety_check_place(Math::Vector3<int>{static_cast<int>(out.x), static_cast<int>(out.y), static_cast<int>(out.z)})) {
+                CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_PLACE, 1);
+            }
+        }
+    }
+
 }

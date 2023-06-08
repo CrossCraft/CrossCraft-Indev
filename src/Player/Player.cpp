@@ -288,7 +288,7 @@ namespace CrossCraft {
         auto player = std::any_cast<Player*>(p);
 
         Math::Vector3<float> pos = player->position;
-        Math::Vector3<float> step = get_rotation(player->rotation);
+        Math::Vector3<float> step = get_rotation(player->rotation) * 0.1f;
 
         Math::Vector3<float> out;
         if(path_trace(pos, step, BREAK_DISTANCE, out)) {
@@ -307,7 +307,7 @@ namespace CrossCraft {
         auto player = std::any_cast<Player*>(p);
 
         Math::Vector3<float> pos = player->position;
-        Math::Vector3<float> step = get_rotation(player->rotation);
+        Math::Vector3<float> step = get_rotation(player->rotation) * 0.1f;
 
         Math::Vector3<float> out;
         if(path_trace(pos, step, PLACE_DISTANCE, out)) {

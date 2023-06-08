@@ -2,6 +2,7 @@
 #include <CC/core.h>
 #include <Utilities/Controllers/KeyboardController.hpp>
 #include <Utilities/Controllers/MouseController.hpp>
+#include <ResourcePack.hpp>
 
 namespace CrossCraft {
 
@@ -41,7 +42,10 @@ namespace CrossCraft {
 
         world = create_refptr<World>();
 
-        terrainTexID = Rendering::TextureManager::get().load_texture("resourcepacks/default/assets/minecraft/textures/terrain.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST, true);
+        ResourcePack::get().add_pack("resourcepacks/default.zip");
+        ResourcePack::get().load();
+
+        terrainTexID = ResourcePack::get().get_texture("terrain");
         Rendering::TextureManager::get().bind_texture(terrainTexID);
     }
 

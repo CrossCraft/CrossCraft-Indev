@@ -8,10 +8,10 @@ using namespace Stardust_Celeste;
 namespace CrossCraft {
     class GameState : public Core::ApplicationState {
     public:
-        void on_start();
+        void on_start() override;
         void on_update(Core::Application* app, double dt) override;
         void on_draw(Core::Application* app, double dt) override;
-        void on_cleanup();
+        void on_cleanup() override;
 
     private:
         RefPtr<Player> player;

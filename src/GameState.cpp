@@ -11,7 +11,7 @@ namespace CrossCraft {
         CC_Core_Init();
 
         // Send initial player position.
-        CC_Event_Push_PlayerUpdate(PLAYER_SELF, 8.0f, 48.0f, 8.0f, 0.0f, 0.0f, false);
+        CC_Event_Push_PlayerUpdate(PLAYER_SELF, 128.0f, 48.0f, 128.0f, 0.0f, 0.0f, false);
 
         // Make sure player position is handled.
         CC_Core_Update(0.0);

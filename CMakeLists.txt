@@ -22,5 +22,7 @@ add_executable(CC-Classic ${SRC_FILES} ${INC_FILES})
 add_subdirectory(ext/SDC Stardust)
 add_subdirectory(Core CC-Core)
 target_include_directories(CC-Classic PRIVATE src Core/include)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-implicit-function-declaration")
 target_compile_options(CC-Classic PRIVATE -Wall)
 target_link_libraries(CC-Classic PRIVATE Stardust-Celeste SC-Entry CC-Core)

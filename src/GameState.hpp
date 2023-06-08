@@ -2,7 +2,7 @@
 #include <Stardust-Celeste.hpp>
 #include <World/World.hpp>
 #include <Player/Player.hpp>
-#include <Chunk/ChunkMesh.hpp>
+#include <Chunk/ChunkStack.hpp>
 
 using namespace Stardust_Celeste;
 
@@ -16,7 +16,7 @@ class GameState : public Core::ApplicationState {
 
       private:
         RefPtr<Player> player;
-        RefPtr<ChunkMesh> chunk_mesh;
+        RefPtr<ChunkStack> chunk_stack;
         Utilities::Controller *kb_controller;
         uint32_t terrainTexID;
     };

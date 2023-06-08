@@ -95,9 +95,9 @@ namespace CrossCraft {
 
     bool test_block(Math::Vector3<int> pos) {
         block_t block;
-        CC_World_GetBlock(pos.x, pos.y, pos.z, &block);
+        bool res = CC_World_TryGetBlock(pos.x, pos.y, pos.z, &block);
 
-        return block != BLK_Air;
+        return block != BLK_Air || !res;
     }
 
     void Player::test_collide(double dt) {

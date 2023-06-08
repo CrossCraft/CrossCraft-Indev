@@ -10,7 +10,7 @@ namespace CrossCraft {
         CC_Core_Init();
 
         // Send initial player position.
-        CC_Event_Push_PlayerUpdate(PLAYER_SELF, 8.0f, 1.0f, 8.0f, 0.0f, 0.0f, false);
+        CC_Event_Push_PlayerUpdate(PLAYER_SELF, 8.0f, 48.0f, 8.0f, 0.0f, 0.0f, false);
 
         // Make sure player position is handled.
         CC_Core_Update(0.0);
@@ -33,7 +33,7 @@ namespace CrossCraft {
 
         Rendering::RenderContext::get().set_mode_3D();
 
-        chunk_mesh = create_refptr<ChunkMesh>(0, 0, 0);
+        chunk_stack = create_refptr<ChunkStack>(0, 0);
 
         terrainTexID = Rendering::TextureManager::get().load_texture("resourcepacks/default/assets/minecraft/textures/terrain.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST, true);
         Rendering::TextureManager::get().bind_texture(terrainTexID);
@@ -59,7 +59,8 @@ namespace CrossCraft {
 
     void GameState::on_draw(Core::Application* app, double dt) {
         player->draw(dt);
-        chunk_mesh->draw(ChunkMeshSelection::Opaque);
+        chunk_stack->draw(ChunkMeshSelection::Opaque);
+        chunk_stack->draw(ChunkMeshSelection::Transparent);
         totalFPS++;
     }
 

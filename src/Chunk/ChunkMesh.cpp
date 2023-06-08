@@ -38,7 +38,7 @@ namespace CrossCraft {
                         continue;
                     }
 
-                    surround_pos.set(x + cX, y + cY, z + cZ);
+                    surround_pos.set(x, y, z);
                     v = Math::Vector3<int>(x, y, z);
 
                     add_block_to_mesh(wd, block, v, surround_pos);
@@ -54,6 +54,9 @@ namespace CrossCraft {
     }
 
     void ChunkMesh::draw(CrossCraft::ChunkMeshSelection selection) {
+        Rendering::RenderContext::get().matrix_clear();
+        Rendering::RenderContext::get().matrix_translate({static_cast<float>(cX * 16), static_cast<float>(cY * 16), static_cast<float>(cZ * 16)});
+
         if(dirty) {
             generate_mesh();
         }
@@ -70,6 +73,7 @@ namespace CrossCraft {
 
     void ChunkMesh::add_block_to_mesh(const WorldData *wd, block_t block, Vector3<int> vector3,
                                       SurroundingPositions positions) {
+
         try_add_face(wd, topFace, block, vector3, positions.up, LIGHT_TOP);
         try_add_face(wd, bottomFace, block, vector3, positions.down, LIGHT_BOT);
 
@@ -79,6 +83,8 @@ namespace CrossCraft {
         try_add_face(wd, frontFace, block, vector3, positions.front, LIGHT_SIDE_Z);
         try_add_face(wd, backFace, block, vector3, positions.back, LIGHT_SIDE_Z);
     }
+
+    int stat = 0;
 
     void ChunkMesh::try_add_face(const WorldData *wd, const std::array<float, 12>& data, block_t block, Vector3<int> actual_pos, Vector3<int> check_pos, uint32_t lightValue) {
         auto check_pos_wx = check_pos.x + cX * 16;
@@ -94,8 +100,23 @@ namespace CrossCraft {
         auto index = CC_WIDX(check_pos_wx, check_pos_wy, check_pos_wz, wd);
         auto block_check = wd->blocks[index];
 
-        if(block_check == 0) {
-            add_face_to_mesh(data, getTexCoord(block, lightValue), actual_pos, lightValue, mesh.opaque);
+        if(block_check == BLK_Air || block_check == BLK_Water) {
+            if (block == BLK_Water && block_check != BLK_Water) {
+                std::array<float, 12> data2 = data;
+                if (lightValue == LIGHT_TOP) {
+                    data2[1] *= 0.9f;
+                    data2[4] *= 0.9f;
+                    data2[7] *= 0.9f;
+                    data2[10] *= 0.9f;
+
+                    stat += 1;
+                }
+                add_face_to_mesh(data2, getTexCoord(block, lightValue), actual_pos, lightValue, mesh.transparent);
+            } else {
+                if (block != BLK_Water && block != BLK_Glass) {
+                    add_face_to_mesh(data, getTexCoord(block, lightValue), actual_pos, lightValue, mesh.opaque);
+                }
+            }
         }
     }
 

@@ -4,6 +4,7 @@
 #include <World/World.hpp>
 #include <Rendering/Camera.hpp>
 #include <Graphics/2D/Sprite.hpp>
+#include <Player/Hud.hpp>
 
 namespace CrossCraft {
 
@@ -52,6 +53,7 @@ namespace CrossCraft {
 
         Rendering::Camera camera;
         ScopePtr<Graphics::G2D::Sprite> water_sprite;
+        ScopePtr<HUD> hud;
     };
 
 }

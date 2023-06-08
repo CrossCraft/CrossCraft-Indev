@@ -45,7 +45,6 @@ namespace CrossCraft {
 
         world = create_refptr<World>();
 
-        font_render = create_refptr<FontRender>();
     }
 
     void GameState::on_update(Core::Application* app, double dt) {
@@ -71,23 +70,26 @@ namespace CrossCraft {
         }
     }
 
-    void GameState::on_draw(Core::Application* app, double dt) {
-        world->draw();
-
+    void GameState::setup_2d_rendering() {
         Rendering::RenderContext::get().set_mode_2D();
         Rendering::RenderContext::get().matrix_ortho(0, 480, 0, 272, -10, 10);
         GI::clearDepth();
         GI::disable(GI_CULL_FACE);
+    }
+
+    void GameState::setup_3d_rendering() {
+        GI::enable(GI_CULL_FACE);
+        Rendering::RenderContext::get().set_mode_3D();
+    }
+
+    void GameState::on_draw(Core::Application* app, double dt) {
+        world->draw();
+
+        setup_2d_rendering();
 
         player->draw(dt);
 
-        font_render->clear();
-        font_render->draw_text(CC_TEXT_COLOR_RED, "Hello World", Math::Vector2<float>(100, 100), 3.0f);
-        font_render->build();
-        font_render->draw();
-
-        GI::enable(GI_CULL_FACE);
-        Rendering::RenderContext::get().set_mode_3D();
+        setup_3d_rendering();
     }
 
     void GameState::on_cleanup() {

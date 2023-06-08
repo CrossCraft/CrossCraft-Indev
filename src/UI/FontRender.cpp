@@ -90,9 +90,25 @@ namespace CrossCraft {
         }
     }
 
-    void FontRender::draw_text(uint8_t color, const char* text, Math::Vector2<float> pos, float layer) {
+    void FontRender::draw_text(uint8_t color, std::string text, Math::Vector2<float> pos, float layer) {
         Rendering::Color front, back;
         get_color(color, front, back);
+
+        fontRenderer->add_text(text, pos, front, layer);
+        fontRenderer->add_text(text, pos - Math::Vector2<float>{-1.0f, 1.0f}, back, layer - 1.0f);
+    }
+
+
+    void FontRender::draw_text_aligned(uint8_t color, uint8_t align, std::string text, Math::Vector2<float> pos, float layer) {
+        Rendering::Color front, back;
+        get_color(color, front, back);
+
+        float width = fontRenderer->calculate_size(text);
+
+        if(align == CC_TEXT_ALIGN_CENTER)
+            pos.x -= width / 2.0f;
+        else if(align == CC_TEXT_ALIGN_RIGHT)
+            pos.x -= width;
 
         fontRenderer->add_text(text, pos, front, layer);
         fontRenderer->add_text(text, pos - Math::Vector2<float>{-1.0f, 1.0f}, back, layer - 1.0f);

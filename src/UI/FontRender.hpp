@@ -23,6 +23,9 @@ using namespace Stardust_Celeste;
 #define CC_TEXT_COLOR_WHITE 15
 #define CC_TEXT_COLOR_BE_MTX_GOLD 16
 
+#define CC_TEXT_ALIGN_LEFT 0
+#define CC_TEXT_ALIGN_CENTER 1
+#define CC_TEXT_ALIGN_RIGHT 2
 
 namespace CrossCraft {
     class FontRender {
@@ -30,7 +33,8 @@ namespace CrossCraft {
         FontRender();
         ~FontRender();
 
-        void draw_text(uint8_t color, const char* text, Math::Vector2<float> pos, float layer);
+        void draw_text(uint8_t color, std::string text, Math::Vector2<float> pos, float layer);
+        void draw_text_aligned(uint8_t color, uint8_t align, std::string text, Math::Vector2<float> pos, float layer);
         void clear();
         void build();
 

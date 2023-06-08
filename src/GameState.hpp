@@ -2,7 +2,6 @@
 #include <Stardust-Celeste.hpp>
 #include <World/World.hpp>
 #include <Player/Player.hpp>
-#include <UI/FontRender.hpp>
 
 using namespace Stardust_Celeste;
 
@@ -15,9 +14,11 @@ namespace CrossCraft {
         void on_cleanup() override;
 
     private:
+        void setup_2d_rendering();
+        void setup_3d_rendering();
+
         RefPtr<Player> player;
         RefPtr<World> world;
-        RefPtr<FontRender> font_render;
         Utilities::Controller *kb_controller;
         Utilities::Controller *mb_controller;
     };

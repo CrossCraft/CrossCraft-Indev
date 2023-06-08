@@ -2,6 +2,7 @@
 #include <Stardust-Celeste.hpp>
 #include <World/World.hpp>
 #include <Player/Player.hpp>
+#include <UI/FontRender.hpp>
 
 using namespace Stardust_Celeste;
 
@@ -16,8 +17,8 @@ namespace CrossCraft {
     private:
         RefPtr<Player> player;
         RefPtr<World> world;
+        RefPtr<FontRender> font_render;
         Utilities::Controller *kb_controller;
         Utilities::Controller *mb_controller;
-        uint32_t terrainTexID;
     };
 }

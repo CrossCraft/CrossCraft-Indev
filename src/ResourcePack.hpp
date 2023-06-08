@@ -39,13 +39,13 @@ namespace CrossCraft{
         void add_pack(std::string pack);
         void remove_pack(std::string pack);
 
-        auto get_resource_type(std::string resource) -> ResourceValue*;
+        auto get_resource(std::string resource) -> ResourceValue*;
         auto get_texture(std::string resource) -> uint32_t;
 
     private:
         ResourcePack();
 
-        auto load_resource(std::string name, ResourceType type, std::string path) -> ResourceValue*;
+        auto load_resource(std::string name, ResourceType type, std::string path) -> void;
 
         std::map<std::string, ResourceValue> resources;
         std::vector<std::string> packQueue;

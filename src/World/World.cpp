@@ -1,11 +1,16 @@
 #include <World/World.hpp>
 #include <vector>
 #include <algorithm>
+#include <ResourcePack.hpp>
+#include <Rendering/Texture.hpp>
 
 namespace CrossCraft {
 
     World::World() {
         player_chunk = Math::Vector2<int>(-1, -1);
+
+        terrainTexID = ResourcePack::get().get_texture("terrain");
+        SC_APP_INFO("Terrain texture ID: {0}", terrainTexID);
     }
 
     World::~World() {
@@ -82,6 +87,7 @@ namespace CrossCraft {
     }
 
     void World::draw() {
+        Rendering::TextureManager::get().bind_texture(terrainTexID);
         for(auto& [val, chunk] : chunks) {
             chunk->draw(ChunkMeshSelection::Opaque);
         }

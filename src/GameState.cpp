@@ -38,15 +38,14 @@ namespace CrossCraft {
         Input::set_differential_mode("Mouse", true);
         Input::set_cursor_center();
 
+        ResourcePack::get().add_pack("resourcepacks/default.zip");
+        ResourcePack::get().load();
+
         Rendering::RenderContext::get().set_mode_3D();
 
         world = create_refptr<World>();
 
-        ResourcePack::get().add_pack("resourcepacks/default.zip");
-        ResourcePack::get().load();
-
-        terrainTexID = ResourcePack::get().get_texture("terrain");
-        Rendering::TextureManager::get().bind_texture(terrainTexID);
+        font_render = create_refptr<FontRender>();
     }
 
     void GameState::on_update(Core::Application* app, double dt) {
@@ -75,6 +74,18 @@ namespace CrossCraft {
     void GameState::on_draw(Core::Application* app, double dt) {
         world->draw();
         player->draw(dt);
+
+        Rendering::RenderContext::get().set_mode_2D();
+        Rendering::RenderContext::get().matrix_ortho(0, 480, 0, 272, -10, 10);
+        GI::disable(GI_CULL_FACE);
+
+        font_render->clear();
+        font_render->draw_text(CC_TEXT_COLOR_RED, "Hello World", Math::Vector2<float>(100, 100), 1.0f);
+        font_render->build();
+        font_render->draw();
+
+        GI::enable(GI_CULL_FACE);
+        Rendering::RenderContext::get().set_mode_3D();
     }
 
     void GameState::on_cleanup() {

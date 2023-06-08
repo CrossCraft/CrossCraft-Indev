@@ -35,7 +35,7 @@ namespace CrossCraft{
         }
     }
 
-    auto ResourcePack::get_resource_type(std::string resource) -> ResourceValue* {
+    auto ResourcePack::get_resource(std::string resource) -> ResourceValue* {
         if(resources.find(resource) == resources.end()) {
             return nullptr;
         }
@@ -44,7 +44,7 @@ namespace CrossCraft{
     }
 
     auto ResourcePack::get_texture(std::string resource) -> uint32_t {
-        auto res = get_resource_type(resource);
+        auto res = get_resource(resource);
         if(res == nullptr) {
             return -1;
         }
@@ -56,9 +56,7 @@ namespace CrossCraft{
         return -1;
     }
 
-    auto ResourcePack::load_resource(std::string name, ResourceType type, std::string path) -> ResourceValue* {
-        ResourceValue* res = nullptr;
-
+    auto ResourcePack::load_resource(std::string name, ResourceType type, std::string path) -> void {
         if(type == ResourceType::TEXTURE) {
             size_t path_index = -1;
 
@@ -88,16 +86,16 @@ namespace CrossCraft{
             auto result = Rendering::TextureManager::get().load_texture_ram(dataBuffer, arrayLength, SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST, true);
             delete[] dataBuffer;
 
-            res = new ResourceValue();
-            res->type = ResourceType::TEXTURE;
-            res->data.texture_value = result;
-            return res;
-        }
+            ResourceValue res;
+            res.type = ResourceType::TEXTURE;
+            res.data.texture_value = result;
 
-        return res;
+            resources.emplace(name, res);
+        }
     }
 
     void ResourcePack::load() {
+        load_resource("default", ResourceType::TEXTURE, "assets/minecraft/textures/default.png");
         load_resource("terrain", ResourceType::TEXTURE, "assets/minecraft/textures/terrain.png");
     }
 

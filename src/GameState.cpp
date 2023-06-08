@@ -33,35 +33,24 @@ namespace CrossCraft {
 
         Rendering::RenderContext::get().set_mode_3D();
 
-        chunk_stack = create_refptr<ChunkStack>(0, 0);
+        world = create_refptr<World>();
 
         terrainTexID = Rendering::TextureManager::get().load_texture("resourcepacks/default/assets/minecraft/textures/terrain.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST, true);
         Rendering::TextureManager::get().bind_texture(terrainTexID);
     }
 
-    double fpsTimer = 0.0;
-    int totalFPS = 0;
-
     void GameState::on_update(Core::Application* app, double dt) {
         Input::update();
 
         player->update(dt);
-
-        fpsTimer += dt;
-        if(fpsTimer > 1.0) {
-            SC_APP_INFO("FPS: {}", totalFPS);
-            totalFPS = 0;
-            fpsTimer = 0.0;
-        }
+        world->update(dt);
 
         CC_Core_Update(dt);
     }
 
     void GameState::on_draw(Core::Application* app, double dt) {
+        world->draw();
         player->draw(dt);
-        chunk_stack->draw(ChunkMeshSelection::Opaque);
-        chunk_stack->draw(ChunkMeshSelection::Transparent);
-        totalFPS++;
     }
 
     void GameState::on_cleanup() {

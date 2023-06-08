@@ -14,11 +14,6 @@ namespace CrossCraft {
         Player();
         ~Player();
 
-        void do_rotate(double dt);
-        void do_move(double dt);
-        void calculate_velocity(double dt);
-        void test_collide(double dt);
-
         void update(double dt);
         void draw(double dt);
 
@@ -40,6 +35,11 @@ namespace CrossCraft {
         float vertInput;
 
         bool on_ground;
+
+        void do_rotate(double dt);
+        void do_move(double dt);
+        void calculate_velocity(double dt);
+        void test_collide(double dt);
 
         Rendering::Camera camera;
     };

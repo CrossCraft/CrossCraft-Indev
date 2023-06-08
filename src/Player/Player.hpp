@@ -35,11 +35,13 @@ namespace CrossCraft {
         float vertInput;
 
         bool on_ground;
+        bool in_water;
 
         void do_rotate(double dt);
         void do_move(double dt);
         void calculate_velocity(double dt);
         void test_collide(double dt);
+        void perform_checks();
 
         Rendering::Camera camera;
     };

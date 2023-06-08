@@ -65,7 +65,7 @@ namespace CrossCraft {
             vertInput /= inputLen;
         }
 
-        const float moveSpeed = 5.0f;
+        const float moveSpeed = 3.417f;
 
         float movementX = horizInput * cosf(Math::toRadians(rotation.y)) + vertInput * sinf(Math::toRadians(rotation.y));
         float movementZ = horizInput * sinf(Math::toRadians(rotation.y)) - vertInput * cosf(Math::toRadians(rotation.y));
@@ -77,7 +77,15 @@ namespace CrossCraft {
     }
 
     void Player::do_move(double dt) {
-        position += velocity * dt;
+        if(in_water) {
+            position.x += velocity.x * dt * 0.75f;
+            position.y += velocity.y * dt * 0.33f;
+            position.z += velocity.z * dt * 0.75f;
+        } else {
+            position.x += velocity.x * dt;
+            position.y += velocity.y * dt;
+            position.z += velocity.z * dt;
+        }
 
         horizInput = 0.0f;
         vertInput = 0.0f;
@@ -97,7 +105,7 @@ namespace CrossCraft {
         block_t block;
         bool res = CC_World_TryGetBlock(pos.x, pos.y, pos.z, &block);
 
-        return block != BLK_Air || !res;
+        return (block != BLK_Air && block != BLK_Water) || !res;
     }
 
     void Player::test_collide(double dt) {
@@ -153,9 +161,14 @@ namespace CrossCraft {
         }
 
         if(testY) {
-            Math::Vector3<int> pos = Math::Vector3<int>{static_cast<int>(position.x), worldY, static_cast<int>(position.z)};
-            if(test_block(pos)) {
-                velocity.y = 0.0f;
+            for(int x = xMin; x <= xMax; x++) {
+                for(int z = zMin; z <= zMax; z++) {
+                    Math::Vector3<int> pos = Math::Vector3<int>{x, worldY, z};
+                    if(test_block(pos)) {
+                        velocity.y = 0.0f;
+                        break;
+                    }
+                }
             }
         }
 
@@ -175,6 +188,25 @@ namespace CrossCraft {
 
     }
 
+    void Player::perform_checks() {
+        // Check on Ground
+        Math::Vector3 testPos = position;
+        testPos.y -= 0.1f;
+        on_ground = test_block(Math::Vector3<int>{static_cast<int>(testPos.x), static_cast<int>(testPos.y), static_cast<int>(testPos.z)});
+
+        // Check in Water
+        block_t out, out2;
+        bool res = CC_World_TryGetBlock(testPos.x, testPos.y - 0.125f, testPos.z, &out);
+        bool res2 = CC_World_TryGetBlock(testPos.x, testPos.y - 0.375f, testPos.z, &out2);
+        if(res) {
+            in_water = out == BLK_Water;
+
+            if(in_water && res2 && out2 == BLK_Water) {
+                on_ground = true;
+            }
+        }
+    }
+
     void Player::update(double dt) {
         // Handle input updates
         do_rotate(dt);
@@ -185,11 +217,10 @@ namespace CrossCraft {
         // Test for collisions
         test_collide(dt);
 
-        // Check on Ground
-        Math::Vector3 testPos = position;
-        testPos.y -= 0.1f;
-        on_ground = test_block(Math::Vector3<int>{static_cast<int>(testPos.x), static_cast<int>(testPos.y), static_cast<int>(testPos.z)});
+        // Check the Player's status
+        perform_checks();
 
+        // Move the player
         do_move(dt);
     }
 

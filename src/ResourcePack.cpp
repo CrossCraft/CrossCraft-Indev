@@ -97,6 +97,7 @@ namespace CrossCraft{
     void ResourcePack::load() {
         load_resource("default", ResourceType::TEXTURE, "assets/minecraft/textures/default.png");
         load_resource("terrain", ResourceType::TEXTURE, "assets/minecraft/textures/terrain.png");
+        load_resource("water_overlay", ResourceType::TEXTURE, "assets/minecraft/textures/water.png");
     }
 
     void ResourcePack::cleanup() {

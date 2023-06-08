@@ -3,6 +3,7 @@
 #include <Math/Math.hpp>
 #include <World/World.hpp>
 #include <Rendering/Camera.hpp>
+#include <Graphics/2D/Sprite.hpp>
 
 namespace CrossCraft {
 
@@ -39,6 +40,7 @@ namespace CrossCraft {
 
         bool on_ground;
         bool in_water;
+        bool water_face;
 
         void do_rotate(double dt);
         void do_move(double dt);
@@ -49,6 +51,7 @@ namespace CrossCraft {
         bool safety_check_place(Math::Vector3<int> position);
 
         Rendering::Camera camera;
+        ScopePtr<Graphics::G2D::Sprite> water_sprite;
     };
 
 }

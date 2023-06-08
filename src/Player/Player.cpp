@@ -1,6 +1,7 @@
 #include <Player/Player.hpp>
 #include <CC/core.h>
 #include <Utilities/Input.hpp>
+#include <ResourcePack.hpp>
 
 #include <GLFW/glfw3.h>
 
@@ -17,6 +18,14 @@ namespace CrossCraft {
         velocity = Math::Vector3<float>{pd->vx, pd->vy, pd->vz};
         rotation = Math::Vector2<float>{pd->pitch, pd->yaw};
         on_ground = pd->on_ground;
+        in_water = false;
+        water_face = false;
+
+        horizInput = 0.0f;
+        vertInput = 0.0f;
+
+        water_sprite = create_scopeptr<Graphics::G2D::Sprite>( ResourcePack::get().get_texture("water_overlay"), Rendering::Rectangle{{0.0f, 0.0f}, {480.0f, 272.0f}});
+        water_sprite->set_layer(1);
     }
 
     Player::~Player() {
@@ -193,11 +202,14 @@ namespace CrossCraft {
         on_ground = test_block(Math::Vector3<int>{static_cast<int>(testPos.x), static_cast<int>(testPos.y), static_cast<int>(testPos.z)});
 
         // Check in Water
-        block_t out, out2;
+        block_t out, out2, out3;
         bool res = CC_World_TryGetBlock(testPos.x, testPos.y - 0.125f, testPos.z, &out);
         bool res2 = CC_World_TryGetBlock(testPos.x, testPos.y - 0.375f, testPos.z, &out2);
+        bool res3 = CC_World_TryGetBlock(testPos.x, testPos.y + 1.3f, testPos.z, &out3);
         if(res) {
             in_water = out == BLK_Water;
+
+            water_face = res3 && out3 == BLK_Water;
 
             if(in_water && res2 && out2 == BLK_Water) {
                 on_ground = true;
@@ -223,7 +235,10 @@ namespace CrossCraft {
     }
 
     void Player::draw(double dt) {
-
+        if(water_face) {
+            SC_APP_INFO("Drawing Water Face");
+            water_sprite->draw();
+        }
     }
 
     auto Player::move_forward(std::any p) -> void {

@@ -8,6 +8,9 @@ namespace CrossCraft {
 
     using namespace Stardust_Celeste::Utilities;
     void GameState::on_start() {
+        ResourcePack::get().add_pack("resourcepacks/default.zip");
+        ResourcePack::get().load();
+
         // Initialize the core library.
         CC_Core_Init();
 
@@ -37,9 +40,6 @@ namespace CrossCraft {
         Input::add_controller(mb_controller);
         Input::set_differential_mode("Mouse", true);
         Input::set_cursor_center();
-
-        ResourcePack::get().add_pack("resourcepacks/default.zip");
-        ResourcePack::get().load();
 
         Rendering::RenderContext::get().set_mode_3D();
 
@@ -73,14 +73,16 @@ namespace CrossCraft {
 
     void GameState::on_draw(Core::Application* app, double dt) {
         world->draw();
-        player->draw(dt);
 
         Rendering::RenderContext::get().set_mode_2D();
         Rendering::RenderContext::get().matrix_ortho(0, 480, 0, 272, -10, 10);
+        GI::clearDepth();
         GI::disable(GI_CULL_FACE);
 
+        player->draw(dt);
+
         font_render->clear();
-        font_render->draw_text(CC_TEXT_COLOR_RED, "Hello World", Math::Vector2<float>(100, 100), 1.0f);
+        font_render->draw_text(CC_TEXT_COLOR_RED, "Hello World", Math::Vector2<float>(100, 100), 3.0f);
         font_render->build();
         font_render->draw();
 

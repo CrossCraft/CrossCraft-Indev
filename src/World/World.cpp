@@ -135,4 +135,9 @@ namespace CrossCraft {
         }
 
     }
+
+
+    auto World::save(std::any p) -> void {
+        CC_World_Save();
+    }
 }

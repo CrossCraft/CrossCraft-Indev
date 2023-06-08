@@ -20,6 +20,8 @@ namespace CrossCraft{
         /// @param y The y position of the block
         /// @param z The z position of the block
         void handle_block_update(uint32_t x, uint32_t y, uint32_t z);
+
+        static auto save(std::any p) -> void;
     private:
 
         void check_chunk_update();

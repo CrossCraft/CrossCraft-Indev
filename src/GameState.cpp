@@ -31,6 +31,7 @@ namespace CrossCraft {
         kb_controller->add_command({(int)Input::Keys::A, KeyFlag::Press | KeyFlag::Held}, {Player::move_left, player.get()});
         kb_controller->add_command({(int)Input::Keys::D, KeyFlag::Press | KeyFlag::Held}, {Player::move_right, player.get()});
         kb_controller->add_command({(int)Input::Keys::Space, KeyFlag::Press | KeyFlag::Held}, {Player::jump, player.get()});
+        kb_controller->add_command({(int)Input::Keys::Enter, KeyFlag::Press}, {World::save, nullptr});
 
         mb_controller = new Utilities::Input::MouseController();
         mb_controller->add_command({(int)Input::MouseButtons::Left, KeyFlag::Press}, {Player::break_block, player.get()});

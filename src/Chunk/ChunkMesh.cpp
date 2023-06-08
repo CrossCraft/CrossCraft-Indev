@@ -100,7 +100,7 @@ namespace CrossCraft {
         auto index = CC_WIDX(check_pos_wx, check_pos_wy, check_pos_wz, wd);
         auto block_check = wd->blocks[index];
 
-        if(block_check == BLK_Air || block_check == BLK_Water) {
+        if(block_check == BLK_Air || block_check == BLK_Water || block_check == BLK_Leaves) {
             if (block == BLK_Water && block_check != BLK_Water) {
                 std::array<float, 12> data2 = data;
                 if (lightValue == LIGHT_TOP) {
@@ -112,6 +112,8 @@ namespace CrossCraft {
                     stat += 1;
                 }
                 add_face_to_mesh(data2, getTexCoord(block, lightValue), actual_pos, lightValue, mesh.transparent);
+            } else if(block == BLK_Leaves) {
+                add_face_to_mesh(data, getTexCoord(block, lightValue), actual_pos, lightValue, mesh.opaque);
             } else {
                 if (block != BLK_Water && block != BLK_Glass) {
                     add_face_to_mesh(data, getTexCoord(block, lightValue), actual_pos, lightValue, mesh.opaque);

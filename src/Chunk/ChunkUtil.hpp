@@ -178,7 +178,7 @@ namespace CrossCraft {
                     return getTexture(vec, 20);
             }
             case 18: // Leaves
-                return getTexture(vec, 22);
+                return getTexture(vec, 51);
             case 19: // Sponge
                 return getTexture(vec, 48);
             case 20: // Glass

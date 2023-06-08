@@ -33,7 +33,7 @@ namespace CrossCraft {
         if(endX > maxX) endX = maxX;
         if(endZ > maxZ) endZ = maxZ;
 
-        SC_APP_DEBUG("SCANNING CHUNKS {0}, {1} -> {2}, {3}", startX, startZ, endX, endZ);
+        //SC_APP_DEBUG("SCANNING CHUNKS {0}, {1} -> {2}, {3}", startX, startZ, endX, endZ);
 
         for(int x = startX; x < endX; x++) {
             for(int z = startZ; z < endZ; z++) {
@@ -42,7 +42,7 @@ namespace CrossCraft {
                 uint64_t id = ((uint64_t)pos.x) << 32 | (uint64_t)pos.y;
 
                 if(chunks.find(id) == chunks.end()) {
-                    SC_APP_DEBUG("NEW CHUNK {0}, {1}", x, z);
+                    //SC_APP_DEBUG("NEW CHUNK {0}, {1}", x, z);
                     new_chunks.emplace(id, new ChunkStack(x, z));
                 } else {
                     new_chunks.emplace(id, chunks[id]);
@@ -69,9 +69,6 @@ namespace CrossCraft {
 
         // If the player has moved to a new chunk, update the chunks list
         if(cX != player_chunk.x || cZ != player_chunk.y) {
-
-            SC_APP_DEBUG("PPOS {0}, {1}, {2}", x, y, z);
-            SC_APP_DEBUG("PCHUNK {0}, {1}", cX, cZ);
 
             player_chunk.x = cX;
             player_chunk.y = cZ;

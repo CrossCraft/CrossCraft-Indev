@@ -8,11 +8,13 @@ namespace CrossCraft {
                 Rendering::Rectangle{ {0.0f, 0.0f} , {182.0f, 22.0f}},
                 Rendering::Rectangle{ {0.0f, 0.0f}, {182.0f/ 256.0f, 22.0f / 256.0f}}
         );
+        hotbar->set_layer(2);
         hotbar_select = create_scopeptr<Graphics::G2D::Sprite>(
                 ResourcePack::get().get_texture("gui_common"),
                 Rendering::Rectangle{ {0.0f, 0.0f} , {24.0f, 24.0f}},
                 Rendering::Rectangle{ {0.0f, 22.0f / 256.0f}, {24.0f/ 256.0f, 24.0f / 256.0f}}
         );
+        hotbar_select->set_layer(3);
     }
 
     Inventory::~Inventory() {

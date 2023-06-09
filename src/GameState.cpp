@@ -5,6 +5,7 @@
 #include <ResourcePack.hpp>
 #include <Player/InGameMenu.hpp>
 #include <Player/Inventory.hpp>
+#include <ModelRenderer.hpp>
 
 namespace CrossCraft {
 
@@ -33,6 +34,8 @@ namespace CrossCraft {
     void GameState::on_start() {
         ResourcePack::get().add_pack("resourcepacks/default.zip");
         ResourcePack::get().load();
+        ModelRenderer::init();
+
 
         // Initialize the core library.
         CC_Core_Init();
@@ -125,6 +128,16 @@ namespace CrossCraft {
         setup_2d_rendering();
 
         player->draw(dt);
+
+        for(int i = 0; i < 65; i++) {
+            ModelRenderer::get().draw_item_isometric(
+                i + 256, 
+                {
+                    (i % 8) * 16, 
+                    (8-(i/8)) * 16, 2.0f
+                }
+            );
+        }
 
         setup_3d_rendering();
     }

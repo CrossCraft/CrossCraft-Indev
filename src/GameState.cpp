@@ -112,7 +112,7 @@ namespace CrossCraft {
 
     void GameState::setup_2d_rendering() {
         Rendering::RenderContext::get().set_mode_2D();
-        Rendering::RenderContext::get().matrix_ortho(0, 480, 0, 272, -10, 10);
+        Rendering::RenderContext::get().matrix_ortho(0, 480, 0, 272, -200, 200);
         GI::clearDepth();
         GI::disable(GI_CULL_FACE);
     }
@@ -125,14 +125,14 @@ namespace CrossCraft {
 
     void GameState::on_draw(Core::Application* app, double dt) {
         world->draw();
-        ModelRenderer::get().draw_item(ITM_Iron_Pickaxe, {127.0f, 38.0f, 127.0f}, {0.0f, x, 0.0f});
-        x += 30.0f * dt;
 
-        ModelRenderer::get().draw_item_hand(ITM_Iron_Pickaxe, player->position, player->rotation);
+        ModelRenderer::get().draw_block_hand(BLK_Leaves, player->position, player->rotation);
 
         setup_2d_rendering();
 
         player->draw(dt);
+
+        ModelRenderer::get().draw_block_isometric(BLK_Stone, {20, 20, 2});
 
         setup_3d_rendering();
     }

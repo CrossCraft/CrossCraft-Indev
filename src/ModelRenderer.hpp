@@ -29,7 +29,7 @@ namespace CrossCraft{
         uint32_t terrainTexID;
         uint32_t itemsTexID;
 
-        ScopePtr<Graphics::G2D::Sprite> blockModels[63];
+        ScopePtr<Rendering::Mesh<Rendering::Vertex>> blockModels[63];
         ScopePtr<Graphics::G2D::Sprite> itemModels[66];
     };
 }

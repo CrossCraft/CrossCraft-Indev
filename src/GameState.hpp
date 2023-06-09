@@ -17,6 +17,9 @@ namespace CrossCraft {
         void setup_2d_rendering();
         void setup_3d_rendering();
 
+        static auto on_action_left(std::any p) -> void;
+        static auto on_action_right(std::any p) -> void;
+
         RefPtr<Player> player;
         RefPtr<World> world;
         Utilities::Controller *kb_controller;

@@ -52,7 +52,7 @@ namespace CrossCraft {
         bool safety_check_place(Math::Vector3<int> position);
 
         Rendering::Camera camera;
-        ScopePtr<Graphics::G2D::Sprite> water_sprite;
+        ScopePtr<Graphics::G2D::Sprite> water_sprite, crosshair;
         ScopePtr<HUD> hud;
     };
 

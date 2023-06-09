@@ -1,10 +1,20 @@
 #include <UI/FontRender.hpp>
 #include <ResourcePack.hpp>
 
+#define CC_TEXT_COLOR_SELECT_FRONT \
+    { 255, 255, 160, 255 }
+#define CC_TEXT_COLOR_SELECT_BACK \
+    { 63, 63, 40, 255 }
+#define CC_TEXT_COLOR_SPLASH_FRONT \
+    { 63, 63, 0, 255 }
+#define CC_TEXT_COLOR_SPLASH_BACK \
+    { 255, 255, 0, 255 }
+
+
 namespace CrossCraft {
 
     FontRender::FontRender() {
-        fontRenderer = create_scopeptr<Graphics::G2D::FixedFontRenderer<512>>(ResourcePack::get().get_texture("default"), Math::Vector2<float>(16, 16));
+        fontRenderer = create_scopeptr<Graphics::G2D::FontRenderer>(ResourcePack::get().get_texture("default"), Math::Vector2<float>(16, 16));
         fontRenderer->scale_factor = 1.0f;
     }
 
@@ -86,6 +96,14 @@ namespace CrossCraft {
             case CC_TEXT_COLOR_BE_MTX_GOLD:
                 front = {221, 214, 5, alpha};
                 back = {55, 53, 1, alpha};
+                break;
+            case CC_TEXT_COLOR_SELECT:
+                front = CC_TEXT_COLOR_SELECT_FRONT;
+                back = CC_TEXT_COLOR_SELECT_BACK;
+                break;
+            case CC_TEXT_COLOR_SPLASH:
+                front = CC_TEXT_COLOR_SPLASH_FRONT;
+                back = CC_TEXT_COLOR_SPLASH_BACK;
                 break;
         }
     }

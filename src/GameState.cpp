@@ -3,10 +3,32 @@
 #include <Utilities/Controllers/KeyboardController.hpp>
 #include <Utilities/Controllers/MouseController.hpp>
 #include <ResourcePack.hpp>
+#include <Player/InGameMenu.hpp>
 
 namespace CrossCraft {
 
     using namespace Stardust_Celeste::Utilities;
+
+
+    auto GameState::on_action_left(std::any p) -> void {
+        auto player = std::any_cast<Player*>(p);
+
+        if(InGameMenu::get().is_open()) {
+            InGameMenu::left_click_command(p);
+        } else {
+            Player::break_block(player);
+        }
+    }
+    auto GameState::on_action_right(std::any p) -> void {
+        auto player = std::any_cast<Player*>(p);
+
+        if(InGameMenu::get().is_open()) {
+            InGameMenu::right_click_command(p);
+        } else {
+            Player::place_block(player);
+        }
+    }
+
     void GameState::on_start() {
         ResourcePack::get().add_pack("resourcepacks/default.zip");
         ResourcePack::get().load();
@@ -22,6 +44,7 @@ namespace CrossCraft {
 
         // Create the player.
         player = create_refptr<Player>();
+        InGameMenu::init();
 
         // Setup controls
         kb_controller = new Utilities::Input::KeyboardController();
@@ -32,10 +55,11 @@ namespace CrossCraft {
         kb_controller->add_command({(int)Input::Keys::D, KeyFlag::Press | KeyFlag::Held}, {Player::move_right, player.get()});
         kb_controller->add_command({(int)Input::Keys::Space, KeyFlag::Press | KeyFlag::Held}, {Player::jump, player.get()});
         kb_controller->add_command({(int)Input::Keys::Enter, KeyFlag::Press}, {World::save, nullptr});
+        kb_controller->add_command({(int)Input::Keys::Escape, KeyFlag::Press}, {InGameMenu::toggle_command, nullptr});
 
         mb_controller = new Utilities::Input::MouseController();
-        mb_controller->add_command({(int)Input::MouseButtons::Left, KeyFlag::Press}, {Player::break_block, player.get()});
-        mb_controller->add_command({(int)Input::MouseButtons::Right, KeyFlag::Press}, {Player::place_block, player.get()});
+        mb_controller->add_command({(int)Input::MouseButtons::Left, KeyFlag::Press}, {on_action_left, player.get()});
+        mb_controller->add_command({(int)Input::MouseButtons::Right, KeyFlag::Press}, {on_action_right, player.get()});
 
         Input::add_controller(kb_controller);
         Input::add_controller(mb_controller);

@@ -63,10 +63,14 @@ namespace CrossCraft {
 
         switch(selection) {
             case ChunkMeshSelection::Opaque:
-                mesh.opaque.mesh.draw();
+                if(mesh.opaque.idx_counter > 0) {
+                    mesh.opaque.mesh.draw();
+                }
                 break;
             case ChunkMeshSelection::Transparent:
-                mesh.transparent.mesh.draw();
+                if(mesh.transparent.idx_counter > 0) {
+                    mesh.transparent.mesh.draw();
+                }
                 break;
         }
     }

@@ -2,6 +2,7 @@
 #include <CC/core.h>
 #include <Utilities/Input.hpp>
 #include <ResourcePack.hpp>
+#include <Player/InGameMenu.hpp>
 
 #include <GLFW/glfw3.h>
 
@@ -28,6 +29,9 @@ namespace CrossCraft {
         water_sprite->set_layer(1);
 
         hud = create_scopeptr<HUD>();
+
+        crosshair = create_scopeptr<Graphics::G2D::Sprite>(ResourcePack::get().get_texture("gui_common"), Rendering::Rectangle{{232.0f, 128.0f}, {16.0f, 16.0f}}, Rendering::Rectangle{{15.0f / 16.0f, 0.0f}, {1.0f / 16.0f, 1.0f / 16.0f} });
+        crosshair->set_layer(2);
     }
 
     Player::~Player() {
@@ -221,7 +225,9 @@ namespace CrossCraft {
 
     void Player::update(double dt) {
         // Handle input updates
-        do_rotate(dt);
+        if(!InGameMenu::get().is_open()) {
+            do_rotate(dt);
+        }
 
         // Calculate velocity
         calculate_velocity(dt);
@@ -242,25 +248,41 @@ namespace CrossCraft {
             water_sprite->draw();
         }
 
+        crosshair->draw();
+
         // Draw the HUD
         hud->draw(position, dt);
+
+        InGameMenu::get().draw(dt);
     }
 
     auto Player::move_forward(std::any p) -> void {
         auto player = std::any_cast<Player*>(p);
-        player->vertInput += 1.0f;
+
+        if(!InGameMenu::get().is_open()) {
+            player->vertInput += 1.0f;
+        }
     }
     auto Player::move_backward(std::any p) -> void {
         auto player = std::any_cast<Player*>(p);
-        player->vertInput -= 1.0f;
+
+        if(!InGameMenu::get().is_open()) {
+            player->vertInput -= 1.0f;
+        }
     }
     auto Player::move_left(std::any p) -> void {
         auto player = std::any_cast<Player*>(p);
-        player->horizInput -= 1.0f;
+
+        if(!InGameMenu::get().is_open()) {
+            player->horizInput -= 1.0f;
+        }
     }
     auto Player::move_right(std::any p) -> void {
         auto player = std::any_cast<Player*>(p);
-        player->horizInput = 1.0f;
+
+        if(!InGameMenu::get().is_open()) {
+            player->horizInput = 1.0f;
+        }
     }
     auto Player::jump(std::any p) -> void {
         auto player = std::any_cast<Player*>(p);

@@ -22,6 +22,8 @@ using namespace Stardust_Celeste;
 #define CC_TEXT_COLOR_YELLOW 14
 #define CC_TEXT_COLOR_WHITE 15
 #define CC_TEXT_COLOR_BE_MTX_GOLD 16
+#define CC_TEXT_COLOR_SELECT 17
+#define CC_TEXT_COLOR_SPLASH 18
 
 #define CC_TEXT_ALIGN_LEFT 0
 #define CC_TEXT_ALIGN_CENTER 1
@@ -42,6 +44,6 @@ namespace CrossCraft {
     private:
         void get_color(uint8_t color, Rendering::Color& fg, Rendering::Color& bg, uint8_t alpha = 255);
 
-        ScopePtr<Graphics::G2D::FixedFontRenderer<512>> fontRenderer;
+        ScopePtr<Graphics::G2D::FontRenderer> fontRenderer;
     };
 }

@@ -20,7 +20,7 @@ namespace CrossCraft {
         SurroundingPositions surround_pos;
         uint32_t index;
         block_t block;
-        Math::Vector3<int> v;
+        mathfu::Vector<float, 3> v;
         auto wd = CC_World_GetData();
 
         for(size_t y = 0; y < 16; y++) {
@@ -39,7 +39,7 @@ namespace CrossCraft {
                     }
 
                     surround_pos.set(x, y, z);
-                    v = Math::Vector3<int>(x, y, z);
+                    v = mathfu::Vector<float, 3>(x, y, z);
 
                     add_block_to_mesh(wd, block, v, surround_pos);
                 }
@@ -75,7 +75,7 @@ namespace CrossCraft {
         }
     }
 
-    void ChunkMesh::add_block_to_mesh(const WorldData *wd, block_t block, Vector3<int> vector3,
+    void ChunkMesh::add_block_to_mesh(const WorldData *wd, block_t block, mathfu::Vector<float, 3> vector3,
                                       SurroundingPositions positions) {
 
         try_add_face(wd, topFace, block, vector3, positions.up, LIGHT_TOP);
@@ -90,7 +90,7 @@ namespace CrossCraft {
 
     int stat = 0;
 
-    void ChunkMesh::try_add_face(const WorldData *wd, const std::array<float, 12>& data, block_t block, Vector3<int> actual_pos, Vector3<int> check_pos, uint32_t lightValue) {
+    void ChunkMesh::try_add_face(const WorldData *wd, const std::array<float, 12>& data, block_t block, mathfu::Vector<float, 3> actual_pos, mathfu::Vector<float, 3> check_pos, uint32_t lightValue) {
         auto check_pos_wx = check_pos.x + cX * 16;
         auto check_pos_wy = check_pos.y + cY * 16;
         auto check_pos_wz = check_pos.z + cZ * 16;
@@ -101,7 +101,7 @@ namespace CrossCraft {
             return;
         }
 
-        auto index = CC_WIDX(check_pos_wx, check_pos_wy, check_pos_wz, wd);
+        size_t index = CC_WIDX(check_pos_wx, check_pos_wy, check_pos_wz, wd);
         auto block_check = wd->blocks[index];
 
         if(block_check == BLK_Air || block_check == BLK_Water || block_check == BLK_Leaves) {
@@ -127,7 +127,7 @@ namespace CrossCraft {
     }
 
     void
-    ChunkMesh::add_face_to_mesh(const std::array<float, 12> &face, std::array<float, 8> tex, Vector3<int> position,
+    ChunkMesh::add_face_to_mesh(const std::array<float, 12> &face, std::array<float, 8> tex, mathfu::Vector<float, 3> position,
                                 uint32_t value, ChunkMeshInstance& m) {
         Rendering::Color c;
         c.color = value;

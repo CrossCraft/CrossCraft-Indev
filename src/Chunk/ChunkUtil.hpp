@@ -1,30 +1,30 @@
 #pragma once
 #include <array>
 #include <cstdint>
-#include <Math/Math.hpp>
+#include <mathfu/vector.h>
 #include <CC/core.h>
 #include <Rendering/GI.hpp>
 #include <Rendering/Mesh.hpp>
 
 namespace CrossCraft {
     using namespace Stardust_Celeste;
-    using namespace Stardust_Celeste::Math;
 
     struct SurroundingPositions {
-        Math::Vector3<int> up;
-        Math::Vector3<int> down;
-        Math::Vector3<int> left;
-        Math::Vector3<int> right;
-        Math::Vector3<int> front;
-        Math::Vector3<int> back;
+        
+        mathfu::Vector<float, 3> up;
+        mathfu::Vector<float, 3> down;
+        mathfu::Vector<float, 3> left;
+        mathfu::Vector<float, 3> right;
+        mathfu::Vector<float, 3> front;
+        mathfu::Vector<float, 3> back;
 
         inline void set(int x, int y, int z) {
-            up = Math::Vector3<int>(x, y + 1, z);
-            down = Math::Vector3<int>(x, y - 1, z);
-            left = Math::Vector3<int>(x - 1, y, z);
-            right = Math::Vector3<int>(x + 1, y, z);
-            front = Math::Vector3<int>(x, y, z + 1);
-            back = Math::Vector3<int>(x, y, z - 1);
+            up = mathfu::Vector<float, 3>(x, y + 1, z);
+            down = mathfu::Vector<float, 3>(x, y - 1, z);
+            left = mathfu::Vector<float, 3>(x - 1, y, z);
+            right = mathfu::Vector<float, 3>(x + 1, y, z);
+            front = mathfu::Vector<float, 3>(x, y, z + 1);
+            back = mathfu::Vector<float, 3>(x, y, z - 1);
         }
     };
 
@@ -72,7 +72,7 @@ namespace CrossCraft {
  * @param index Index of tile to get
  * @return std::array<float, 8>
  */
-    inline auto getTexture(Math::Vector2<float> sideCount, int index) -> std::array<float, 8> {
+    inline auto getTexture(mathfu::Vector<float, 2> sideCount, int index) -> std::array<float, 8> {
         int row = index / (int)sideCount.x;
         int column = index % (int)sideCount.y;
 
@@ -132,7 +132,7 @@ namespace CrossCraft {
  * @return std::array<float, 8>
  */
     inline std::array<float, 8> getTexCoord(uint8_t idx, uint32_t lv) {
-        auto vec = Math::Vector2<float>(16, 16);
+        auto vec = mathfu::Vector<float, 2>(16, 16);
 
         switch (idx) {
             case 1: // Stone

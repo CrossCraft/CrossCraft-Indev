@@ -1,15 +1,14 @@
 #pragma once
 #include <Stardust-Celeste.hpp>
-#include <Math/Math.hpp>
 #include <World/World.hpp>
 #include <Rendering/Camera.hpp>
 #include <Graphics/2D/Sprite.hpp>
 #include <Player/Hud.hpp>
+#include <mathfu/vector.h>
 
 namespace CrossCraft {
 
     using namespace Stardust_Celeste;
-    using namespace Stardust_Celeste::Math;
 
     class Player {
     public:
@@ -29,11 +28,11 @@ namespace CrossCraft {
         static auto break_block(std::any p) -> void;
         static auto place_block(std::any p) -> void;
 
-        Math::Vector3<float> position;
-        Math::Vector3<float> velocity;
-        Math::Vector2<float> rotation;
+        mathfu::Vector<float, 3> position;
+        mathfu::Vector<float, 3> velocity;
+        mathfu::Vector<float, 2> rotation;
     private:
-        static Math::Vector3<float> size;
+        static mathfu::Vector<float, 3> size;
 
         float horizInput;
         float vertInput;
@@ -48,7 +47,7 @@ namespace CrossCraft {
         void test_collide(double dt);
         void perform_checks();
 
-        bool safety_check_place(Math::Vector3<int> position);
+        bool safety_check_place(mathfu::Vector<int, 3> position);
 
         Rendering::Camera camera;
         ScopePtr<Graphics::G2D::Sprite> water_sprite, crosshair;

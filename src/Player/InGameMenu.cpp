@@ -55,9 +55,9 @@ namespace CrossCraft {
     auto InGameMenu::left_click_command(std::any p) -> void {
         auto cX = Input::get_axis("Mouse", "X");
         auto cY = Input::get_axis("Mouse", "Y");
-        auto mousePos = Math::Vector2<float>(cX, cY);
+        auto mousePos = mathfu::Vector<float, 2>(cX, cY);
 
-        Math::Vector2<float> windowSize(480, 272);
+        mathfu::Vector<float, 2> windowSize(480, 272);
         auto mouseVec = mousePos * windowSize;
         mouseVec.y = windowSize.y - mouseVec.y;
 
@@ -76,13 +76,13 @@ namespace CrossCraft {
 
     }
 
-    auto InGameMenu::draw_button(Math::Vector2<float> mousePos, Math::Vector2<float> pos, std::string text, bool disabled) -> void {
-        Math::Vector2<float> windowSize(480, 272);
+    auto InGameMenu::draw_button(mathfu::Vector<float, 2> mousePos, mathfu::Vector<float, 2> pos, std::string text, bool disabled) -> void {
+        mathfu::Vector<float, 2> windowSize(480, 272);
         auto mouseVec = mousePos * windowSize;
         mouseVec.y = windowSize.y - mouseVec.y;
 
         Rendering::RenderContext::get().matrix_clear();
-        Rendering::RenderContext::get().matrix_translate(Math::Vector3<float>(pos.x, pos.y, 6));
+        Rendering::RenderContext::get().matrix_translate(mathfu::Vector<float, 3>(pos.x, pos.y, 6));
 
         if(disabled) {
             button_disabled->draw();
@@ -108,17 +108,17 @@ namespace CrossCraft {
 
         auto cX = Input::get_axis("Mouse", "X");
         auto cY = Input::get_axis("Mouse", "Y");
-        auto mouseVec = Math::Vector2<float>(cX, cY);
+        auto mouseVec = mathfu::Vector<float, 2>(cX, cY);
 
         Rendering::RenderContext::get().matrix_clear();
         background_rectangle->draw();
 
         font_render->clear();
-        font_render->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_CENTER, "Game Menu", Math::Vector2<float>(240, 216), 5.0f);
+        font_render->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_CENTER, "Game Menu", mathfu::Vector<float, 2>(240, 216), 5.0f);
 
-        draw_button(mouseVec, Math::Vector2<float>(240, 140), "Back to Game", false);
-        draw_button(mouseVec, Math::Vector2<float>(240, 116), "Options", true);
-        draw_button(mouseVec, Math::Vector2<float>(240, 92), "Save Game", false);
+        draw_button(mouseVec, mathfu::Vector<float, 2>(240, 140), "Back to Game", false);
+        draw_button(mouseVec, mathfu::Vector<float, 2>(240, 116), "Options", true);
+        draw_button(mouseVec, mathfu::Vector<float, 2>(240, 92), "Save Game", false);
 
         font_render->build();
         Rendering::RenderContext::get().matrix_clear();

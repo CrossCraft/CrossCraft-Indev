@@ -8,7 +8,7 @@ namespace CrossCraft{
         HUD();
         ~HUD();
 
-        void draw(Math::Vector3<float> pos, double dt);
+        void draw(mathfu::Vector<float, 3> pos, double dt);
 
     private:
         RefPtr<FontRender> font_render;

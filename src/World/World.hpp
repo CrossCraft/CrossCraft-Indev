@@ -28,7 +28,7 @@ namespace CrossCraft{
         void update_chunks_list();
 
         std::map<uint64_t, ChunkStack*> chunks;
-        Math::Vector2<int> player_chunk;
+        mathfu::Vector<int, 2> player_chunk;
         uint32_t terrainTexID;
     };
 }

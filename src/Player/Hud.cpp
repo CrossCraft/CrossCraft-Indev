@@ -10,7 +10,7 @@ namespace CrossCraft {
 
         }
 
-        void HUD::draw(Math::Vector3<float> pos, double dt) {
+        void HUD::draw(mathfu::Vector<float, 3> pos, double dt) {
             timer += dt;
             fpsCount++;
 
@@ -20,11 +20,11 @@ namespace CrossCraft {
                 fpsCount = 0;
             }
 
-            auto ipos = Math::Vector3<int>(pos.x, pos.y, pos.z);
+            auto ipos = mathfu::Vector<float, 3>(pos.x, pos.y, pos.z);
 
             font_render->clear();
-            font_render->draw_text_aligned(CC_TEXT_COLOR_YELLOW, CC_TEXT_ALIGN_LEFT, "POS: " + std::to_string(ipos.x) + " " + std::to_string(ipos.y) + " " + std::to_string(ipos.z), Math::Vector2<float>(0, 264), 3.0f);
-            font_render->draw_text_aligned(CC_TEXT_COLOR_YELLOW, CC_TEXT_ALIGN_RIGHT, "FPS: " + std::to_string(currentFPS), Math::Vector2<float>(480, 264), 3.0f);
+            font_render->draw_text_aligned(CC_TEXT_COLOR_YELLOW, CC_TEXT_ALIGN_LEFT, "POS: " + std::to_string(ipos.x) + " " + std::to_string(ipos.y) + " " + std::to_string(ipos.z), mathfu::Vector<float, 2>(0, 264), 3.0f);
+            font_render->draw_text_aligned(CC_TEXT_COLOR_YELLOW, CC_TEXT_ALIGN_RIGHT, "FPS: " + std::to_string(currentFPS), mathfu::Vector<float, 2>(480, 264), 3.0f);
             font_render->build();
             font_render->draw();
         }

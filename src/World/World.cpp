@@ -7,7 +7,7 @@
 namespace CrossCraft {
 
     World::World() {
-        player_chunk = Math::Vector2<int>(-1, -1);
+        player_chunk = mathfu::Vector<int, 2>(-1, -1);
 
         terrainTexID = ResourcePack::get().get_texture("terrain");
         SC_APP_INFO("Terrain texture ID: {0}", terrainTexID);
@@ -42,7 +42,7 @@ namespace CrossCraft {
 
         for(int x = startX; x < endX; x++) {
             for(int z = startZ; z < endZ; z++) {
-                Math::Vector2<int> pos(x, z);
+                mathfu::Vector<int, 2> pos(x, z);
 
                 uint64_t id = ((uint64_t)pos.x) << 32 | (uint64_t)pos.y;
 
@@ -99,18 +99,13 @@ namespace CrossCraft {
     }
 
     // This function generates a chunk vector from a block position
-    auto generate_chunk_vector(uint32_t x, uint32_t y, uint32_t z) -> Math::Vector3<int> {
-        return Math::Vector3<int>(x >> 4, y >> 4, z >> 4);
+    auto generate_chunk_vector(uint32_t x, uint32_t y, uint32_t z) -> mathfu::Vector<int, 3> {
+        return mathfu::Vector<int, 3>(x >> 4, y >> 4, z >> 4);
     }
 
-    template<typename T>
-    void removeDuplicates(std::vector<T>& vec) {
-        std::sort(vec.begin(), vec.end());
-        vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
-    }
 
     void World::handle_block_update(uint32_t x, uint32_t y, uint32_t z) {
-        std::vector<Math::Vector3<int>> chunks_to_update_vec;
+        std::vector<mathfu::Vector<int, 3>> chunks_to_update_vec;
         chunks_to_update_vec.reserve(7);
 
         // This updates the chunk that the block is in, and checks the 6 possible surrounding chunks
@@ -121,9 +116,6 @@ namespace CrossCraft {
         chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y - 1, z));
         chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y, z + 1));
         chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y, z - 1));
-
-        // Remove duplicates
-        removeDuplicates(chunks_to_update_vec);
 
         // Update the chunks
         for(auto& chunk : chunks_to_update_vec) {

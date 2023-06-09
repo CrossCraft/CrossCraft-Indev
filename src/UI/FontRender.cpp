@@ -14,7 +14,7 @@
 namespace CrossCraft {
 
     FontRender::FontRender() {
-        fontRenderer = create_scopeptr<Graphics::G2D::FontRenderer>(ResourcePack::get().get_texture("default"), Math::Vector2<float>(16, 16));
+        fontRenderer = create_scopeptr<Graphics::G2D::FontRenderer>(ResourcePack::get().get_texture("default"), mathfu::Vector<float, 2>(16, 16));
         fontRenderer->scale_factor = 1.0f;
     }
 
@@ -108,16 +108,16 @@ namespace CrossCraft {
         }
     }
 
-    void FontRender::draw_text(uint8_t color, std::string text, Math::Vector2<float> pos, float layer) {
+    void FontRender::draw_text(uint8_t color, std::string text, mathfu::Vector<float, 2> pos, float layer) {
         Rendering::Color front, back;
         get_color(color, front, back);
 
         fontRenderer->add_text(text, pos, front, layer);
-        fontRenderer->add_text(text, pos - Math::Vector2<float>{-1.0f, 1.0f}, back, layer - 1.0f);
+        fontRenderer->add_text(text, pos - mathfu::Vector<float, 2>{-1.0f, 1.0f}, back, layer - 1.0f);
     }
 
 
-    void FontRender::draw_text_aligned(uint8_t color, uint8_t align, std::string text, Math::Vector2<float> pos, float layer) {
+    void FontRender::draw_text_aligned(uint8_t color, uint8_t align, std::string text, mathfu::Vector<float, 2> pos, float layer) {
         Rendering::Color front, back;
         get_color(color, front, back);
 
@@ -129,7 +129,7 @@ namespace CrossCraft {
             pos.x -= width;
 
         fontRenderer->add_text(text, pos, front, layer);
-        fontRenderer->add_text(text, pos - Math::Vector2<float>{-1.0f, 1.0f}, back, layer - 1.0f);
+        fontRenderer->add_text(text, pos - mathfu::Vector<float, 2>{-1.0f, 1.0f}, back, layer - 1.0f);
     }
 
     void FontRender::clear() {

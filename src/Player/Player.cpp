@@ -13,12 +13,12 @@ namespace GI {
 
 namespace CrossCraft {
 
-    Player::Player() : camera(Math::Vector3<float>{0.0f, 0.0f, 0.0f}, Math::Vector3<float>{0.0f, 0.0f, 0.0f}, 70.0f, 16.0f / 9.0f, 0.1f, 1000.0f) {
+    Player::Player() : camera(mathfu::Vector<float, 3>{0.0f, 0.0f, 0.0f}, mathfu::Vector<float, 3>{0.0f, 0.0f, 0.0f}, 70.0f, 16.0f / 9.0f, 0.1f, 1000.0f) {
         auto pd = CC_Player_GetData();
 
-        position = Math::Vector3<float>{pd->x, pd->y, pd->z};
-        velocity = Math::Vector3<float>{pd->vx, pd->vy, pd->vz};
-        rotation = Math::Vector2<float>{pd->pitch, pd->yaw};
+        position = mathfu::Vector<float, 3>{pd->x, pd->y, pd->z};
+        velocity = mathfu::Vector<float, 3>{pd->vx, pd->vy, pd->vz};
+        rotation = mathfu::Vector<float, 2>{pd->pitch, pd->yaw};
         on_ground = pd->on_ground;
         in_water = false;
         water_face = false;
@@ -81,8 +81,9 @@ namespace CrossCraft {
 
         const float moveSpeed = 3.417f;
 
-        float movementX = horizInput * cosf(Math::toRadians(rotation.y)) + vertInput * sinf(Math::toRadians(rotation.y));
-        float movementZ = horizInput * sinf(Math::toRadians(rotation.y)) - vertInput * cosf(Math::toRadians(rotation.y));
+        float yrad = rotation.y / 180.0f * M_PI;
+        float movementX = horizInput * cosf(yrad) + vertInput * sinf(yrad);
+        float movementZ = horizInput * sinf(yrad) - vertInput * cosf(yrad);
 
         velocity.x = movementX * moveSpeed;
         velocity.z = movementZ * moveSpeed;
@@ -105,17 +106,17 @@ namespace CrossCraft {
         vertInput = 0.0f;
 
         CC_Event_Push_PlayerUpdate(PLAYER_SELF, position.x, position.y + 1.625f, position.z, rotation.x, rotation.y, on_ground);
-        camera.pos = position;
-        camera.pos.y += 1.5f;
-        camera.rot = Math::Vector3<float>{Math::toRadians(rotation.x), Math::toRadians(rotation.y), 0.0f};
+        camera.pos = -position;
+        camera.pos.y -= 1.5f;
+        camera.rot = mathfu::Vector<float, 3>{rotation.x, rotation.y, 0.0f};
 
         camera.update();
     }
 
 
-    Math::Vector3<float> Player::size = Math::Vector3<float>{0.6f, 1.8f, 0.6f};
+    mathfu::Vector<float, 3> Player::size = mathfu::Vector<float, 3>{0.6f, 1.8f, 0.6f};
 
-    bool test_block(Math::Vector3<int> pos) {
+    bool test_block(mathfu::Vector<int, 3> pos) {
         block_t block;
         bool res = CC_World_TryGetBlock(pos.x, pos.y, pos.z, &block);
 
@@ -165,7 +166,7 @@ namespace CrossCraft {
         if(testX) {
             for(int y = yMin; y <= yMax; y++) {
                 for(int z = zMin; z <= zMax; z++) {
-                    Math::Vector3<int> pos = Math::Vector3<int>{worldX, y, z};
+                    mathfu::Vector<int, 3> pos = mathfu::Vector<int, 3>{worldX, y, z};
                     if(test_block(pos)) {
                         velocity.x = 0.0f;
                         break;
@@ -177,7 +178,7 @@ namespace CrossCraft {
         if(testY) {
             for(int x = xMin; x <= xMax; x++) {
                 for(int z = zMin; z <= zMax; z++) {
-                    Math::Vector3<int> pos = Math::Vector3<int>{x, worldY, z};
+                    mathfu::Vector<int, 3> pos = mathfu::Vector<int, 3>{x, worldY, z};
                     if(test_block(pos)) {
                         velocity.y = 0.0f;
                         break;
@@ -189,7 +190,7 @@ namespace CrossCraft {
         if(testZ) {
             for(int y = yMin; y <= yMax; y++) {
                 for(int x = xMin; x <= xMax; x++) {
-                    Math::Vector3<int> pos = Math::Vector3<int>{x, y, worldZ};
+                    mathfu::Vector<int, 3> pos = mathfu::Vector<int, 3>{x, y, worldZ};
                     if(test_block(pos)) {
                         velocity.z = 0.0f;
                         break;
@@ -204,9 +205,9 @@ namespace CrossCraft {
 
     void Player::perform_checks() {
         // Check on Ground
-        Math::Vector3 testPos = position;
+        mathfu::Vector<float, 3> testPos = position;
         testPos.y -= 0.1f;
-        on_ground = test_block(Math::Vector3<int>{static_cast<int>(testPos.x), static_cast<int>(testPos.y), static_cast<int>(testPos.z)});
+        on_ground = test_block(mathfu::Vector<int, 3>{static_cast<int>(testPos.x), static_cast<int>(testPos.y), static_cast<int>(testPos.z)});
 
         // Check in Water
         block_t out, out2, out3;
@@ -298,7 +299,7 @@ namespace CrossCraft {
     const float BREAK_DISTANCE = 5.0f;
     const float PLACE_DISTANCE = 4.0f;
 
-    auto path_trace(Math::Vector3<float> pos, Math::Vector3<float> step, float max, Math::Vector3<float>& output) -> bool {
+    auto path_trace(mathfu::Vector<float, 3> pos, mathfu::Vector<float, 3> step, float max, mathfu::Vector<float, 3>& output) -> bool {
         pos.y += 1.625f; // This is a hack to make the ray trace work properly
 
         for(int i = 0; i < max * 10; i++) {
@@ -315,13 +316,14 @@ namespace CrossCraft {
         return false;
     }
 
-    auto get_rotation(Math::Vector2<float> rotation) -> Math::Vector3<float> {
-        auto rx = Math::Matrix::Rotate(Math::toRadians(rotation.x), Math::Vector3<float>(1, 0, 0));
-        auto ry = Math::Matrix::Rotate(Math::toRadians(-rotation.y + 180.0f), Math::Vector3<float>(0, 1, 0));
+    auto get_rotation(mathfu::Vector<float, 2> rotation) -> mathfu::Vector<float, 3> {
 
-        Math::Vector3<float> view = Math::Vector3<float>(0, 0, 1);
-        view = rx.mul(view);
-        view = ry.mul(view);
+        auto rx = mathfu::Matrix<float, 3>::RotationX(rotation.x / 180.0f * M_PI);
+        auto ry = mathfu::Matrix<float, 3>::RotationY((-rotation.y + 180.0f) / 180.0f * M_PI);
+
+        mathfu::Vector<float, 3> view = mathfu::Vector<float, 3>(0, 0, 1);
+        view = rx * view;
+        view = ry * view;
 
         return view;
     }
@@ -329,18 +331,18 @@ namespace CrossCraft {
     auto Player::break_block(std::any p) -> void {
         auto player = std::any_cast<Player*>(p);
 
-        Math::Vector3<float> pos = player->position;
-        Math::Vector3<float> step = get_rotation(player->rotation) * 0.1f;
+        mathfu::Vector<float, 3> pos = player->position;
+        mathfu::Vector<float, 3> step = get_rotation(player->rotation) * 0.1f;
 
-        Math::Vector3<float> out;
+        mathfu::Vector<float, 3> out;
         if(path_trace(pos, step, BREAK_DISTANCE, out)) {
             CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_BREAK, 0);
         }
     }
 
-    bool Player::safety_check_place(Math::Vector3<int> updatePosition) {
-        Math::Vector3<int> currentPosition = Math::Vector3<int>{static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(position.z)};
-        Math::Vector3<int> currentPositionY = Math::Vector3<int>{static_cast<int>(position.x), static_cast<int>(position.y + 1), static_cast<int>(position.z)};
+    bool Player::safety_check_place(mathfu::Vector<int, 3> updatePosition) {
+        mathfu::Vector<int, 3> currentPosition = mathfu::Vector<int, 3>{static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(position.z)};
+        mathfu::Vector<int, 3> currentPositionY = mathfu::Vector<int, 3>{static_cast<int>(position.x), static_cast<int>(position.y + 1), static_cast<int>(position.z)};
 
         return currentPosition != updatePosition && currentPositionY != updatePosition;
     }
@@ -348,13 +350,13 @@ namespace CrossCraft {
     auto Player::place_block(std::any p) -> void {
         auto player = std::any_cast<Player*>(p);
 
-        Math::Vector3<float> pos = player->position;
-        Math::Vector3<float> step = get_rotation(player->rotation) * 0.1f;
+        mathfu::Vector<float, 3> pos = player->position;
+        mathfu::Vector<float, 3> step = get_rotation(player->rotation) * 0.1f;
 
-        Math::Vector3<float> out;
+        mathfu::Vector<float, 3> out;
         if(path_trace(pos, step, PLACE_DISTANCE, out)) {
             out -= step;
-            Math::Vector3<int> updatePosition = Math::Vector3<int>{static_cast<int>(out.x), static_cast<int>(out.y), static_cast<int>(out.z)};
+            mathfu::Vector<int, 3> updatePosition = mathfu::Vector<int, 3>{static_cast<int>(out.x), static_cast<int>(out.y), static_cast<int>(out.z)};
 
             if(player->safety_check_place(updatePosition)) {
                 CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_PLACE, 1); //TODO: PLAYER SELECTION

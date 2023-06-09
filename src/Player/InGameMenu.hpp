@@ -34,7 +34,7 @@ namespace CrossCraft {
         static auto right_click_command(std::any p) -> void;
 
     private:
-        auto draw_button(Math::Vector2<float> mousePos, Math::Vector2<float> pos, std::string text, bool disabled) -> void;
+        auto draw_button(mathfu::Vector<float, 2> mousePos, mathfu::Vector<float, 2> pos, std::string text, bool disabled) -> void;
         bool open;
 
         RefPtr<Graphics::G2D::Sprite> button_selected, button_unselected, button_disabled;

@@ -19,11 +19,11 @@ namespace CrossCraft{
 
         ChunkMeshCollection mesh;
 
-        void add_block_to_mesh(const WorldData *wd, block_t block, Vector3<int> vector3, SurroundingPositions positions);
-        void try_add_face(const WorldData *wd, const std::array<float, 12>& data, block_t block, Vector3<int> actual_pos, Vector3<int> check_pos, uint32_t lightValue);
+        void add_block_to_mesh(const WorldData *wd, block_t block, mathfu::Vector<float, 3> vector3, SurroundingPositions positions);
+        void try_add_face(const WorldData *wd, const std::array<float, 12>& data, block_t block, mathfu::Vector<float, 3> actual_pos, mathfu::Vector<float, 3> check_pos, uint32_t lightValue);
 
         void
-        add_face_to_mesh(const std::array<float, 12> &array1, std::array<float, 8> array2, Vector3<int> vector3,
+        add_face_to_mesh(const std::array<float, 12> &array1, std::array<float, 8> array2, mathfu::Vector<float, 3> vector3,
                          uint32_t value,
                          ChunkMeshInstance& instance);
     };

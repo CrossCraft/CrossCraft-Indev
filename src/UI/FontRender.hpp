@@ -35,8 +35,8 @@ namespace CrossCraft {
         FontRender();
         ~FontRender();
 
-        void draw_text(uint8_t color, std::string text, Math::Vector2<float> pos, float layer);
-        void draw_text_aligned(uint8_t color, uint8_t align, std::string text, Math::Vector2<float> pos, float layer);
+        void draw_text(uint8_t color, std::string text, mathfu::Vector<float, 2> pos, float layer);
+        void draw_text_aligned(uint8_t color, uint8_t align, std::string text, mathfu::Vector<float, 2> pos, float layer);
         void clear();
         void build();
 

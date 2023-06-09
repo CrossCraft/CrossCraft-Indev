@@ -18,8 +18,8 @@ namespace CrossCraft{
         auto draw_block(uint8_t id, Math::Vector3<float> position, Math::Vector3<float> rotation) -> void;
         auto draw_item(uint16_t id, Math::Vector3<float> position, Math::Vector3<float> rotation) -> void;
 
-        auto draw_block_hand(uint8_t id, Math::Vector3<float> position) -> void;
-        auto draw_item_hand(uint16_t id, Math::Vector3<float> position) -> void;
+        auto draw_block_hand(uint8_t id, Math::Vector3<float> position, Math::Vector2<float> rotation) -> void;
+        auto draw_item_hand(uint16_t id, Math::Vector3<float> position, Math::Vector2<float> rotation) -> void;
 
         auto draw_block_isometric(uint8_t id, Math::Vector3<float> position) -> void;
         auto draw_item_isometric(uint16_t id, Math::Vector3<float> position) -> void;

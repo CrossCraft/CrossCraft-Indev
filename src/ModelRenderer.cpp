@@ -320,10 +320,63 @@ case ITM_Painting: {
     }
 
     auto ModelRenderer::draw_block(block_t id, Math::Vector3<float> position, Math::Vector3<float> rotation) -> void{}
-    auto ModelRenderer::draw_item(item_t id, Math::Vector3<float> position, Math::Vector3<float> rotation) -> void{}
+    auto ModelRenderer::draw_item(item_t id, Math::Vector3<float> position, Math::Vector3<float> rotation) -> void{
+        auto idTransform = id - 256;
+        if(idTransform < 0 || idTransform > 65) {
+            return;
+        }
 
-    auto ModelRenderer::draw_block_hand(block_t id, Math::Vector3<float> position) -> void{}
-    auto ModelRenderer::draw_item_hand(item_t id, Math::Vector3<float> position) -> void{}
+        GI::disable(GI_CULL_FACE);
+
+        Rendering::TextureManager::get().bind_texture(itemsTexID);
+        Rendering::RenderContext::get().matrix_clear();
+
+        // Give model to world
+        Rendering::RenderContext::get().matrix_translate(position); // [6] Position the model to player
+        Rendering::RenderContext::get().matrix_rotate({-rotation.x, -rotation.y, 0.0f}); // [5] Rotate the model to player
+
+        // Scale and Center
+        Rendering::RenderContext::get().matrix_push();
+        Rendering::RenderContext::get().matrix_scale({1.0f / 32.0f, 1.0f / 32.0f, 1.0f / 32.0f}); // [2] Scale the model
+        Rendering::RenderContext::get().matrix_translate({-8.0f, -8.0f, 0.0f}); // [1] Center the model
+
+        itemModels[idTransform]->draw();
+        GI::enable(GI_CULL_FACE);
+        Rendering::RenderContext::get().matrix_pop();
+
+    }
+
+    auto ModelRenderer::draw_block_hand(block_t id, Math::Vector3<float> position, Math::Vector2<float> rotation) -> void{}
+    auto ModelRenderer::draw_item_hand(item_t id, Math::Vector3<float> position, Math::Vector2<float> rotation) -> void{
+        auto idTransform = id - 256;
+        if(idTransform < 0 || idTransform > 65) {
+            return;
+        }
+
+        GI::disable(GI_CULL_FACE);
+
+        Rendering::TextureManager::get().bind_texture(itemsTexID);
+        Rendering::RenderContext::get().matrix_clear();
+
+        // Give model to player
+        Rendering::RenderContext::get().matrix_translate(position); // [6] Position the model to player
+        Rendering::RenderContext::get().matrix_rotate({-rotation.x, -rotation.y, 0.0f}); // [5] Rotate the model to player
+
+        // Rotate and Position in Hand
+        Rendering::RenderContext::get().matrix_push();
+        Rendering::RenderContext::get().matrix_translate(Math::Vector3<float>(0.5f, 1.2f, 0.5f)); // [4] Position the model in the hand
+        Rendering::RenderContext::get().matrix_rotate({0.0f, 90.0f, 0.0f}); // [3] Rotate the model
+
+        // Scale and Center
+        Rendering::RenderContext::get().matrix_push();
+        Rendering::RenderContext::get().matrix_scale({1.0f / 16.0f, 1.0f / 16.0f, 1.0f / 16.0f}); // [2] Scale the model
+        Rendering::RenderContext::get().matrix_translate({-8.0f, -8.0f, 0.0f}); // [1] Center the model
+
+        itemModels[idTransform]->draw();
+        GI::enable(GI_CULL_FACE);
+        Rendering::RenderContext::get().matrix_pop();
+        Rendering::RenderContext::get().matrix_pop();
+    }
 
     auto ModelRenderer::draw_block_isometric(block_t id, Math::Vector3<float> position) -> void{}
     auto ModelRenderer::draw_item_isometric(item_t id, Math::Vector3<float> position) -> void {

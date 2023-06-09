@@ -29,11 +29,10 @@ namespace CrossCraft {
         static auto break_block(std::any p) -> void;
         static auto place_block(std::any p) -> void;
 
-    private:
         Math::Vector3<float> position;
         Math::Vector3<float> velocity;
         Math::Vector2<float> rotation;
-
+    private:
         static Math::Vector3<float> size;
 
         float horizInput;

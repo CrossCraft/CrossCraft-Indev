@@ -121,23 +121,18 @@ namespace CrossCraft {
         GI::enable(GI_CULL_FACE);
         Rendering::RenderContext::get().set_mode_3D();
     }
+    float x = 0;
 
     void GameState::on_draw(Core::Application* app, double dt) {
         world->draw();
+        ModelRenderer::get().draw_item(ITM_Iron_Pickaxe, {127.0f, 38.0f, 127.0f}, {0.0f, x, 0.0f});
+        x += 30.0f * dt;
+
+        ModelRenderer::get().draw_item_hand(ITM_Iron_Pickaxe, player->position, player->rotation);
 
         setup_2d_rendering();
 
         player->draw(dt);
-
-        for(int i = 0; i < 65; i++) {
-            ModelRenderer::get().draw_item_isometric(
-                i + 256, 
-                {
-                    (i % 8) * 16, 
-                    (8-(i/8)) * 16, 2.0f
-                }
-            );
-        }
 
         setup_3d_rendering();
     }

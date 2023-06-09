@@ -58,7 +58,7 @@ namespace CrossCraft{
 
     auto ResourcePack::load_resource(std::string name, ResourceType type, std::string path) -> void {
         if(type == ResourceType::TEXTURE) {
-            size_t path_index = -1;
+            int path_index = -1;
 
             for(long int idx = packQueue.size() - 1; idx >= 0; idx--) {
                 if(unzLocateFile(packs[packQueue[idx]], path.c_str(), 0) == UNZ_OK) {

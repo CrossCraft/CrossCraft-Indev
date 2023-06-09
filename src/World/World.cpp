@@ -35,8 +35,8 @@ namespace CrossCraft {
         size_t maxX, maxY, maxZ;
         CC_World_GetChunkSize(&maxX, &maxY, &maxZ);
 
-        if(endX > maxX) endX = maxX;
-        if(endZ > maxZ) endZ = maxZ;
+        if((size_t)endX > maxX) endX = maxX;
+        if((size_t)endZ > maxZ) endZ = maxZ;
 
         //SC_APP_DEBUG("SCANNING CHUNKS {0}, {1} -> {2}, {3}", startX, startZ, endX, endZ);
 

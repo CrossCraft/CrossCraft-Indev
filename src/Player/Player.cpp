@@ -244,7 +244,6 @@ namespace CrossCraft {
 
     void Player::draw(double dt) {
         if(water_face) {
-            SC_APP_INFO("Drawing Water Face");
             water_sprite->draw();
         }
 

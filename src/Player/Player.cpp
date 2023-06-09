@@ -5,6 +5,7 @@
 #include <Player/InGameMenu.hpp>
 
 #include <GLFW/glfw3.h>
+#include <Player/Inventory.hpp>
 
 namespace GI {
     extern GLFWwindow *window;
@@ -251,6 +252,8 @@ namespace CrossCraft {
 
         // Draw the HUD
         hud->draw(position, dt);
+
+        Inventory::get().draw_hotbar(dt);
 
         InGameMenu::get().draw(dt);
     }

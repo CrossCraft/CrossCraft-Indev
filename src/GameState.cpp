@@ -4,6 +4,7 @@
 #include <Utilities/Controllers/MouseController.hpp>
 #include <ResourcePack.hpp>
 #include <Player/InGameMenu.hpp>
+#include <Player/Inventory.hpp>
 
 namespace CrossCraft {
 
@@ -56,10 +57,21 @@ namespace CrossCraft {
         kb_controller->add_command({(int)Input::Keys::Space, KeyFlag::Press | KeyFlag::Held}, {Player::jump, player.get()});
         kb_controller->add_command({(int)Input::Keys::Enter, KeyFlag::Press}, {World::save, nullptr});
         kb_controller->add_command({(int)Input::Keys::Escape, KeyFlag::Press}, {InGameMenu::toggle_command, nullptr});
+        kb_controller->add_command({(int)Input::Keys::Num1, KeyFlag::Press}, {Inventory::set_selection, SelData{0}});
+        kb_controller->add_command({(int)Input::Keys::Num2, KeyFlag::Press}, {Inventory::set_selection, SelData{1}});
+        kb_controller->add_command({(int)Input::Keys::Num3, KeyFlag::Press}, {Inventory::set_selection, SelData{2}});
+        kb_controller->add_command({(int)Input::Keys::Num4, KeyFlag::Press}, {Inventory::set_selection, SelData{3}});
+        kb_controller->add_command({(int)Input::Keys::Num5, KeyFlag::Press}, {Inventory::set_selection, SelData{4}});
+        kb_controller->add_command({(int)Input::Keys::Num6, KeyFlag::Press}, {Inventory::set_selection, SelData{5}});
+        kb_controller->add_command({(int)Input::Keys::Num7, KeyFlag::Press}, {Inventory::set_selection, SelData{6}});
+        kb_controller->add_command({(int)Input::Keys::Num8, KeyFlag::Press}, {Inventory::set_selection, SelData{7}});
+        kb_controller->add_command({(int)Input::Keys::Num9, KeyFlag::Press}, {Inventory::set_selection, SelData{8}});
 
         mb_controller = new Utilities::Input::MouseController();
         mb_controller->add_command({(int)Input::MouseButtons::Left, KeyFlag::Press}, {on_action_left, player.get()});
         mb_controller->add_command({(int)Input::MouseButtons::Right, KeyFlag::Press}, {on_action_right, player.get()});
+        mb_controller->add_command({(int)Input::MouseButtons::MWheelUp, KeyFlag::Press}, {Inventory::decrement_selection, nullptr});
+        mb_controller->add_command({(int)Input::MouseButtons::MWheelDown, KeyFlag::Press}, {Inventory::increment_selection, nullptr});
 
         Input::add_controller(kb_controller);
         Input::add_controller(mb_controller);

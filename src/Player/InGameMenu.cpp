@@ -110,6 +110,7 @@ namespace CrossCraft {
         auto cY = Input::get_axis("Mouse", "Y");
         auto mouseVec = Math::Vector2<float>(cX, cY);
 
+        Rendering::RenderContext::get().matrix_clear();
         background_rectangle->draw();
 
         font_render->clear();

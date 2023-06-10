@@ -38,6 +38,7 @@ namespace CrossCraft {
         static auto increment_selection(std::any p) -> void;
         static auto decrement_selection(std::any p) -> void;
         static auto set_selection(std::any p) -> void;
+        static auto drop_selection(std::any p) -> void;
 
         private:
         std::array<ItemData, 45> item_array;

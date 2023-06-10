@@ -70,6 +70,7 @@ namespace CrossCraft {
         kb_controller->add_command({(int)Input::Keys::Num7, KeyFlag::Press}, {Inventory::set_selection, SelData{6}});
         kb_controller->add_command({(int)Input::Keys::Num8, KeyFlag::Press}, {Inventory::set_selection, SelData{7}});
         kb_controller->add_command({(int)Input::Keys::Num9, KeyFlag::Press}, {Inventory::set_selection, SelData{8}});
+        kb_controller->add_command({(int)Input::Keys::Q, KeyFlag::Press}, {Inventory::drop_selection, player.get()});
 
         mb_controller = new Utilities::Input::MouseController();
         mb_controller->add_command({(int)Input::MouseButtons::Left, KeyFlag::Press}, {on_action_left, player.get()});

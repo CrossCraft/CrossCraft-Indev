@@ -1,5 +1,6 @@
 #include <Player/Inventory.hpp>
 #include <ModelRenderer.hpp>
+#include <Player/Player.hpp>
 
 namespace CrossCraft {
 
@@ -91,6 +92,35 @@ namespace CrossCraft {
         }
     }
 
+    auto Inventory::drop_selection(std::any p) -> void {
+        auto& itm = get().item_array[get().selection_idx + 36];
+
+        if(itm.id == 0 || itm.count == 0) {
+            return;
+        }
+
+        auto player = std::any_cast<Player*>(p);
+
+        auto rx = mathfu::Matrix<float, 3>::RotationX(player->rotation.x / 180.0f * M_PI);
+        auto ry = mathfu::Matrix<float, 3>::RotationY((-player->rotation.y + 180.0f) / 180.0f * M_PI);
+
+        mathfu::Vector<float, 3> view = mathfu::Vector<float, 3>(0, 0, 1);
+        view = rx * view;
+        view = ry * view;
+
+        auto pos = player->position + view;
+        auto vel = view * 5.0f;
+
+        auto itmCopy = itm;
+        itmCopy.count = 1;
+
+        CC_Event_Push_SpawnItem(itmCopy, pos.x - 0.5f, pos.y + 1.0f, pos.z - 0.5f, vel.x, vel.y, vel.z);
+
+        itm.count--;
+        if(itm.count == 0) {
+            itm.id = 0;
+        }
+    }
 
     auto Inventory::draw_hotbar(double dt) -> void {
         Rendering::RenderContext::get().matrix_clear();

@@ -15,10 +15,24 @@ namespace CrossCraft {
         lifetimer += dt;
         rotation.y += dt * 30.0f;
 
-        position.x += velocity.x * (float)dt;
-        if(velocity.y >= -0.3f) {
+
+        velocity.y -= 16.0f * dt;
+
+        // TEST GROUND COLLIDE
+        {
+            auto pos = position;
+            pos.y -= 0.5f;
+            block_t blk;
+            auto res = CC_World_TryGetBlock(pos.x, pos.y, pos.z, &blk);
+            if(res) {
+                if(blk != BLK_Air && blk != BLK_Water) {
+                    velocity.y = 0;
+                }
+            }
             position.y += velocity.y * (float)dt;
         }
+
+        position.x += velocity.x * (float)dt;
         position.z += velocity.z * (float)dt;
     }
 

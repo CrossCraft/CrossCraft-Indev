@@ -131,7 +131,7 @@ namespace CrossCraft {
 
     }
 
-    void World::handle_spawn_item(int16_t eid, float x, float y, float z, ItemData item) {
+    void World::handle_spawn_item(int16_t eid, float x, float y, float z, float vx, float vy, float vz, ItemData item) {
         auto entity = new ItemEntity();
         entity->eid = eid;
         entity->data = new ItemData();
@@ -140,7 +140,8 @@ namespace CrossCraft {
         entity->data->count = item.count;
 
         entity->position = mathfu::Vector<float, 3>(x, y, z);
-        entity->rotation = mathfu::Vector<float, 2>(0, 0);
+        entity->velocity = mathfu::Vector<float, 3>(vx, vy, vz);
+        entity->rotation = mathfu::Vector<float, 3>(0, 0, 0);
 
         EntityManager::get().add(entity);
     }

@@ -31,6 +31,14 @@ namespace CrossCraft {
         }
     }
 
+    auto EntityManager::handle_teleport(uint16_t eid, float x, float y, float z, float vx, float vy, float vz, uint8_t yaw, uint8_t pitch) -> void {
+        if(entities.find(eid) != entities.end()) {
+            entities[eid]->position = mathfu::Vector<float, 3>(x, y, z);
+            entities[eid]->velocity = mathfu::Vector<float, 3>(vx, vy, vz);
+            entities[eid]->rotation = mathfu::Vector<float, 3>((float)yaw / 255.0f * 360.0f, (float)pitch / 255.0f * 360.0f, 0.0f);
+        }
+    }
+
     auto EntityManager::draw() -> void {
         for(auto& [id, entity] : entities) {
             entity->draw();

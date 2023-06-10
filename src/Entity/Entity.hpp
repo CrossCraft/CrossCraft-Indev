@@ -12,7 +12,8 @@ namespace CrossCraft {
         virtual auto draw() -> void = 0;
 
         mathfu::Vector<float, 3> position;
-        mathfu::Vector<float, 2> rotation;
+        mathfu::Vector<float, 3> velocity;
+        mathfu::Vector<float, 3> rotation;
         uint16_t eid;
         void* data;
     };

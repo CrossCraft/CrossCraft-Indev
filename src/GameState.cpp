@@ -106,7 +106,7 @@ namespace CrossCraft {
                 }
 
                 case CC_EVENT_SPAWN_ITEM: {
-                    world->handle_spawn_item(event->data.spawn_item.eid, event->data.spawn_item.x, event->data.spawn_item.y, event->data.spawn_item.z, event->data.spawn_item.item);
+                    world->handle_spawn_item(event->data.spawn_item.eid, event->data.spawn_item.x, event->data.spawn_item.y, event->data.spawn_item.z, event->data.spawn_item.vx, event->data.spawn_item.vy, event->data.spawn_item.vz, event->data.spawn_item.item);
                     break;
                 }
 
@@ -117,6 +117,11 @@ namespace CrossCraft {
 
                 case CC_EVENT_SET_PLAYER_HEALTH: {
                     Player::handle_health_update(HealthUpdate{player.get(), event->data.set_player_health.health});
+                    break;
+                }
+
+                case CC_EVENT_ENTITY_TELEPORT: {
+                    EntityManager::get().handle_teleport(event->data.entity_teleport.eid, event->data.entity_teleport.x, event->data.entity_teleport.y, event->data.entity_teleport.z, event->data.entity_teleport.vx, event->data.entity_teleport.vy, event->data.entity_teleport.vz, event->data.entity_teleport.yaw, event->data.entity_teleport.pitch);
                     break;
                 }
 

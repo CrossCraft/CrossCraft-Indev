@@ -14,6 +14,12 @@ namespace CrossCraft {
     auto ItemEntity::update(double dt) -> void {
         lifetimer += dt;
         rotation.y += dt * 30.0f;
+
+        position.x += velocity.x * (float)dt;
+        if(velocity.y >= -0.3f) {
+            position.y += velocity.y * (float)dt;
+        }
+        position.z += velocity.z * (float)dt;
     }
 
     auto ItemEntity::draw() -> void {

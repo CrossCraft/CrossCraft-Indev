@@ -26,6 +26,8 @@ namespace CrossCraft {
             return get().entities;
         }
 
+        auto handle_teleport(uint16_t eid, float x, float y, float z, float vx, float vy, float vz, uint8_t yaw, uint8_t pitch) -> void;
+
         private:
         std::map<int, Entity*> entities;
     };

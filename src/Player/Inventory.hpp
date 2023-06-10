@@ -28,7 +28,7 @@ namespace CrossCraft {
         }
 
         inline static auto get_selected() -> ItemData& {
-            return get().item_array[get().selection_idx];
+            return get().item_array[get().selection_idx + 36];
         }
 
         auto draw(double dt) -> void;

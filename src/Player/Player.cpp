@@ -363,7 +363,24 @@ namespace CrossCraft {
             mathfu::Vector<int, 3> updatePosition = mathfu::Vector<int, 3>{static_cast<int>(out.x), static_cast<int>(out.y), static_cast<int>(out.z)};
 
             if(player->safety_check_place(updatePosition)) {
-                CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_PLACE, 1); //TODO: PLAYER SELECTION
+
+                // Okay let's check the player inventory for the block they want to place
+                auto& itm = Inventory::get().get_selected();
+                if(itm.id == 0 || itm.count == 0) {
+                    return;
+                }
+                auto id = itm.id;
+                if(id >= 256) {
+                    //DON'T PLACE ITEMS!
+                    return;
+                }
+
+                itm.count--;
+
+                if(itm.count == 0) {
+                    itm.id = 0;
+                }
+                CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_PLACE, id);
             }
         }
     }

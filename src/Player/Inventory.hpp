@@ -32,6 +32,7 @@ namespace CrossCraft {
         }
 
         auto draw(double dt) -> void;
+        auto draw_block_hand(mathfu::Vector<float, 3> position, mathfu::Vector<float, 2> rotation, double dt) -> void;
         auto draw_hotbar(double dt) -> void;
 
         static auto increment_selection(std::any p) -> void;
@@ -42,6 +43,7 @@ namespace CrossCraft {
         std::array<ItemData, 45> item_array;
         uint8_t selection_idx = 0;
 
+        RefPtr<FontRender> font_render;
         ScopePtr<Graphics::G2D::Sprite> hotbar, hotbar_select;
     };
 }

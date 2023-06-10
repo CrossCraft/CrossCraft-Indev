@@ -112,6 +112,7 @@ namespace CrossCraft {
 
                 case CC_EVENT_DESTROY_ENTITY: {
                     EntityManager::get().remove(event->data.destroy_entity.eid);
+                    break;
                 }
 
                 default:
@@ -137,13 +138,11 @@ namespace CrossCraft {
     void GameState::on_draw(Core::Application* app, double dt) {
         world->draw();
 
-        ModelRenderer::get().draw_item_hand(ITM_Iron_Shovel, player->position, player->rotation);
+        Inventory::get().draw_block_hand(player->position, player->rotation, dt);
 
         setup_2d_rendering();
 
         player->draw(dt);
-
-//        ModelRenderer::get().draw_block_isometric(BLK_Stone, {20, 20, 2});
 
         setup_3d_rendering();
     }

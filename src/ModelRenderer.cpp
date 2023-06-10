@@ -468,7 +468,7 @@ case I_Painting: {
 
         Rendering::RenderContext::get().matrix_push();
         Rendering::RenderContext::get().matrix_rotate({30.0f, 45.0f, 0.0f});
-        Rendering::RenderContext::get().matrix_scale({16.0f, 16.0f, 16.0f});
+        Rendering::RenderContext::get().matrix_scale({10.0f, 10.0f, 10.0f});
 
         blockModels[id]->draw();
         Rendering::RenderContext::get().matrix_pop();

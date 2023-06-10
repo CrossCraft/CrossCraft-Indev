@@ -16,21 +16,24 @@ namespace CrossCraft {
 
         background_rectangle = create_refptr<Rendering::Primitive::Rectangle>(
                 Rendering::Rectangle{{0, 0}, {480, 272}},
-                Rendering::Color{0, 0, 0, 128}, 4);
+                Rendering::Color{0, 0, 0, 128}, 10);
 
         font_render = create_refptr<FontRender>();
 
         button_disabled = create_refptr<Graphics::G2D::Sprite>(
                 ResourcePack::get().get_texture("gui_common"),
                 Rendering::Rectangle{{-100, -10}, {200, 20}}, Rendering::Rectangle{{0.0f, 46.0f / 256.0f}, {200.0f / 256.0f, 20.0f / 256.0f}});
+        button_disabled->set_layer(11);
 
         button_unselected = create_refptr<Graphics::G2D::Sprite>(
                 ResourcePack::get().get_texture("gui_common"),
                 Rendering::Rectangle{{-100, -10}, {200, 20}}, Rendering::Rectangle{{0.0f, 66.0f / 256.0f}, {200.0f / 256.0f, 20.0f / 256.0f}});
+        button_unselected->set_layer(11);
 
         button_selected = create_refptr<Graphics::G2D::Sprite>(
                 ResourcePack::get().get_texture("gui_common"),
                 Rendering::Rectangle{{-100, -10}, {200, 20}}, Rendering::Rectangle{{0.0f, 86.0f / 256.0f}, {200.0f / 256.0f, 20.0f / 256.0f}});
+        button_selected->set_layer(11);
     }
 
     InGameMenu::~InGameMenu() {
@@ -87,16 +90,16 @@ namespace CrossCraft {
         if(disabled) {
             button_disabled->draw();
             pos.y -= 4;
-            font_render->draw_text_aligned(CC_TEXT_COLOR_GRAY, CC_TEXT_ALIGN_CENTER, text, pos, 7.0f);
+            font_render->draw_text_aligned(CC_TEXT_COLOR_GRAY, CC_TEXT_ALIGN_CENTER, text, pos, 20.0f);
         } else {
             if(mouseVec.x >= pos.x - 100 && mouseVec.x <= pos.x + 100 && mouseVec.y >= pos.y - 10 && mouseVec.y <= pos.y + 10) {
                 button_selected->draw();
                 pos.y -= 4;
-                font_render->draw_text_aligned(CC_TEXT_COLOR_SELECT, CC_TEXT_ALIGN_CENTER, text, pos, 7.0f);
+                font_render->draw_text_aligned(CC_TEXT_COLOR_SELECT, CC_TEXT_ALIGN_CENTER, text, pos, 20.0f);
             } else {
                 button_unselected->draw();
                 pos.y -= 4;
-                font_render->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_CENTER, text, pos, 7.0f);
+                font_render->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_CENTER, text, pos, 20.0f);
             }
         }
 
@@ -114,7 +117,7 @@ namespace CrossCraft {
         background_rectangle->draw();
 
         font_render->clear();
-        font_render->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_CENTER, "Game Menu", mathfu::Vector<float, 2>(240, 216), 5.0f);
+        font_render->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_CENTER, "Game Menu", mathfu::Vector<float, 2>(240, 216), 20.0f);
 
         draw_button(mouseVec, mathfu::Vector<float, 2>(240, 140), "Back to Game", false);
         draw_button(mouseVec, mathfu::Vector<float, 2>(240, 116), "Options", true);

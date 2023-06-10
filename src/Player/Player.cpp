@@ -27,7 +27,7 @@ namespace CrossCraft {
         vertInput = 0.0f;
 
         water_sprite = create_scopeptr<Graphics::G2D::Sprite>( ResourcePack::get().get_texture("water_overlay"), Rendering::Rectangle{{0.0f, 0.0f}, {480.0f, 272.0f}});
-        water_sprite->set_layer(1);
+        water_sprite->set_layer(-5);
 
         hud = create_scopeptr<HUD>();
 

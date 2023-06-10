@@ -20,6 +20,8 @@ namespace CrossCraft {
         Inventory();
         ~Inventory();
 
+        auto try_add_item(ItemData item) -> bool;
+
         inline static auto get() -> Inventory& {
             static Inventory inventory;
             return inventory;

@@ -94,6 +94,7 @@ namespace CrossCraft {
 
 #define makeIndex(x, y) ((x) + (y) * 16)
 
+    //TODO: NUKE THIS
     auto get_mapped_item_index(int id) -> int {
         id += 256;
 

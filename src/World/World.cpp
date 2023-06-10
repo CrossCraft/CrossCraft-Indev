@@ -84,7 +84,6 @@ namespace CrossCraft {
     }
 
     void World::update(double dt) {
-        EntityManager::get().update(dt);
         check_chunk_update();
     }
 

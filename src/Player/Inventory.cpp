@@ -15,6 +15,11 @@ namespace CrossCraft {
                 Rendering::Rectangle{ {0.0f, 22.0f / 256.0f}, {24.0f/ 256.0f, 24.0f / 256.0f}}
         );
         hotbar_select->set_layer(3);
+
+        for (auto& i : item_array) {
+            i.id = 0;
+            i.count = 0;
+        }
     }
 
     Inventory::~Inventory() {
@@ -46,6 +51,24 @@ namespace CrossCraft {
             return;
         }
         get().selection_idx = new_idx;
+    }
+
+    auto Inventory::try_add_item(ItemData item) -> bool {
+        for (auto& i : item_array) {
+            if (i.id == item.id && i.count < 64) {
+                i.count += item.count;
+                return true;
+            }
+        }
+        for (auto& i : item_array) {
+            if (i.id == 0) {
+                i = item;
+                return true;
+            }
+        }
+
+        SC_APP_DEBUG("Inventory full");
+        return false;
     }
 
 

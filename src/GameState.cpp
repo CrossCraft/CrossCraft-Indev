@@ -6,6 +6,7 @@
 #include <Player/InGameMenu.hpp>
 #include <Player/Inventory.hpp>
 #include <ModelRenderer.hpp>
+#include <Entity/EntityManager.hpp>
 
 namespace CrossCraft {
 
@@ -92,6 +93,7 @@ namespace CrossCraft {
 
         player->update(dt);
         world->update(dt);
+        EntityManager::get().update(player.get(), dt);
 
         CC_Core_Update(dt);
 
@@ -106,6 +108,10 @@ namespace CrossCraft {
                 case CC_EVENT_SPAWN_ITEM: {
                     world->handle_spawn_item(event->data.spawn_item.eid, event->data.spawn_item.x, event->data.spawn_item.y, event->data.spawn_item.z, event->data.spawn_item.item);
                     break;
+                }
+
+                case CC_EVENT_DESTROY_ENTITY: {
+                    EntityManager::get().remove(event->data.destroy_entity.eid);
                 }
 
                 default:
@@ -131,13 +137,13 @@ namespace CrossCraft {
     void GameState::on_draw(Core::Application* app, double dt) {
         world->draw();
 
-        ModelRenderer::get().draw_block_hand(BLK_Leaves, player->position, player->rotation);
+        ModelRenderer::get().draw_item_hand(ITM_Iron_Shovel, player->position, player->rotation);
 
         setup_2d_rendering();
 
         player->draw(dt);
 
-        ModelRenderer::get().draw_block_isometric(BLK_Stone, {20, 20, 2});
+//        ModelRenderer::get().draw_block_isometric(BLK_Stone, {20, 20, 2});
 
         setup_3d_rendering();
     }

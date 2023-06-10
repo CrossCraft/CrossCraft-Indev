@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <Entity/Entity.hpp>
+#include <Player/Player.hpp>
 
 namespace CrossCraft {
 
@@ -9,11 +10,12 @@ namespace CrossCraft {
         EntityManager();
         ~EntityManager();
 
-        auto update(double dt) -> void;
+        auto update(Player* player, double dt) -> void;
         auto draw() -> void;
 
         auto add(Entity* entity) -> void;
         auto remove(Entity* entity) -> void;
+        auto remove(uint16_t eid) -> void;
 
         static auto get() -> EntityManager& {
             static EntityManager instance;

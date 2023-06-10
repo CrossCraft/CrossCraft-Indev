@@ -73,8 +73,8 @@ namespace CrossCraft {
         kb_controller->add_command({(int)Input::Keys::Q, KeyFlag::Press}, {Inventory::drop_selection, player.get()});
 
         mb_controller = new Utilities::Input::MouseController();
-        mb_controller->add_command({(int)Input::MouseButtons::Left, KeyFlag::Press}, {on_action_left, player.get()});
-        mb_controller->add_command({(int)Input::MouseButtons::Right, KeyFlag::Press}, {on_action_right, player.get()});
+        mb_controller->add_command({(int)Input::MouseButtons::Left, KeyFlag::Press | KeyFlag::Held}, {on_action_left, player.get()});
+        mb_controller->add_command({(int)Input::MouseButtons::Right, KeyFlag::Press }, {on_action_right, player.get()});
         mb_controller->add_command({(int)Input::MouseButtons::MWheelUp, KeyFlag::Press}, {Inventory::decrement_selection, nullptr});
         mb_controller->add_command({(int)Input::MouseButtons::MWheelDown, KeyFlag::Press}, {Inventory::increment_selection, nullptr});
 

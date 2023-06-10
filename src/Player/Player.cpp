@@ -225,6 +225,12 @@ namespace CrossCraft {
         }
     }
 
+    // TODO: CLEAN UP BREAK TIMER
+    // Break Timer Variables
+    bool gBreaking = false;
+    mathfu::Vector<int, 3> gBreakingPos = mathfu::Vector<int, 3>{0, 0, 0};
+    float gBreakingTimer = 0.0f;
+
     void Player::update(double dt) {
         // Handle input updates
         if(!InGameMenu::get().is_open()) {
@@ -243,6 +249,9 @@ namespace CrossCraft {
         // Move the player
         do_move(dt);
 
+        gBreakingTimer -= dt;
+
+        // TODO: Cleanup Tick (maybe move to a separate function)
         tickTimer += dt;
         if(tickTimer > 0.05f) {
             tickTimer = 0.0f;
@@ -340,7 +349,23 @@ namespace CrossCraft {
 
         mathfu::Vector<float, 3> out;
         if(path_trace(pos, step, BREAK_DISTANCE, out)) {
-            CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_BREAK, 0);
+
+            if(!gBreaking) {
+                gBreaking = true;
+                gBreakingTimer = 1.0f; // TODO: Get Time To Break From Equipment + Block Hit
+                gBreakingPos = mathfu::Vector<int, 3>{static_cast<int>(out.x), static_cast<int>(out.y), static_cast<int>(out.z)};
+            }
+
+            if(gBreaking) {
+                if(gBreakingPos.x != (int)out.x || gBreakingPos.y != (int)out.y || gBreakingPos.z != (int)out.z) {
+                    gBreaking = false;
+                }
+
+                if(gBreakingTimer < 0.0f) {
+                    CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_BREAK, 0);
+                    gBreaking = false;
+                }
+            }
         }
     }
 

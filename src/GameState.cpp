@@ -103,6 +103,11 @@ namespace CrossCraft {
                     break;
                 }
 
+                case CC_EVENT_SPAWN_ITEM: {
+                    world->handle_spawn_item(event->data.spawn_item.eid, event->data.spawn_item.x, event->data.spawn_item.y, event->data.spawn_item.z, event->data.spawn_item.item);
+                    break;
+                }
+
                 default:
                     SC_APP_INFO("Unhandled event type: {}", event->type);
                     break;

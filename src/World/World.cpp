@@ -1,6 +1,7 @@
 #include <World/World.hpp>
 #include <vector>
-#include <algorithm>
+#include <Entity/ItemEntity.hpp>
+#include <Entity/EntityManager.hpp>
 #include <ResourcePack.hpp>
 #include <Rendering/Texture.hpp>
 
@@ -83,6 +84,7 @@ namespace CrossCraft {
     }
 
     void World::update(double dt) {
+        EntityManager::get().update(dt);
         check_chunk_update();
     }
 
@@ -96,6 +98,8 @@ namespace CrossCraft {
         for(auto& [val, chunk] : chunks) {
             chunk->draw(ChunkMeshSelection::Transparent);
         }
+
+        EntityManager::get().draw();
     }
 
     // This function generates a chunk vector from a block position
@@ -128,6 +132,19 @@ namespace CrossCraft {
 
     }
 
+    void World::handle_spawn_item(int16_t eid, float x, float y, float z, ItemData item) {
+        auto entity = new ItemEntity();
+        entity->eid = eid;
+        entity->data = new ItemData();
+        entity->data->id = item.id;
+        entity->data->data = item.data;
+        entity->data->count = item.count;
+
+        entity->position = mathfu::Vector<float, 3>(x, y, z);
+        entity->rotation = mathfu::Vector<float, 2>(0, 0);
+
+        EntityManager::get().add(entity);
+    }
 
     auto World::save(std::any p) -> void {
         CC_World_Save();

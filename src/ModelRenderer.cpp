@@ -372,7 +372,7 @@ case I_Painting: {
         Rendering::RenderContext::get().matrix_rotate({-rotation.x, -rotation.y, 0.0f});
 
         Rendering::RenderContext::get().matrix_push();
-        Rendering::RenderContext::get().matrix_translate({0, 0.5f, 0});
+        Rendering::RenderContext::get().matrix_translate({0, -0.25f, 0});
         Rendering::RenderContext::get().matrix_scale({0.25f, 0.25f, 0.25f});
 
         blockModels[id]->draw();
@@ -384,6 +384,7 @@ case I_Painting: {
         if(idTransform < 0 || idTransform > 65) {
             return;
         }
+        //TODO: USE CC Transforms
 
         GI::disable(GI_CULL_FACE);
 
@@ -396,7 +397,7 @@ case I_Painting: {
 
         // Scale and Center
         Rendering::RenderContext::get().matrix_push();
-        Rendering::RenderContext::get().matrix_translate({0, 0.5f, 0}); // [6] Position the model to player
+        Rendering::RenderContext::get().matrix_translate({0, 0, 0}); // [6] Position the model to player
         Rendering::RenderContext::get().matrix_scale({1.0f / 32.0f, 1.0f / 32.0f, 1.0f / 32.0f}); // [2] Scale the model
         Rendering::RenderContext::get().matrix_translate({-8.0f, -8.0f, 0.0f}); // [1] Center the model
 
@@ -408,6 +409,8 @@ case I_Painting: {
 
     auto ModelRenderer::draw_block_hand(block_t id, mathfu::Vector<float, 3> position, mathfu::Vector<float, 2> rotation) -> void {
         GI::clearDepth();
+
+        //TODO: USE CC Transforms
 
         Rendering::TextureManager::get().bind_texture(terrainTexID);
         Rendering::RenderContext::get().set_mode_3D();

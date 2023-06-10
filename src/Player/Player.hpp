@@ -10,10 +10,11 @@ namespace CrossCraft {
 
     using namespace Stardust_Celeste;
 
+    class HUD;
     class Player;
     struct HealthUpdate {
         Player* player;
-        uint16_t health;
+        int16_t health;
     };
 
     class Player {
@@ -40,7 +41,10 @@ namespace CrossCraft {
         mathfu::Vector<float, 3> velocity;
         mathfu::Vector<float, 2> rotation;
     private:
+        friend class HUD;
         static mathfu::Vector<float, 3> size;
+
+        float tickTimer;
 
         float horizInput;
         float vertInput;
@@ -49,8 +53,8 @@ namespace CrossCraft {
         bool in_water;
         bool water_face;
 
-        uint16_t health;
-        uint16_t air;
+        int16_t health;
+        int16_t air;
 
         void do_rotate(double dt);
         void do_move(double dt);
@@ -61,7 +65,6 @@ namespace CrossCraft {
         bool safety_check_place(mathfu::Vector<int, 3> position);
 
         Rendering::Camera camera;
-        ScopePtr<Graphics::G2D::Sprite> water_sprite, crosshair;
         ScopePtr<HUD> hud;
     };
 

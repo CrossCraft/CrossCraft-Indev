@@ -26,13 +26,8 @@ namespace CrossCraft {
         horizInput = 0.0f;
         vertInput = 0.0f;
 
-        water_sprite = create_scopeptr<Graphics::G2D::Sprite>( ResourcePack::get().get_texture("water_overlay"), Rendering::Rectangle{{0.0f, 0.0f}, {480.0f, 272.0f}});
-        water_sprite->set_layer(-5);
-
         hud = create_scopeptr<HUD>();
-
-        crosshair = create_scopeptr<Graphics::G2D::Sprite>(ResourcePack::get().get_texture("gui_common"), Rendering::Rectangle{{232.0f, 128.0f}, {16.0f, 16.0f}}, Rendering::Rectangle{{15.0f / 16.0f, 0.0f}, {1.0f / 16.0f, 1.0f / 16.0f} });
-        crosshair->set_layer(2);
+        tickTimer = 0.0f;
     }
 
     Player::~Player() {
@@ -247,17 +242,21 @@ namespace CrossCraft {
 
         // Move the player
         do_move(dt);
+
+        tickTimer += dt;
+        if(tickTimer > 0.05f) {
+            tickTimer = 0.0f;
+            if(water_face) {
+                air -= 1;
+            } else {
+                air = 300;
+            }
+        }
     }
 
     void Player::draw(double dt) {
-        if(water_face) {
-            water_sprite->draw();
-        }
-
-        crosshair->draw();
-
         // Draw the HUD
-        hud->draw(position, dt);
+        hud->draw(this, dt);
 
         Inventory::get().draw_hotbar(dt);
 

@@ -10,6 +10,12 @@ namespace CrossCraft {
 
     using namespace Stardust_Celeste;
 
+    class Player;
+    struct HealthUpdate {
+        Player* player;
+        uint16_t health;
+    };
+
     class Player {
     public:
         Player();
@@ -28,6 +34,8 @@ namespace CrossCraft {
         static auto break_block(std::any p) -> void;
         static auto place_block(std::any p) -> void;
 
+        static auto handle_health_update(std::any p) -> void;
+
         mathfu::Vector<float, 3> position;
         mathfu::Vector<float, 3> velocity;
         mathfu::Vector<float, 2> rotation;
@@ -40,6 +48,9 @@ namespace CrossCraft {
         bool on_ground;
         bool in_water;
         bool water_face;
+
+        uint16_t health;
+        uint16_t air;
 
         void do_rotate(double dt);
         void do_move(double dt);

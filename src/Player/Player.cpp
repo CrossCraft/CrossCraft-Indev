@@ -39,6 +39,11 @@ namespace CrossCraft {
 
     }
 
+    auto Player::handle_health_update(std::any p) -> void {
+        auto update = std::any_cast<HealthUpdate>(p);
+        update.player->health = update.health;
+        SC_APP_INFO("Health update: {}", update.health);
+    }
 
     void Player::do_rotate(double dt) {
         float cX = Utilities::Input::get_axis("Mouse", "X") * 0.1; // TODO: Sensitivity

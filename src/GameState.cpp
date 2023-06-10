@@ -115,6 +115,11 @@ namespace CrossCraft {
                     break;
                 }
 
+                case CC_EVENT_SET_PLAYER_HEALTH: {
+                    Player::handle_health_update(HealthUpdate{player.get(), event->data.set_player_health.health});
+                    break;
+                }
+
                 default:
                     SC_APP_INFO("Unhandled event type: {}", event->type);
                     break;

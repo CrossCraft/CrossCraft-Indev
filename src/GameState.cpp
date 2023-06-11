@@ -61,6 +61,14 @@ namespace CrossCraft {
         kb_controller = new Utilities::Input::KeyboardController();
 
         //TODO: Clean this up
+        kb_controller->add_command({(int) Input::Keys::W, KeyFlag::Release},
+                                   {Player::move_release, player.get()});
+        kb_controller->add_command({(int) Input::Keys::S, KeyFlag::Release},
+                                   {Player::move_release, player.get()});
+        kb_controller->add_command({(int) Input::Keys::A, KeyFlag::Release},
+                                   {Player::move_release, player.get()});
+        kb_controller->add_command({(int) Input::Keys::D, KeyFlag::Release},
+                                   {Player::move_release, player.get()});
         kb_controller->add_command({(int) Input::Keys::W, KeyFlag::Press | KeyFlag::Held},
                                    {Player::move_forward, player.get()});
         kb_controller->add_command({(int) Input::Keys::S, KeyFlag::Press | KeyFlag::Held},
@@ -108,8 +116,14 @@ namespace CrossCraft {
 
     }
 
+    double poll_time = 10.0f;
+
     void GameState::on_update(Core::Application *app, double dt) {
-        Input::update();
+        poll_time += dt;
+        if(poll_time > (1.0f / 240.0f)) {
+            Input::update();
+            poll_time = 0.0f;
+        }
 
         player->update(dt);
         world->update(dt);

@@ -2,6 +2,7 @@
 #include <Chunk/FaceConst.hpp>
 #include <ResourcePack.hpp>
 #include <Rendering/Texture.hpp>
+#include <Chunk/Frustum.hpp>
 
 namespace CrossCraft {
 
@@ -54,9 +55,9 @@ namespace CrossCraft {
     }
 
     void ChunkMesh::draw(CrossCraft::ChunkMeshSelection selection) {
-        Rendering::RenderContext::get().matrix_clear();
-        Rendering::RenderContext::get().matrix_translate(
-                {static_cast<float>(cX * 16), static_cast<float>(cY * 16), static_cast<float>(cZ * 16)});
+        if(!Frustum::get().IsBoxVisible(mathfu::Vector<float, 3>(cX * 16, cY * 16, cZ * 16), mathfu::Vector<float, 3>(cX * 16 + 16, cY * 16 + 16, cZ * 16 + 16))) {
+            return;
+        }
 
         if (dirty) {
             generate_mesh();
@@ -64,14 +65,27 @@ namespace CrossCraft {
 
         switch (selection) {
             case ChunkMeshSelection::Opaque:
-                if (mesh.opaque.idx_counter > 0) {
-                    mesh.opaque.mesh.draw();
+                if (mesh.opaque.idx_counter <= 0) {
+                    return;
                 }
                 break;
             case ChunkMeshSelection::Transparent:
-                if (mesh.transparent.idx_counter > 0) {
-                    mesh.transparent.mesh.draw();
+                if (mesh.transparent.idx_counter <= 0) {
+                    return;
                 }
+                break;
+        }
+
+        Rendering::RenderContext::get().matrix_clear();
+        Rendering::RenderContext::get().matrix_translate(
+                {static_cast<float>(cX * 16), static_cast<float>(cY * 16), static_cast<float>(cZ * 16)});
+
+        switch (selection) {
+            case ChunkMeshSelection::Opaque:
+                mesh.opaque.mesh.draw();
+                break;
+            case ChunkMeshSelection::Transparent:
+                mesh.transparent.mesh.draw();
                 break;
         }
     }
@@ -163,7 +177,7 @@ namespace CrossCraft {
                     static_cast<uint16_t>(tex[tx++] * 65535),
                     newColor,
                     static_cast<uint16_t>(face[idx++] + position.x),
-                    static_cast<uint16_t>(face[idx++] + position.y),
+                    static_cast<uint16_t>(face[idx++] * 32 + position.y * 32),
                     static_cast<uint16_t>(face[idx++] + position.z),
             });
         }

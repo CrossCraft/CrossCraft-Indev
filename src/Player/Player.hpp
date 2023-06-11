@@ -53,6 +53,8 @@ namespace CrossCraft {
 
         static auto move_right(std::any p) -> void;
 
+        static auto move_release(std::any p) -> void;
+
         static auto jump(std::any p) -> void;
 
         static auto break_block(std::any p) -> void;
@@ -70,6 +72,7 @@ namespace CrossCraft {
         friend class HUD;
 
         static mathfu::Vector<float, 3> size;
+        float lastCX, lastCY;
 
         float tickTimer;
 

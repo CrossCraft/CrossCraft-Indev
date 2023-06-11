@@ -4,6 +4,7 @@
 #include <Entity/EntityManager.hpp>
 #include <ResourcePack.hpp>
 #include <Rendering/Texture.hpp>
+#include <Chunk/Frustum.hpp>
 
 namespace CrossCraft {
 
@@ -16,7 +17,7 @@ namespace CrossCraft {
 
     World::~World() = default;
 
-    const int CHUNK_RADIUS_OPTION = 4;
+    const int CHUNK_RADIUS_OPTION = 16;
     constexpr int CHUNK_RADIUS_REAL = CHUNK_RADIUS_OPTION + 1;
 
     void World::update_chunks_list() {
@@ -86,6 +87,8 @@ namespace CrossCraft {
     }
 
     void World::draw() {
+        Frustum::update();
+
         Rendering::TextureManager::get().bind_texture(terrainTexID);
         for (auto &[val, chunk]: chunks) {
             chunk->draw(ChunkMeshSelection::Opaque);

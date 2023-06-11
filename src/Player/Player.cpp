@@ -44,10 +44,19 @@ namespace CrossCraft {
         float cX = Utilities::Input::get_axis("Mouse", "X") * 0.1; // TODO: Sensitivity
         float cY = Utilities::Input::get_axis("Mouse", "Y") * 0.1; // TODO: Sensitivity
 
-        int rx = 0, ry = 0;
-        glfwGetWindowSize(GI::window, &rx, &ry);
-        cX *= rx;
-        cY *= ry;
+        cX *= 960;
+        cY *= 544;
+
+
+        if(lastCX == cX && lastCY == cY) {
+            return;
+        }
+
+        if(lastCX != cX || lastCY != cY) {
+            lastCX = cX;
+            lastCY = cY;
+            Utilities::Input::set_cursor_center();
+        }
 
         rotation.y += cX;
         rotation.x += cY;
@@ -67,8 +76,6 @@ namespace CrossCraft {
         if (rotation.x > 89.9f) {
             rotation.x = 89.9f;
         }
-
-        Utilities::Input::set_cursor_center();
     }
 
     const double GRAVITY = 28.0f;
@@ -102,9 +109,6 @@ namespace CrossCraft {
             position.y += velocity.y * dt;
             position.z += velocity.z * dt;
         }
-
-        horizInput = 0.0f;
-        vertInput = 0.0f;
 
         CC_Event_Push_PlayerUpdate(PLAYER_SELF, position.x, position.y + 1.625f, position.z, rotation.x, rotation.y,
                                    on_ground);
@@ -342,6 +346,15 @@ namespace CrossCraft {
         }
     }
 
+
+    auto Player::move_release(std::any p) -> void {
+        auto player = std::any_cast<Player *>(p);
+
+        if (!InGameMenu::get().is_open() && !Inventory::is_open()) {
+            player->vertInput = 0.0f;
+            player->horizInput = 0.0f;
+        }
+    }
     auto Player::move_right(std::any p) -> void {
         auto player = std::any_cast<Player *>(p);
 

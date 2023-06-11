@@ -18,6 +18,7 @@ namespace CrossCraft {
         void setup_3d_rendering();
 
         static auto on_action_left(std::any p) -> void;
+        static auto on_action_left_up(std::any p) -> void;
         static auto on_action_right(std::any p) -> void;
 
         RefPtr<Player> player;

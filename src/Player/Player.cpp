@@ -225,11 +225,38 @@ namespace CrossCraft {
         }
     }
 
-    // TODO: CLEAN UP BREAK TIMER
-    // Break Timer Variables
-    bool gBreaking = false;
-    mathfu::Vector<int, 3> gBreakingPos = mathfu::Vector<int, 3>{0, 0, 0};
-    float gBreakingTimer = 0.0f;
+
+    const float BREAK_DISTANCE = 5.0f;
+    const float PLACE_DISTANCE = 4.0f;
+
+    auto path_trace(mathfu::Vector<float, 3> pos, mathfu::Vector<float, 3> step, float max, mathfu::Vector<float, 3>& output) -> bool {
+        pos.y += 1.625f; // This is a hack to make the ray trace work properly
+
+        for(int i = 0; i < max * 10; i++) {
+            pos += step;
+
+            block_t out;
+            bool res = CC_World_TryGetBlock(pos.x, pos.y, pos.z, &out);
+            if(res && out != BLK_Air && out != BLK_Water) {
+                output = pos;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    auto get_rotation(mathfu::Vector<float, 2> rotation) -> mathfu::Vector<float, 3> {
+
+        auto rx = mathfu::Matrix<float, 3>::RotationX(rotation.x / 180.0f * M_PI);
+        auto ry = mathfu::Matrix<float, 3>::RotationY((-rotation.y + 180.0f) / 180.0f * M_PI);
+
+        mathfu::Vector<float, 3> view = mathfu::Vector<float, 3>(0, 0, 1);
+        view = rx * view;
+        view = ry * view;
+
+        return view;
+    }
 
     void Player::update(double dt) {
         // Handle input updates
@@ -249,7 +276,20 @@ namespace CrossCraft {
         // Move the player
         do_move(dt);
 
-        gBreakingTimer -= dt;
+        // TODO: Cleanup Break Information
+        if(BreakInformation::get().gBreaking) {
+            BreakInformation::get().gBreakingTimer -= dt;
+        }
+
+        mathfu::Vector<float, 3> pos = position;
+        mathfu::Vector<float, 3> step = get_rotation(rotation) * 0.1f;
+
+        mathfu::Vector<float, 3> out;
+        if(path_trace(pos, step, BREAK_DISTANCE, out)) {
+            BreakInformation::get().gSelectedPos = mathfu::Vector<int, 3>{static_cast<int>(out.x), static_cast<int>(out.y), static_cast<int>(out.z)};
+        } else {
+            BreakInformation::get().gSelectedPos = mathfu::Vector<int, 3>{-1, -1, -1};
+        }
 
         // TODO: Cleanup Tick (maybe move to a separate function)
         tickTimer += dt;
@@ -309,36 +349,10 @@ namespace CrossCraft {
         }
     }
 
-    const float BREAK_DISTANCE = 5.0f;
-    const float PLACE_DISTANCE = 4.0f;
-
-    auto path_trace(mathfu::Vector<float, 3> pos, mathfu::Vector<float, 3> step, float max, mathfu::Vector<float, 3>& output) -> bool {
-        pos.y += 1.625f; // This is a hack to make the ray trace work properly
-
-        for(int i = 0; i < max * 10; i++) {
-            pos += step;
-
-            block_t out;
-            bool res = CC_World_TryGetBlock(pos.x, pos.y, pos.z, &out);
-            if(res && out != BLK_Air && out != BLK_Water) {
-                output = pos;
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    auto get_rotation(mathfu::Vector<float, 2> rotation) -> mathfu::Vector<float, 3> {
-
-        auto rx = mathfu::Matrix<float, 3>::RotationX(rotation.x / 180.0f * M_PI);
-        auto ry = mathfu::Matrix<float, 3>::RotationY((-rotation.y + 180.0f) / 180.0f * M_PI);
-
-        mathfu::Vector<float, 3> view = mathfu::Vector<float, 3>(0, 0, 1);
-        view = rx * view;
-        view = ry * view;
-
-        return view;
+    auto Player::break_block_up(std::any p) -> void {
+        BreakInformation::get().gBreaking = false;
+        BreakInformation::get().gBreakingTimer = 0.0f;
+        BreakInformation::get().gBreakingTotal = 0.0f;
     }
 
     auto Player::break_block(std::any p) -> void {
@@ -350,20 +364,24 @@ namespace CrossCraft {
         mathfu::Vector<float, 3> out;
         if(path_trace(pos, step, BREAK_DISTANCE, out)) {
 
-            if(!gBreaking) {
-                gBreaking = true;
-                gBreakingTimer = 1.0f; // TODO: Get Time To Break From Equipment + Block Hit
-                gBreakingPos = mathfu::Vector<int, 3>{static_cast<int>(out.x), static_cast<int>(out.y), static_cast<int>(out.z)};
+            if(!BreakInformation::get().gBreaking) {
+                BreakInformation::get().gBreaking = true;
+                BreakInformation::get().gBreakingTimer = 1.0f; // TODO: Get Time To Break From Equipment + Block Hit
+                BreakInformation::get().gBreakingTotal = 1.0f; // TODO: Get Time To Break From Equipment + Block Hit
+                SC_APP_INFO("Timer Started at {0}", BreakInformation::get().gBreakingTimer);
+                BreakInformation::get().gBreakingPos = mathfu::Vector<int, 3>{static_cast<int>(out.x), static_cast<int>(out.y), static_cast<int>(out.z)};
             }
 
-            if(gBreaking) {
-                if(gBreakingPos.x != (int)out.x || gBreakingPos.y != (int)out.y || gBreakingPos.z != (int)out.z) {
-                    gBreaking = false;
+            if(BreakInformation::get().gBreaking) {
+                if(BreakInformation::get().gBreakingPos.x != (int)out.x || BreakInformation::get().gBreakingPos.y != (int)out.y || BreakInformation::get().gBreakingPos.z != (int)out.z) {
+                    BreakInformation::get().gBreaking = false;
+                    BreakInformation::get().gBreakingTotal = 0.0f;
                 }
 
-                if(gBreakingTimer < 0.0f) {
+                if(BreakInformation::get().gBreakingTimer < 0.0f) {
                     CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_BREAK, 0);
-                    gBreaking = false;
+                    BreakInformation::get().gBreaking = false;
+                    BreakInformation::get().gBreakingTotal = 0.0f;
                 }
             }
         }

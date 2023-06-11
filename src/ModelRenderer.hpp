@@ -15,6 +15,8 @@ namespace CrossCraft{
         static auto init() -> void;
         static auto get() -> ModelRenderer&;
 
+        auto draw_block_outline() -> void;
+        auto draw_break() -> void;
         auto draw_block(uint8_t id, mathfu::Vector<float, 3> position, mathfu::Vector<float, 3> rotation) -> void;
         auto draw_item(uint16_t id, mathfu::Vector<float, 3> position, mathfu::Vector<float, 3> rotation) -> void;
 
@@ -31,5 +33,7 @@ namespace CrossCraft{
 
         ScopePtr<Rendering::Mesh<Rendering::Vertex>> blockModels[63];
         ScopePtr<Graphics::G2D::Sprite> itemModels[66];
+
+        ScopePtr<Rendering::Mesh<Rendering::Vertex>> breakModels[11];
     };
 }

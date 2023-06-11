@@ -2,6 +2,7 @@
 #include <ResourcePack.hpp>
 #include <Chunk/ChunkUtil.hpp>
 #include <Chunk/FaceConst.hpp>
+#include <Player/Player.hpp>
 
 const item_t I_Iron_Shovel = 256;
 const item_t I_Iron_Pickaxe = 257;
@@ -358,6 +359,165 @@ case I_Painting: {
                     get_mapped_item_index(i)
                 )
             );
+        }
+
+        for (int i = 1; i < 11; i++) {
+            uint32_t idx_counter = 0;
+            gModelRenderer->breakModels[i] = create_scopeptr<Rendering::Mesh<Rendering::Vertex>>();
+
+            auto p = mathfu::Vector<float, 3>(0, 0, 0);
+
+            add_face_to_mesh(topFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP, *(gModelRenderer->breakModels[i].get()), idx_counter);
+            add_face_to_mesh(bottomFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP, *(gModelRenderer->breakModels[i].get()), idx_counter);
+            add_face_to_mesh(leftFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP, *(gModelRenderer->breakModels[i].get()), idx_counter);
+            add_face_to_mesh(rightFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP, *(gModelRenderer->breakModels[i].get()), idx_counter);
+            add_face_to_mesh(frontFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP, *(gModelRenderer->breakModels[i].get()), idx_counter);
+            add_face_to_mesh(backFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP, *(gModelRenderer->breakModels[i].get()), idx_counter);
+
+            gModelRenderer->breakModels[i]->setup_buffer();
+        }
+
+        //TODO: TIDY
+        gModelRenderer->breakModels[0] = create_scopeptr<Rendering::Mesh<Rendering::Vertex>>();
+        gModelRenderer->breakModels[0]->vertices.clear();
+        gModelRenderer->breakModels[0]->vertices.shrink_to_fit();
+        gModelRenderer->breakModels[0]->indices.clear();
+        gModelRenderer->breakModels[0]->indices.shrink_to_fit();
+        gModelRenderer->breakModels[0]->delete_data();
+
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 1, 0});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 1, 0});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 1, 1});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 1, 1});
+
+        gModelRenderer->breakModels[0]->indices.push_back(0);
+        gModelRenderer->breakModels[0]->indices.push_back(1);
+        gModelRenderer->breakModels[0]->indices.push_back(2);
+        gModelRenderer->breakModels[0]->indices.push_back(3);
+        gModelRenderer->breakModels[0]->indices.push_back(0);
+
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 0, 0});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 0, 0});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 0, 1});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 0, 1});
+
+        gModelRenderer->breakModels[0]->indices.push_back(4);
+        gModelRenderer->breakModels[0]->indices.push_back(5);
+        gModelRenderer->breakModels[0]->indices.push_back(6);
+        gModelRenderer->breakModels[0]->indices.push_back(7);
+        gModelRenderer->breakModels[0]->indices.push_back(4);
+
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 0, 0});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 1, 0});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 1, 1});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 0, 1});
+
+        gModelRenderer->breakModels[0]->indices.push_back(8);
+        gModelRenderer->breakModels[0]->indices.push_back(9);
+        gModelRenderer->breakModels[0]->indices.push_back(10);
+        gModelRenderer->breakModels[0]->indices.push_back(11);
+        gModelRenderer->breakModels[0]->indices.push_back(8);
+
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 0, 0});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 1, 0});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 1, 1});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 0, 1});
+
+        gModelRenderer->breakModels[0]->indices.push_back(12);
+        gModelRenderer->breakModels[0]->indices.push_back(13);
+        gModelRenderer->breakModels[0]->indices.push_back(14);
+        gModelRenderer->breakModels[0]->indices.push_back(15);
+        gModelRenderer->breakModels[0]->indices.push_back(12);
+
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 0, 0});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 0, 0});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 1, 0});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 1, 0});
+
+        gModelRenderer->breakModels[0]->indices.push_back(16);
+        gModelRenderer->breakModels[0]->indices.push_back(17);
+        gModelRenderer->breakModels[0]->indices.push_back(18);
+        gModelRenderer->breakModels[0]->indices.push_back(19);
+        gModelRenderer->breakModels[0]->indices.push_back(16);
+
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, Rendering::Color{0, 0, 0, 128}, 0, 0, 1});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, Rendering::Color{0, 0, 0, 128}, 1, 0, 1});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, Rendering::Color{0, 0, 0, 128}, 1, 1, 1});
+        gModelRenderer->breakModels[0]->vertices.push_back(
+                Rendering::Vertex{0, 0, Rendering::Color{0, 0, 0, 128}, 0, 1, 1});
+
+        gModelRenderer->breakModels[0]->indices.push_back(20);
+        gModelRenderer->breakModels[0]->indices.push_back(21);
+        gModelRenderer->breakModels[0]->indices.push_back(22);
+        gModelRenderer->breakModels[0]->indices.push_back(23);
+        gModelRenderer->breakModels[0]->indices.push_back(20);
+
+        gModelRenderer->breakModels[0]->setup_buffer();
+    }
+
+
+    auto ModelRenderer::draw_block_outline() -> void {
+        auto selPos = BreakInformation::get().gSelectedPos;
+        mathfu::Vector<float, 3> position = mathfu::Vector<float, 3>(selPos.x, selPos.y, selPos.z);
+        auto ctx = &Rendering::RenderContext::get();
+        ctx->matrix_clear();
+        ctx->matrix_translate(mathfu::Vector<float, 3>(position.x, position.y, position.z));
+        breakModels[0]->draw(Rendering::PrimType::PRIM_TYPE_LINE);
+
+        ctx->matrix_clear();
+        return;
+    }
+
+    auto ModelRenderer::draw_break() -> void {
+        if (BreakInformation::get().gBreaking) {
+            auto ctx = &Rendering::RenderContext::get();
+            auto pos = BreakInformation::get().gBreakingPos;
+
+            SC_APP_INFO("Breaking at: {} {} {}", pos.x, pos.y, pos.z);
+
+            ctx->matrix_clear();
+            ctx->matrix_translate(mathfu::Vector<float, 3>(pos.x, pos.y, pos.z));
+            ctx->matrix_translate(mathfu::Vector<float, 3>(-0.01f, -0.01f, -0.01f));
+            ctx->matrix_scale({1.02f, 1.02f, 1.02f});
+
+            if (BreakInformation::get().gBreakingTotal == 0.0f)
+                return;
+
+            int i = (BreakInformation::get().gBreakingTotal - BreakInformation::get().gBreakingTimer) /
+                    (BreakInformation::get().gBreakingTotal / 10.0f);
+            if (i >= 0 && i < 10) {
+                GI::blend_func(GI_DST_COLOR, GI_SRC_COLOR);
+
+                breakModels[i + 1]->draw();
+
+                GI::blend_func(GI_SRC_ALPHA, GI_ONE_MINUS_SRC_ALPHA);
+            }
+
+            ctx->matrix_clear();
+            return;
         }
     }
 

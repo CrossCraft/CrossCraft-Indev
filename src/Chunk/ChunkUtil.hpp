@@ -243,7 +243,11 @@ namespace CrossCraft {
                 return getTexture(vec, 37);
 
             default:
-                return getTexture(vec, idx + 43);
+                if (idx < 128) {
+                    return getTexture(vec, idx + 43);
+                } else {
+                    return getTexture(vec, idx);
+                }
         }
     }
 }

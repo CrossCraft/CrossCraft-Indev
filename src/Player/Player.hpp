@@ -17,6 +17,21 @@ namespace CrossCraft {
         int16_t health;
     };
 
+    struct BreakInformation {
+        // Break Timer Variables
+        bool gBreaking = false;
+        mathfu::Vector<int, 3> gBreakingPos = mathfu::Vector<int, 3>{0, 0, 0};
+        float gBreakingTimer = 0.0f;
+        float gBreakingTotal = 0.0f;
+
+        mathfu::Vector<int, 3> gSelectedPos = mathfu::Vector<int, 3>{0, 0, 0};
+
+        inline static auto get() -> BreakInformation& {
+            static BreakInformation instance;
+            return instance;
+        }
+    };
+
     class Player {
     public:
         Player();
@@ -33,6 +48,7 @@ namespace CrossCraft {
         static auto jump(std::any p) -> void;
 
         static auto break_block(std::any p) -> void;
+        static auto break_block_up(std::any p) -> void;
         static auto place_block(std::any p) -> void;
 
         static auto handle_health_update(std::any p) -> void;

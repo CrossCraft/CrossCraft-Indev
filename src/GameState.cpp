@@ -12,6 +12,11 @@ namespace CrossCraft {
 
     using namespace Stardust_Celeste::Utilities;
 
+    auto GameState::on_action_left_up(std::any p) -> void {
+        auto player = std::any_cast<Player*>(p);
+
+        Player::break_block_up(player);
+    }
 
     auto GameState::on_action_left(std::any p) -> void {
         auto player = std::any_cast<Player*>(p);
@@ -73,6 +78,7 @@ namespace CrossCraft {
         kb_controller->add_command({(int)Input::Keys::Q, KeyFlag::Press}, {Inventory::drop_selection, player.get()});
 
         mb_controller = new Utilities::Input::MouseController();
+        mb_controller->add_command({(int)Input::MouseButtons::Left, KeyFlag::Release | KeyFlag::Untouched}, {on_action_left_up, player.get()});
         mb_controller->add_command({(int)Input::MouseButtons::Left, KeyFlag::Press | KeyFlag::Held}, {on_action_left, player.get()});
         mb_controller->add_command({(int)Input::MouseButtons::Right, KeyFlag::Press }, {on_action_right, player.get()});
         mb_controller->add_command({(int)Input::MouseButtons::MWheelUp, KeyFlag::Press}, {Inventory::decrement_selection, nullptr});
@@ -148,6 +154,9 @@ namespace CrossCraft {
 
     void GameState::on_draw(Core::Application* app, double dt) {
         world->draw();
+
+        ModelRenderer::get().draw_break();
+        ModelRenderer::get().draw_block_outline();
 
         Inventory::get().draw_block_hand(player->position, player->rotation, dt);
 

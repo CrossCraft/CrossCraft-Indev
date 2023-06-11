@@ -101,6 +101,7 @@ namespace CrossCraft {
         load_resource("items", ResourceType::TEXTURE, "assets/minecraft/textures/gui/items.png");
         load_resource("icons", ResourceType::TEXTURE, "assets/minecraft/textures/gui/icons.png");
         load_resource("death_overlay", ResourceType::TEXTURE, "assets/crosscraft/textures/overlay.png");
+        load_resource("inventory_overlay", ResourceType::TEXTURE, "assets/minecraft/textures/gui/inventory.png");
     }
 
     void ResourcePack::cleanup() {

@@ -33,6 +33,10 @@ namespace CrossCraft {
             return get().item_array[get().selection_idx + 36];
         }
 
+        inline static auto is_open() -> bool {
+            return get().open;
+        }
+
         auto draw(double dt) -> void;
 
         auto draw_block_hand(const mathfu::Vector<float, 3>& position, const mathfu::Vector<float, 2>& rotation, double dt) -> void;
@@ -47,11 +51,17 @@ namespace CrossCraft {
 
         static auto drop_selection(std::any p) -> void;
 
+        static auto toggle_inventory(const std::any p) -> void;
+
     private:
+        bool open;
         std::array<ItemData, 45> item_array{};
         uint8_t selection_idx = 0;
 
-        RefPtr<FontRender> font_render;
+        RefPtr<FontRender> font_render_hotbar, font_render_inventory;
         ScopePtr<Graphics::G2D::Sprite> hotbar, hotbar_select;
+
+        RefPtr<Rendering::Primitive::Rectangle> background_rectangle;
+        ScopePtr<Graphics::G2D::Sprite> inventory_background;
     };
 }

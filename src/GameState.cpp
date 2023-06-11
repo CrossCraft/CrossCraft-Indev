@@ -83,6 +83,7 @@ namespace CrossCraft {
         kb_controller->add_command({(int) Input::Keys::Num8, KeyFlag::Press}, {Inventory::set_selection, SelData{7}});
         kb_controller->add_command({(int) Input::Keys::Num9, KeyFlag::Press}, {Inventory::set_selection, SelData{8}});
         kb_controller->add_command({(int) Input::Keys::Q, KeyFlag::Press}, {Inventory::drop_selection, player.get()});
+        kb_controller->add_command({(int) Input::Keys::E, KeyFlag::Press}, {Inventory::toggle_inventory, player.get()});
 
         // TODO: Clean This Up
         mb_controller = new Utilities::Input::MouseController();
@@ -186,6 +187,7 @@ namespace CrossCraft {
         setup_2d_rendering();
 
         player->draw(dt);
+        Inventory::get().draw(dt);
 
         setup_3d_rendering();
     }

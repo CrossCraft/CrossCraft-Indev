@@ -264,7 +264,7 @@ namespace CrossCraft {
 
     void Player::update(double dt) {
         // Handle input updates
-        if (!InGameMenu::get().is_open()) {
+        if (!InGameMenu::get().is_open() && !Inventory::is_open()) {
             do_rotate();
         }
 
@@ -321,7 +321,7 @@ namespace CrossCraft {
     auto Player::move_forward(std::any p) -> void {
         auto player = std::any_cast<Player *>(p);
 
-        if (!InGameMenu::get().is_open()) {
+        if (!InGameMenu::get().is_open() && !Inventory::is_open()) {
             player->vertInput += 1.0f;
         }
     }
@@ -329,7 +329,7 @@ namespace CrossCraft {
     auto Player::move_backward(std::any p) -> void {
         auto player = std::any_cast<Player *>(p);
 
-        if (!InGameMenu::get().is_open()) {
+        if (!InGameMenu::get().is_open() && !Inventory::is_open()) {
             player->vertInput -= 1.0f;
         }
     }
@@ -337,7 +337,7 @@ namespace CrossCraft {
     auto Player::move_left(std::any p) -> void {
         auto player = std::any_cast<Player *>(p);
 
-        if (!InGameMenu::get().is_open()) {
+        if (!InGameMenu::get().is_open() && !Inventory::is_open()) {
             player->horizInput -= 1.0f;
         }
     }
@@ -345,7 +345,7 @@ namespace CrossCraft {
     auto Player::move_right(std::any p) -> void {
         auto player = std::any_cast<Player *>(p);
 
-        if (!InGameMenu::get().is_open()) {
+        if (!InGameMenu::get().is_open() && !Inventory::is_open()) {
             player->horizInput = 1.0f;
         }
     }
@@ -353,9 +353,11 @@ namespace CrossCraft {
     auto Player::jump(std::any p) -> void {
         auto player = std::any_cast<Player *>(p);
 
-        if (player->on_ground) {
-            player->velocity.y = 8.367f;
-            player->on_ground = false;
+        if(!InGameMenu::get().is_open() && !Inventory::is_open()) {
+            if (player->on_ground) {
+                player->velocity.y = 8.367f;
+                player->on_ground = false;
+            }
         }
     }
 
@@ -378,7 +380,6 @@ namespace CrossCraft {
                 BreakInformation::get().gBreaking = true;
                 BreakInformation::get().gBreakingTimer = 1.0f; // TODO: Get Time To Break From Equipment + Block Hit
                 BreakInformation::get().gBreakingTotal = 1.0f; // TODO: Get Time To Break From Equipment + Block Hit
-                SC_APP_INFO("Timer Started at {0}", BreakInformation::get().gBreakingTimer);
                 BreakInformation::get().gBreakingPos = mathfu::Vector<int, 3>{static_cast<int>(out.x),
                                                                               static_cast<int>(out.y),
                                                                               static_cast<int>(out.z)};

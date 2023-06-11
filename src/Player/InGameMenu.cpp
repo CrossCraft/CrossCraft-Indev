@@ -3,6 +3,7 @@
 #include <World/World.hpp>
 #include <utility>
 #include <GLFW/glfw3.h>
+#include <Player/Inventory.hpp>
 
 namespace GI {
     extern GLFWwindow *window;
@@ -182,6 +183,9 @@ namespace CrossCraft {
     }
 
     void InGameMenu::toggle() {
+        if(Inventory::is_open())
+            return;
+
         open = !open;
 
         if (open) {

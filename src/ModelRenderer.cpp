@@ -502,8 +502,6 @@ namespace CrossCraft {
             auto ctx = &Rendering::RenderContext::get();
             auto pos = BreakInformation::get().gBreakingPos;
 
-            SC_APP_INFO("Breaking at: {} {} {}", pos.x, pos.y, pos.z);
-
             ctx->matrix_clear();
             ctx->matrix_translate(mathfu::Vector<float, 3>(pos.x, pos.y, pos.z));
             ctx->matrix_translate(mathfu::Vector<float, 3>(-0.01f, -0.01f, -0.01f));
@@ -652,7 +650,7 @@ namespace CrossCraft {
 
         Rendering::TextureManager::get().bind_texture(itemsTexID);
         Rendering::RenderContext::get().matrix_clear();
-        Rendering::RenderContext::get().matrix_translate(position);
+        Rendering::RenderContext::get().matrix_translate(position - mathfu::Vector<float, 3>{8.0f, 8.0f, 0.0f});
         itemModels[idTransform]->draw();
     }
 

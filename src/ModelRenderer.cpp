@@ -74,23 +74,22 @@ const item_t I_Painting = 321;
 
 namespace CrossCraft {
 
-    ModelRenderer* gModelRenderer;
+    ModelRenderer *gModelRenderer;
 
     ModelRenderer::ModelRenderer() {
         terrainTexID = ResourcePack::get().get_texture("terrain");
         itemsTexID = ResourcePack::get().get_texture("items");
     }
 
-    ModelRenderer::~ModelRenderer() {
-
-    }
+    ModelRenderer::~ModelRenderer() = default;
 
 
     auto get_rendering_rectangle(int id) -> Rendering::Rectangle {
         int x = id % 16;
         int y = id / 16;
 
-        return Rendering::Rectangle{ {(float)x * 16.0f / 256.0f, (float)y * 16.0f / 256.0f}, {16.0f / 256.0f, 16.0f / 256.0f}};
+        return Rendering::Rectangle{{(float) x * 16.0f / 256.0f, (float) y * 16.0f / 256.0f},
+                                    {16.0f / 256.0f,             16.0f / 256.0f}};
     }
 
 #define makeIndex(x, y) ((x) + (y) * 16)
@@ -99,216 +98,217 @@ namespace CrossCraft {
     auto get_mapped_item_index(int id) -> int {
         id += 256;
 
-        switch(id) {
-case I_Iron_Shovel: {
-    return makeIndex(2, 5);
-}
-case I_Iron_Pickaxe: {
-    return makeIndex(2, 6);
-}
-case I_Iron_Axe: {
-    return makeIndex(2, 7);
-}
-case I_Flint_and_Steel: {
-    return makeIndex(5, 0);
-}
-case I_Apple: {
-    return makeIndex(10, 0);
-}
-case I_Bow: {
-    return makeIndex(5, 1);
-}
-case I_Arrow: {
-    return makeIndex(5, 2);
-}
-case I_Coal: {
-    return makeIndex(7, 0);
-}
-case I_Diamond: {
-    return makeIndex(7, 3);
-}
-case I_Iron_Ingot: {
-    return makeIndex(7, 1);
-}
-case I_Gold_Ingot: {
-    return makeIndex(7, 2);
-}
-case I_Iron_Sword: {
-    return makeIndex(2, 4);
-}
-case I_Wooden_Sword: {
-    return makeIndex(0, 4);
-}
-case I_Wooden_Shovel: {
-    return makeIndex(0, 5);
-}
-case I_Wooden_Pickaxe: {
-    return makeIndex(0, 6);
-}
-case I_Wooden_Axe: {
-    return makeIndex(0, 7);
-}
-case I_Stone_Sword: {
-    return makeIndex(1, 4);
-}
-case I_Stone_Shovel: {
-    return makeIndex(1, 5);
-}
-case I_Stone_Pickaxe: {
-    return makeIndex(1, 6);
-}
-case I_Stone_Axe: {
-    return makeIndex(1, 7);
-}
-case I_Diamond_Sword: {
-    return makeIndex(3, 4);
-}
-case I_Diamond_Shovel: {
-    return makeIndex(3, 5);
-}
-case I_Diamond_Pickaxe: {
-    return makeIndex(3, 6);
-}
-case I_Diamond_Axe: {
-    return makeIndex(3, 7);
-}
-case I_Stick: {
-    return makeIndex(5, 3);
-}
-case I_Bowl: {
-    return makeIndex(7, 4);
-}
-case I_Mushroom_Stew: {
-    return makeIndex(8, 4);
-}
-case I_Golden_Sword: {
-    return makeIndex(4, 4);
-}
-case I_Golden_Shovel: {
-    return makeIndex(4, 5);
-}
-case I_Golden_Pickaxe: {
-    return makeIndex(4, 6);
-}
-case I_Golden_Axe: {
-    return makeIndex(4, 7);
-}
-case I_String: {
-    return makeIndex(8, 0);
-}
-case I_Feather: {
-    return makeIndex(8, 1);
-}
-case I_Gunpowder: {
-    return makeIndex(8, 2);
-}
-case I_Wooden_Hoe: {
-    return makeIndex(0, 8);
-}
-case I_Stone_Hoe: {
-    return makeIndex(1, 8);
-}
-case I_Iron_Hoe: {
-    return makeIndex(2, 8);
-}
-case I_Diamond_Hoe: {
-    return makeIndex(3, 8);
-}
-case I_Golden_Hoe: {
-    return makeIndex(4, 8);
-}
-case I_Seeds: {
-    return makeIndex(9, 0);
-}
-case I_Wheat: {
-    return makeIndex(9, 1);
-}
-case I_Bread: {
-    return makeIndex(9, 2);
-}
-case I_Leather_Cap: {
-    return makeIndex(0, 0);
-}
-case I_Leather_Tunic: {
-    return makeIndex(0, 1);
-}
-case I_Leather_Pants: {
-    return makeIndex(0, 2);
-}
-case I_Leather_Boots: {
-    return makeIndex(0, 3);
-}
-case I_Chain_Helmet: {
-    return makeIndex(1, 0);
-}
-case I_Chain_Chestplate: {
-    return makeIndex(1, 1);
-}
-case I_Chain_Leggings: {
-    return makeIndex(1, 2);
-}
-case I_Chain_Boots: {
-    return makeIndex(1, 3);
-}
-case I_Iron_Helmet: {
-    return makeIndex(2, 0);
-}
-case I_Iron_Chestplate: {
-    return makeIndex(2, 1);
-}
-case I_Iron_Leggings: {
-    return makeIndex(2, 2);
-}
-case I_Iron_Boots: {
-    return makeIndex(2, 3);
-}
-case I_Diamond_Helmet: {
-    return makeIndex(3, 0);
-}
-case I_Diamond_Chestplate: {
-    return makeIndex(3, 1);
-}
-case I_Diamond_Leggings: {
-    return makeIndex(3, 2);
-}
-case I_Diamond_Boots: {
-    return makeIndex(3, 3);
-}
-case I_Golden_Helmet: {
-    return makeIndex(4, 0);
-}
-case I_Golden_Chestplate: {
-    return makeIndex(4, 1);
-}
-case I_Golden_Leggings: {
-    return makeIndex(4, 2);
-}
-case I_Golden_Boots: {
-    return makeIndex(4, 3);
-}
-case I_Flint: {
-    return makeIndex(6, 0);
-}
-case I_Raw_Porkchop: {
-    return makeIndex(7, 5);
-}
-case I_Cooked_Porkchop: {
-    return makeIndex(8, 5);
-}
-case I_Painting: {
-    return makeIndex(10, 1);
-}
+        switch (id) {
+            case I_Iron_Shovel: {
+                return makeIndex(2, 5);
+            }
+            case I_Iron_Pickaxe: {
+                return makeIndex(2, 6);
+            }
+            case I_Iron_Axe: {
+                return makeIndex(2, 7);
+            }
+            case I_Flint_and_Steel: {
+                return makeIndex(5, 0);
+            }
+            case I_Apple: {
+                return makeIndex(10, 0);
+            }
+            case I_Bow: {
+                return makeIndex(5, 1);
+            }
+            case I_Arrow: {
+                return makeIndex(5, 2);
+            }
+            case I_Coal: {
+                return makeIndex(7, 0);
+            }
+            case I_Diamond: {
+                return makeIndex(7, 3);
+            }
+            case I_Iron_Ingot: {
+                return makeIndex(7, 1);
+            }
+            case I_Gold_Ingot: {
+                return makeIndex(7, 2);
+            }
+            case I_Iron_Sword: {
+                return makeIndex(2, 4);
+            }
+            case I_Wooden_Sword: {
+                return makeIndex(0, 4);
+            }
+            case I_Wooden_Shovel: {
+                return makeIndex(0, 5);
+            }
+            case I_Wooden_Pickaxe: {
+                return makeIndex(0, 6);
+            }
+            case I_Wooden_Axe: {
+                return makeIndex(0, 7);
+            }
+            case I_Stone_Sword: {
+                return makeIndex(1, 4);
+            }
+            case I_Stone_Shovel: {
+                return makeIndex(1, 5);
+            }
+            case I_Stone_Pickaxe: {
+                return makeIndex(1, 6);
+            }
+            case I_Stone_Axe: {
+                return makeIndex(1, 7);
+            }
+            case I_Diamond_Sword: {
+                return makeIndex(3, 4);
+            }
+            case I_Diamond_Shovel: {
+                return makeIndex(3, 5);
+            }
+            case I_Diamond_Pickaxe: {
+                return makeIndex(3, 6);
+            }
+            case I_Diamond_Axe: {
+                return makeIndex(3, 7);
+            }
+            case I_Stick: {
+                return makeIndex(5, 3);
+            }
+            case I_Bowl: {
+                return makeIndex(7, 4);
+            }
+            case I_Mushroom_Stew: {
+                return makeIndex(8, 4);
+            }
+            case I_Golden_Sword: {
+                return makeIndex(4, 4);
+            }
+            case I_Golden_Shovel: {
+                return makeIndex(4, 5);
+            }
+            case I_Golden_Pickaxe: {
+                return makeIndex(4, 6);
+            }
+            case I_Golden_Axe: {
+                return makeIndex(4, 7);
+            }
+            case I_String: {
+                return makeIndex(8, 0);
+            }
+            case I_Feather: {
+                return makeIndex(8, 1);
+            }
+            case I_Gunpowder: {
+                return makeIndex(8, 2);
+            }
+            case I_Wooden_Hoe: {
+                return makeIndex(0, 8);
+            }
+            case I_Stone_Hoe: {
+                return makeIndex(1, 8);
+            }
+            case I_Iron_Hoe: {
+                return makeIndex(2, 8);
+            }
+            case I_Diamond_Hoe: {
+                return makeIndex(3, 8);
+            }
+            case I_Golden_Hoe: {
+                return makeIndex(4, 8);
+            }
+            case I_Seeds: {
+                return makeIndex(9, 0);
+            }
+            case I_Wheat: {
+                return makeIndex(9, 1);
+            }
+            case I_Bread: {
+                return makeIndex(9, 2);
+            }
+            case I_Leather_Cap: {
+                return makeIndex(0, 0);
+            }
+            case I_Leather_Tunic: {
+                return makeIndex(0, 1);
+            }
+            case I_Leather_Pants: {
+                return makeIndex(0, 2);
+            }
+            case I_Leather_Boots: {
+                return makeIndex(0, 3);
+            }
+            case I_Chain_Helmet: {
+                return makeIndex(1, 0);
+            }
+            case I_Chain_Chestplate: {
+                return makeIndex(1, 1);
+            }
+            case I_Chain_Leggings: {
+                return makeIndex(1, 2);
+            }
+            case I_Chain_Boots: {
+                return makeIndex(1, 3);
+            }
+            case I_Iron_Helmet: {
+                return makeIndex(2, 0);
+            }
+            case I_Iron_Chestplate: {
+                return makeIndex(2, 1);
+            }
+            case I_Iron_Leggings: {
+                return makeIndex(2, 2);
+            }
+            case I_Iron_Boots: {
+                return makeIndex(2, 3);
+            }
+            case I_Diamond_Helmet: {
+                return makeIndex(3, 0);
+            }
+            case I_Diamond_Chestplate: {
+                return makeIndex(3, 1);
+            }
+            case I_Diamond_Leggings: {
+                return makeIndex(3, 2);
+            }
+            case I_Diamond_Boots: {
+                return makeIndex(3, 3);
+            }
+            case I_Golden_Helmet: {
+                return makeIndex(4, 0);
+            }
+            case I_Golden_Chestplate: {
+                return makeIndex(4, 1);
+            }
+            case I_Golden_Leggings: {
+                return makeIndex(4, 2);
+            }
+            case I_Golden_Boots: {
+                return makeIndex(4, 3);
+            }
+            case I_Flint: {
+                return makeIndex(6, 0);
+            }
+            case I_Raw_Porkchop: {
+                return makeIndex(7, 5);
+            }
+            case I_Cooked_Porkchop: {
+                return makeIndex(8, 5);
+            }
+            case I_Painting: {
+                return makeIndex(10, 1);
+            }
         }
 
         return -1;
     }
 
-    void add_face_to_mesh(const std::array<float, 12> &face, std::array<float, 8> tex, mathfu::Vector<float, 3> position,
-                                uint32_t value, Rendering::Mesh<Rendering::Vertex>& mesh, uint32_t& idx_counter) {
-        Rendering::Color c;
+    void
+    add_face_to_mesh(const std::array<float, 12> &face, std::array<float, 8> tex, const mathfu::Vector<float, 3>& position,
+                     uint32_t value, Rendering::Mesh<Rendering::Vertex> &mesh, uint32_t &idx_counter) {
+        Rendering::Color c{};
         c.color = value;
 
-        for(size_t i =0, tx = 0, idx = 0; i < 4; i++) {
+        for (size_t i = 0, tx = 0, idx = 0; i < 4; i++) {
             mesh.vertices.push_back(Rendering::Vertex{
                     tex[tx++],
                     tex[tx++],
@@ -327,8 +327,8 @@ case I_Painting: {
         mesh.indices.push_back(idx_counter + 0);
         idx_counter += 4;
     }
-    
-    void add_cube(block_t id, mathfu::Vector<float, 3> position, Rendering::Mesh<Rendering::Vertex>& mesh) {
+
+    void add_cube(block_t id, const mathfu::Vector<float, 3>& position, Rendering::Mesh<Rendering::Vertex> &mesh) {
         uint32_t idx_counter = 0;
         add_face_to_mesh(topFace, getTexCoord(id, LIGHT_TOP), position, LIGHT_TOP, mesh, idx_counter);
         add_face_to_mesh(bottomFace, getTexCoord(id, LIGHT_BOT), position, LIGHT_BOT, mesh, idx_counter);
@@ -345,19 +345,20 @@ case I_Painting: {
     auto ModelRenderer::init() -> void {
         gModelRenderer = new ModelRenderer();
 
-        for(int i = 0; i < 63; i++) {
+        for (int i = 0; i < 63; i++) {
             gModelRenderer->blockModels[i] = create_scopeptr<Rendering::Mesh<Rendering::Vertex>>();
 
             add_cube(i, {-0.5f, -0.5f, -0.5f}, *gModelRenderer->blockModels[i]);
         }
 
-        for(int i = 0; i < 65; i++) {
+        for (int i = 0; i < 65; i++) {
             gModelRenderer->itemModels[i] = create_scopeptr<Graphics::G2D::Sprite>(
-                ResourcePack::get().get_texture("items"),
-                Rendering::Rectangle{ {0.0f, 0.0f} , {16.0f, 16.0f}},
-                get_rendering_rectangle(
-                    get_mapped_item_index(i)
-                )
+                    ResourcePack::get().get_texture("items"),
+                    Rendering::Rectangle{{0.0f,  0.0f},
+                                         {16.0f, 16.0f}},
+                    get_rendering_rectangle(
+                            get_mapped_item_index(i)
+                    )
             );
         }
 
@@ -367,12 +368,18 @@ case I_Painting: {
 
             auto p = mathfu::Vector<float, 3>(0, 0, 0);
 
-            add_face_to_mesh(topFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP, *(gModelRenderer->breakModels[i].get()), idx_counter);
-            add_face_to_mesh(bottomFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP, *(gModelRenderer->breakModels[i].get()), idx_counter);
-            add_face_to_mesh(leftFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP, *(gModelRenderer->breakModels[i].get()), idx_counter);
-            add_face_to_mesh(rightFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP, *(gModelRenderer->breakModels[i].get()), idx_counter);
-            add_face_to_mesh(frontFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP, *(gModelRenderer->breakModels[i].get()), idx_counter);
-            add_face_to_mesh(backFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP, *(gModelRenderer->breakModels[i].get()), idx_counter);
+            add_face_to_mesh(topFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP,
+                             *(gModelRenderer->breakModels[i].get()), idx_counter);
+            add_face_to_mesh(bottomFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP,
+                             *(gModelRenderer->breakModels[i].get()), idx_counter);
+            add_face_to_mesh(leftFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP,
+                             *(gModelRenderer->breakModels[i].get()), idx_counter);
+            add_face_to_mesh(rightFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP,
+                             *(gModelRenderer->breakModels[i].get()), idx_counter);
+            add_face_to_mesh(frontFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP,
+                             *(gModelRenderer->breakModels[i].get()), idx_counter);
+            add_face_to_mesh(backFace, getTexCoord(239 + i, LIGHT_TOP), p, LIGHT_TOP,
+                             *(gModelRenderer->breakModels[i].get()), idx_counter);
 
             gModelRenderer->breakModels[i]->setup_buffer();
         }
@@ -386,13 +393,13 @@ case I_Painting: {
         gModelRenderer->breakModels[0]->delete_data();
 
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 1, 0});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 0, 1, 0});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 1, 0});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 1, 1, 0});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 1, 1});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 1, 1, 1});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 1, 1});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 0, 1, 1});
 
         gModelRenderer->breakModels[0]->indices.push_back(0);
         gModelRenderer->breakModels[0]->indices.push_back(1);
@@ -401,13 +408,13 @@ case I_Painting: {
         gModelRenderer->breakModels[0]->indices.push_back(0);
 
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 0, 0});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 0, 0, 0});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 0, 0});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 1, 0, 0});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 0, 1});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 1, 0, 1});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 0, 1});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 0, 0, 1});
 
         gModelRenderer->breakModels[0]->indices.push_back(4);
         gModelRenderer->breakModels[0]->indices.push_back(5);
@@ -416,13 +423,13 @@ case I_Painting: {
         gModelRenderer->breakModels[0]->indices.push_back(4);
 
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 0, 0});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 0, 0, 0});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 1, 0});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 0, 1, 0});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 1, 1});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 0, 1, 1});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 0, 1});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 0, 0, 1});
 
         gModelRenderer->breakModels[0]->indices.push_back(8);
         gModelRenderer->breakModels[0]->indices.push_back(9);
@@ -431,13 +438,13 @@ case I_Painting: {
         gModelRenderer->breakModels[0]->indices.push_back(8);
 
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 0, 0});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 1, 0, 0});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 1, 0});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 1, 1, 0});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 1, 1});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 1, 1, 1});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 0, 1});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 1, 0, 1});
 
         gModelRenderer->breakModels[0]->indices.push_back(12);
         gModelRenderer->breakModels[0]->indices.push_back(13);
@@ -446,13 +453,13 @@ case I_Painting: {
         gModelRenderer->breakModels[0]->indices.push_back(12);
 
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 0, 0});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 0, 0, 0});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 0, 0});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 1, 0, 0});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 1, 1, 0});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 1, 1, 0});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, {0, 0, 0, 128}, 0, 1, 0});
+                Rendering::Vertex{0, 0, {{0, 0, 0, 128}}, 0, 1, 0});
 
         gModelRenderer->breakModels[0]->indices.push_back(16);
         gModelRenderer->breakModels[0]->indices.push_back(17);
@@ -461,13 +468,13 @@ case I_Painting: {
         gModelRenderer->breakModels[0]->indices.push_back(16);
 
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, Rendering::Color{0, 0, 0, 128}, 0, 0, 1});
+                Rendering::Vertex{0, 0, Rendering::Color{{0, 0, 0, 128}}, 0, 0, 1});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, Rendering::Color{0, 0, 0, 128}, 1, 0, 1});
+                Rendering::Vertex{0, 0, Rendering::Color{{0, 0, 0, 128}}, 1, 0, 1});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, Rendering::Color{0, 0, 0, 128}, 1, 1, 1});
+                Rendering::Vertex{0, 0, Rendering::Color{{0, 0, 0, 128}}, 1, 1, 1});
         gModelRenderer->breakModels[0]->vertices.push_back(
-                Rendering::Vertex{0, 0, Rendering::Color{0, 0, 0, 128}, 0, 1, 1});
+                Rendering::Vertex{0, 0, Rendering::Color{{0, 0, 0, 128}}, 0, 1, 1});
 
         gModelRenderer->breakModels[0]->indices.push_back(20);
         gModelRenderer->breakModels[0]->indices.push_back(21);
@@ -488,8 +495,7 @@ case I_Painting: {
         breakModels[0]->draw(Rendering::PrimType::PRIM_TYPE_LINE);
 
         ctx->matrix_clear();
-        return;
-    }
+   }
 
     auto ModelRenderer::draw_break() -> void {
         if (BreakInformation::get().gBreaking) {
@@ -521,11 +527,12 @@ case I_Painting: {
         }
     }
 
-    auto ModelRenderer::get() -> ModelRenderer& {
-        return *gModelRenderer;    
+    auto ModelRenderer::get() -> ModelRenderer & {
+        return *gModelRenderer;
     }
 
-    auto ModelRenderer::draw_block(block_t id, mathfu::Vector<float, 3> position, mathfu::Vector<float, 3> rotation) -> void{
+    auto ModelRenderer::draw_block(block_t id, const mathfu::Vector<float, 3>& position,
+                                   const mathfu::Vector<float, 3>& rotation) -> void {
         Rendering::TextureManager::get().bind_texture(terrainTexID);
         Rendering::RenderContext::get().matrix_clear();
 
@@ -540,9 +547,10 @@ case I_Painting: {
         Rendering::RenderContext::get().matrix_pop();
     }
 
-    auto ModelRenderer::draw_item(item_t id, mathfu::Vector<float, 3> position, mathfu::Vector<float, 3> rotation) -> void{
+    auto
+    ModelRenderer::draw_item(item_t id, const mathfu::Vector<float, 3>& position, const mathfu::Vector<float, 3>& rotation) -> void {
         auto idTransform = id - 256;
-        if(idTransform < 0 || idTransform > 65) {
+        if (idTransform < 0 || idTransform > 65) {
             return;
         }
         //TODO: USE CC Transforms
@@ -554,7 +562,8 @@ case I_Painting: {
 
         // Give model to world
         Rendering::RenderContext::get().matrix_translate(position); // [6] Position the model to player
-        Rendering::RenderContext::get().matrix_rotate({-rotation.x, -rotation.y, 0.0f}); // [5] Rotate the model to player
+        Rendering::RenderContext::get().matrix_rotate(
+                {-rotation.x, -rotation.y, 0.0f}); // [5] Rotate the model to player
 
         // Scale and Center
         Rendering::RenderContext::get().matrix_push();
@@ -568,7 +577,7 @@ case I_Painting: {
 
     }
 
-    auto ModelRenderer::draw_block_hand(block_t id, mathfu::Vector<float, 3> position, mathfu::Vector<float, 2> rotation) -> void {
+    auto ModelRenderer::draw_block_hand(block_t id, const mathfu::Vector<float, 2>& rotation) -> void {
         GI::clearDepth();
 
         //TODO: USE CC Transforms
@@ -591,9 +600,10 @@ case I_Painting: {
         Rendering::RenderContext::get().matrix_pop();
         Rendering::RenderContext::get().matrix_pop();
     }
-    auto ModelRenderer::draw_item_hand(item_t id, mathfu::Vector<float, 3> position, mathfu::Vector<float, 2> rotation) -> void{
+
+    auto ModelRenderer::draw_item_hand(item_t id, const mathfu::Vector<float, 2>& rotation) -> void {
         auto idTransform = id - 256;
-        if(idTransform < 0 || idTransform > 65) {
+        if (idTransform < 0 || idTransform > 65) {
             return;
         }
 
@@ -620,7 +630,7 @@ case I_Painting: {
         Rendering::RenderContext::get().matrix_pop();
     }
 
-    auto ModelRenderer::draw_block_isometric(block_t id, mathfu::Vector<float, 3> position) -> void{
+    auto ModelRenderer::draw_block_isometric(block_t id, const mathfu::Vector<float, 3>& position) -> void {
         Rendering::TextureManager::get().bind_texture(terrainTexID);
         Rendering::RenderContext::get().matrix_clear();
 
@@ -633,9 +643,10 @@ case I_Painting: {
         blockModels[id]->draw();
         Rendering::RenderContext::get().matrix_pop();
     }
-    auto ModelRenderer::draw_item_isometric(item_t id, mathfu::Vector<float, 3> position) -> void {
+
+    auto ModelRenderer::draw_item_isometric(item_t id, const mathfu::Vector<float, 3>& position) -> void {
         auto idTransform = id - 256;
-        if(idTransform < 0 || idTransform > 65) {
+        if (idTransform < 0 || idTransform > 65) {
             return;
         }
 

@@ -1,7 +1,6 @@
 #include <Player/Player.hpp>
 #include <CC/core.h>
 #include <Utilities/Input.hpp>
-#include <ResourcePack.hpp>
 #include <Player/InGameMenu.hpp>
 
 #include <GLFW/glfw3.h>
@@ -13,7 +12,8 @@ namespace GI {
 
 namespace CrossCraft {
 
-    Player::Player() : camera(mathfu::Vector<float, 3>{0.0f, 0.0f, 0.0f}, mathfu::Vector<float, 3>{0.0f, 0.0f, 0.0f}, 70.0f, 16.0f / 9.0f, 0.1f, 1000.0f) {
+    Player::Player() : camera(mathfu::Vector<float, 3>{0.0f, 0.0f, 0.0f}, mathfu::Vector<float, 3>{0.0f, 0.0f, 0.0f},
+                              70.0f, 16.0f / 9.0f, 0.1f, 1000.0f) {
         auto pd = CC_Player_GetData();
 
         position = mathfu::Vector<float, 3>{pd->x, pd->y, pd->z};
@@ -30,9 +30,7 @@ namespace CrossCraft {
         tickTimer = 0.0f;
     }
 
-    Player::~Player() {
-
-    }
+    Player::~Player() = default;
 
     auto Player::handle_health_update(std::any p) -> void {
         auto update = std::any_cast<HealthUpdate>(p);
@@ -40,7 +38,7 @@ namespace CrossCraft {
         SC_APP_INFO("Health update: {}", update.health);
     }
 
-    void Player::do_rotate(double dt) {
+    void Player::do_rotate() {
         float cX = Utilities::Input::get_axis("Mouse", "X") * 0.1; // TODO: Sensitivity
         float cY = Utilities::Input::get_axis("Mouse", "Y") * 0.1; // TODO: Sensitivity
 
@@ -72,6 +70,7 @@ namespace CrossCraft {
     }
 
     const double GRAVITY = 28.0f;
+
     void Player::calculate_velocity(double dt) {
         float inputLen = sqrtf(horizInput * horizInput + vertInput * vertInput);
         if (inputLen > 0.0f) {
@@ -92,7 +91,7 @@ namespace CrossCraft {
     }
 
     void Player::do_move(double dt) {
-        if(in_water) {
+        if (in_water) {
             position.x += velocity.x * dt * 0.75f;
             position.y += velocity.y * dt * 0.33f;
             position.z += velocity.z * dt * 0.75f;
@@ -105,7 +104,8 @@ namespace CrossCraft {
         horizInput = 0.0f;
         vertInput = 0.0f;
 
-        CC_Event_Push_PlayerUpdate(PLAYER_SELF, position.x, position.y + 1.625f, position.z, rotation.x, rotation.y, on_ground);
+        CC_Event_Push_PlayerUpdate(PLAYER_SELF, position.x, position.y + 1.625f, position.z, rotation.x, rotation.y,
+                                   on_ground);
         camera.pos = -position;
         camera.pos.y -= 1.5f;
         camera.rot = mathfu::Vector<float, 3>{rotation.x, rotation.y, 0.0f};
@@ -116,7 +116,7 @@ namespace CrossCraft {
 
     mathfu::Vector<float, 3> Player::size = mathfu::Vector<float, 3>{0.6f, 1.8f, 0.6f};
 
-    bool test_block(mathfu::Vector<int, 3> pos) {
+    bool test_block(const mathfu::Vector<int, 3>& pos) {
         block_t block;
         bool res = CC_World_TryGetBlock(pos.x, pos.y, pos.z, &block);
 
@@ -139,35 +139,35 @@ namespace CrossCraft {
         int zMin = static_cast<int>(position.z - size.z / 2.0f);
         int zMax = static_cast<int>(position.z + size.z / 2.0f);
 
-        if(velocity.x < 0.0) {
+        if (velocity.x < 0.0) {
             worldX = (int) (position.x - size.x / 2.0f + velocity.x * dt);
             testX = true;
-        } else if(velocity.x > 0.0) {
+        } else if (velocity.x > 0.0) {
             worldX = (int) (position.x + size.x / 2.0f + velocity.x * dt);
             testX = true;
         }
 
-        if(velocity.y < 0.0) {
+        if (velocity.y < 0.0) {
             worldY = (int) (position.y - size.y + velocity.y * dt);
             testY = true;
-        } else if(velocity.y > 0.0) {
+        } else if (velocity.y > 0.0) {
             worldY = (int) (position.y + velocity.y * dt);
             testY = true;
         }
 
-        if(velocity.z < 0.0) {
+        if (velocity.z < 0.0) {
             worldZ = (int) (position.z - size.z / 2.0f + velocity.z * dt);
             testZ = true;
-        } else if(velocity.z > 0.0) {
+        } else if (velocity.z > 0.0) {
             worldZ = (int) (position.z + size.z / 2.0f + velocity.z * dt);
             testZ = true;
         }
 
-        if(testX) {
-            for(int y = yMin; y <= yMax; y++) {
-                for(int z = zMin; z <= zMax; z++) {
+        if (testX) {
+            for (int y = yMin; y <= yMax; y++) {
+                for (int z = zMin; z <= zMax; z++) {
                     mathfu::Vector<int, 3> pos = mathfu::Vector<int, 3>{worldX, y, z};
-                    if(test_block(pos)) {
+                    if (test_block(pos)) {
                         velocity.x = 0.0f;
                         break;
                     }
@@ -175,11 +175,11 @@ namespace CrossCraft {
             }
         }
 
-        if(testY) {
-            for(int x = xMin; x <= xMax; x++) {
-                for(int z = zMin; z <= zMax; z++) {
+        if (testY) {
+            for (int x = xMin; x <= xMax; x++) {
+                for (int z = zMin; z <= zMax; z++) {
                     mathfu::Vector<int, 3> pos = mathfu::Vector<int, 3>{x, worldY, z};
-                    if(test_block(pos)) {
+                    if (test_block(pos)) {
                         velocity.y = 0.0f;
                         break;
                     }
@@ -187,11 +187,11 @@ namespace CrossCraft {
             }
         }
 
-        if(testZ) {
-            for(int y = yMin; y <= yMax; y++) {
-                for(int x = xMin; x <= xMax; x++) {
+        if (testZ) {
+            for (int y = yMin; y <= yMax; y++) {
+                for (int x = xMin; x <= xMax; x++) {
                     mathfu::Vector<int, 3> pos = mathfu::Vector<int, 3>{x, y, worldZ};
-                    if(test_block(pos)) {
+                    if (test_block(pos)) {
                         velocity.z = 0.0f;
                         break;
                     }
@@ -207,19 +207,20 @@ namespace CrossCraft {
         // Check on Ground
         mathfu::Vector<float, 3> testPos = position;
         testPos.y -= 0.1f;
-        on_ground = test_block(mathfu::Vector<int, 3>{static_cast<int>(testPos.x), static_cast<int>(testPos.y), static_cast<int>(testPos.z)});
+        on_ground = test_block(mathfu::Vector<int, 3>{static_cast<int>(testPos.x), static_cast<int>(testPos.y),
+                                                      static_cast<int>(testPos.z)});
 
         // Check in Water
         block_t out, out2, out3;
         bool res = CC_World_TryGetBlock(testPos.x, testPos.y - 0.125f, testPos.z, &out);
         bool res2 = CC_World_TryGetBlock(testPos.x, testPos.y - 0.375f, testPos.z, &out2);
         bool res3 = CC_World_TryGetBlock(testPos.x, testPos.y + 1.3f, testPos.z, &out3);
-        if(res) {
+        if (res) {
             in_water = out == BLK_Water;
 
             water_face = res3 && out3 == BLK_Water;
 
-            if(in_water && res2 && out2 == BLK_Water) {
+            if (in_water && res2 && out2 == BLK_Water) {
                 on_ground = true;
             }
         }
@@ -229,15 +230,16 @@ namespace CrossCraft {
     const float BREAK_DISTANCE = 5.0f;
     const float PLACE_DISTANCE = 4.0f;
 
-    auto path_trace(mathfu::Vector<float, 3> pos, mathfu::Vector<float, 3> step, float max, mathfu::Vector<float, 3>& output) -> bool {
+    auto path_trace(mathfu::Vector<float, 3> pos, const mathfu::Vector<float, 3>& step, float max,
+                    mathfu::Vector<float, 3> &output) -> bool {
         pos.y += 1.625f; // This is a hack to make the ray trace work properly
 
-        for(int i = 0; i < max * 10; i++) {
+        for (int i = 0; i < max * 10; i++) {
             pos += step;
 
             block_t out;
             bool res = CC_World_TryGetBlock(pos.x, pos.y, pos.z, &out);
-            if(res && out != BLK_Air && out != BLK_Water) {
+            if (res && out != BLK_Air && out != BLK_Water) {
                 output = pos;
                 return true;
             }
@@ -246,7 +248,7 @@ namespace CrossCraft {
         return false;
     }
 
-    auto get_rotation(mathfu::Vector<float, 2> rotation) -> mathfu::Vector<float, 3> {
+    auto get_rotation(const mathfu::Vector<float, 2>& rotation) -> mathfu::Vector<float, 3> {
 
         auto rx = mathfu::Matrix<float, 3>::RotationX(rotation.x / 180.0f * M_PI);
         auto ry = mathfu::Matrix<float, 3>::RotationY((-rotation.y + 180.0f) / 180.0f * M_PI);
@@ -260,8 +262,8 @@ namespace CrossCraft {
 
     void Player::update(double dt) {
         // Handle input updates
-        if(!InGameMenu::get().is_open()) {
-            do_rotate(dt);
+        if (!InGameMenu::get().is_open()) {
+            do_rotate();
         }
 
         // Calculate velocity
@@ -277,7 +279,7 @@ namespace CrossCraft {
         do_move(dt);
 
         // TODO: Cleanup Break Information
-        if(BreakInformation::get().gBreaking) {
+        if (BreakInformation::get().gBreaking) {
             BreakInformation::get().gBreakingTimer -= dt;
         }
 
@@ -285,17 +287,19 @@ namespace CrossCraft {
         mathfu::Vector<float, 3> step = get_rotation(rotation) * 0.1f;
 
         mathfu::Vector<float, 3> out;
-        if(path_trace(pos, step, BREAK_DISTANCE, out)) {
-            BreakInformation::get().gSelectedPos = mathfu::Vector<int, 3>{static_cast<int>(out.x), static_cast<int>(out.y), static_cast<int>(out.z)};
+        if (path_trace(pos, step, BREAK_DISTANCE, out)) {
+            BreakInformation::get().gSelectedPos = mathfu::Vector<int, 3>{static_cast<int>(out.x),
+                                                                          static_cast<int>(out.y),
+                                                                          static_cast<int>(out.z)};
         } else {
             BreakInformation::get().gSelectedPos = mathfu::Vector<int, 3>{-1, -1, -1};
         }
 
         // TODO: Cleanup Tick (maybe move to a separate function)
         tickTimer += dt;
-        if(tickTimer > 0.05f) {
+        if (tickTimer > 0.05f) {
             tickTimer = 0.0f;
-            if(water_face) {
+            if (water_face) {
                 air -= 1;
             } else {
                 air = 300;
@@ -309,76 +313,84 @@ namespace CrossCraft {
 
         Inventory::get().draw_hotbar(dt);
 
-        InGameMenu::get().draw(dt);
+        InGameMenu::get().draw();
     }
 
     auto Player::move_forward(std::any p) -> void {
-        auto player = std::any_cast<Player*>(p);
+        auto player = std::any_cast<Player *>(p);
 
-        if(!InGameMenu::get().is_open()) {
+        if (!InGameMenu::get().is_open()) {
             player->vertInput += 1.0f;
         }
     }
-    auto Player::move_backward(std::any p) -> void {
-        auto player = std::any_cast<Player*>(p);
 
-        if(!InGameMenu::get().is_open()) {
+    auto Player::move_backward(std::any p) -> void {
+        auto player = std::any_cast<Player *>(p);
+
+        if (!InGameMenu::get().is_open()) {
             player->vertInput -= 1.0f;
         }
     }
-    auto Player::move_left(std::any p) -> void {
-        auto player = std::any_cast<Player*>(p);
 
-        if(!InGameMenu::get().is_open()) {
+    auto Player::move_left(std::any p) -> void {
+        auto player = std::any_cast<Player *>(p);
+
+        if (!InGameMenu::get().is_open()) {
             player->horizInput -= 1.0f;
         }
     }
-    auto Player::move_right(std::any p) -> void {
-        auto player = std::any_cast<Player*>(p);
 
-        if(!InGameMenu::get().is_open()) {
+    auto Player::move_right(std::any p) -> void {
+        auto player = std::any_cast<Player *>(p);
+
+        if (!InGameMenu::get().is_open()) {
             player->horizInput = 1.0f;
         }
     }
-    auto Player::jump(std::any p) -> void {
-        auto player = std::any_cast<Player*>(p);
 
-        if(player->on_ground) {
+    auto Player::jump(std::any p) -> void {
+        auto player = std::any_cast<Player *>(p);
+
+        if (player->on_ground) {
             player->velocity.y = 8.367f;
             player->on_ground = false;
         }
     }
 
-    auto Player::break_block_up(std::any p) -> void {
+    auto Player::break_block_up(const std::any& p) -> void {
         BreakInformation::get().gBreaking = false;
         BreakInformation::get().gBreakingTimer = 0.0f;
         BreakInformation::get().gBreakingTotal = 0.0f;
     }
 
     auto Player::break_block(std::any p) -> void {
-        auto player = std::any_cast<Player*>(p);
+        auto player = std::any_cast<Player *>(p);
 
         mathfu::Vector<float, 3> pos = player->position;
         mathfu::Vector<float, 3> step = get_rotation(player->rotation) * 0.1f;
 
         mathfu::Vector<float, 3> out;
-        if(path_trace(pos, step, BREAK_DISTANCE, out)) {
+        if (path_trace(pos, step, BREAK_DISTANCE, out)) {
 
-            if(!BreakInformation::get().gBreaking) {
+            if (!BreakInformation::get().gBreaking) {
                 BreakInformation::get().gBreaking = true;
                 BreakInformation::get().gBreakingTimer = 1.0f; // TODO: Get Time To Break From Equipment + Block Hit
                 BreakInformation::get().gBreakingTotal = 1.0f; // TODO: Get Time To Break From Equipment + Block Hit
                 SC_APP_INFO("Timer Started at {0}", BreakInformation::get().gBreakingTimer);
-                BreakInformation::get().gBreakingPos = mathfu::Vector<int, 3>{static_cast<int>(out.x), static_cast<int>(out.y), static_cast<int>(out.z)};
+                BreakInformation::get().gBreakingPos = mathfu::Vector<int, 3>{static_cast<int>(out.x),
+                                                                              static_cast<int>(out.y),
+                                                                              static_cast<int>(out.z)};
             }
 
-            if(BreakInformation::get().gBreaking) {
-                if(BreakInformation::get().gBreakingPos.x != (int)out.x || BreakInformation::get().gBreakingPos.y != (int)out.y || BreakInformation::get().gBreakingPos.z != (int)out.z) {
+            if (BreakInformation::get().gBreaking) {
+                if (BreakInformation::get().gBreakingPos.x != (int) out.x ||
+                    BreakInformation::get().gBreakingPos.y != (int) out.y ||
+                    BreakInformation::get().gBreakingPos.z != (int) out.z) {
                     BreakInformation::get().gBreaking = false;
                     BreakInformation::get().gBreakingTotal = 0.0f;
                 }
 
-                if(BreakInformation::get().gBreakingTimer < 0.0f) {
+                if (BreakInformation::get().gBreakingTimer < 0.0f) {
                     CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_BREAK, 0);
                     BreakInformation::get().gBreaking = false;
                     BreakInformation::get().gBreakingTotal = 0.0f;
@@ -387,40 +399,46 @@ namespace CrossCraft {
         }
     }
 
-    bool Player::safety_check_place(mathfu::Vector<int, 3> updatePosition) {
-        mathfu::Vector<int, 3> currentPosition = mathfu::Vector<int, 3>{static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(position.z)};
-        mathfu::Vector<int, 3> currentPositionY = mathfu::Vector<int, 3>{static_cast<int>(position.x), static_cast<int>(position.y + 1), static_cast<int>(position.z)};
+    bool Player::safety_check_place(const mathfu::Vector<int, 3>& updatePosition) const {
+        mathfu::Vector<int, 3> currentPosition = mathfu::Vector<int, 3>{static_cast<int>(position.x),
+                                                                        static_cast<int>(position.y),
+                                                                        static_cast<int>(position.z)};
+        mathfu::Vector<int, 3> currentPositionY = mathfu::Vector<int, 3>{static_cast<int>(position.x),
+                                                                         static_cast<int>(position.y + 1),
+                                                                         static_cast<int>(position.z)};
 
         return currentPosition != updatePosition && currentPositionY != updatePosition;
     }
 
     auto Player::place_block(std::any p) -> void {
-        auto player = std::any_cast<Player*>(p);
+        auto player = std::any_cast<Player *>(p);
 
         mathfu::Vector<float, 3> pos = player->position;
         mathfu::Vector<float, 3> step = get_rotation(player->rotation) * 0.1f;
 
         mathfu::Vector<float, 3> out;
-        if(path_trace(pos, step, PLACE_DISTANCE, out)) {
+        if (path_trace(pos, step, PLACE_DISTANCE, out)) {
             out -= step;
-            mathfu::Vector<int, 3> updatePosition = mathfu::Vector<int, 3>{static_cast<int>(out.x), static_cast<int>(out.y), static_cast<int>(out.z)};
+            mathfu::Vector<int, 3> updatePosition = mathfu::Vector<int, 3>{static_cast<int>(out.x),
+                                                                           static_cast<int>(out.y),
+                                                                           static_cast<int>(out.z)};
 
-            if(player->safety_check_place(updatePosition)) {
+            if (player->safety_check_place(updatePosition)) {
 
                 // Okay let's check the player inventory for the block they want to place
-                auto& itm = Inventory::get().get_selected();
-                if(itm.id == 0 || itm.count == 0) {
+                auto &itm = Inventory::get().get_selected();
+                if (itm.id == 0 || itm.count == 0) {
                     return;
                 }
                 auto id = itm.id;
-                if(id >= 256) {
+                if (id >= 256) {
                     //DON'T PLACE ITEMS!
                     return;
                 }
 
                 itm.count--;
 
-                if(itm.count == 0) {
+                if (itm.count == 0) {
                     itm.id = 0;
                 }
                 CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_PLACE, id);

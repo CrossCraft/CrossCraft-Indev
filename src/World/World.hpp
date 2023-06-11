@@ -1,16 +1,19 @@
 #pragma once
+
 #include <CC/core.h>
 #include <Chunk/ChunkStack.hpp>
 #include <map>
 
-namespace CrossCraft{
+namespace CrossCraft {
 
     class World {
     public:
         World();
+
         ~World();
 
         void update(double dt);
+
         void draw();
 
         /// This function is called when a block is updated
@@ -21,15 +24,17 @@ namespace CrossCraft{
         /// @param z The z position of the block
         void handle_block_update(uint32_t x, uint32_t y, uint32_t z);
 
-        void handle_spawn_item(int16_t eid, float x, float y, float z, float vx, float vy, float vz, ItemData item);
+        static void handle_spawn_item(int16_t eid, float x, float y, float z, float vx, float vy, float vz, ItemData item);
 
-        static auto save(std::any p) -> void;
+        static auto save(const std::any p) -> void;
+
     private:
 
         void check_chunk_update();
+
         void update_chunks_list();
 
-        std::map<uint64_t, ChunkStack*> chunks;
+        std::map<uint64_t, ChunkStack *> chunks;
         mathfu::Vector<int, 2> player_chunk;
         uint32_t terrainTexID;
     };

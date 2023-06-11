@@ -33,16 +33,22 @@ namespace CrossCraft {
     class FontRender {
     public:
         FontRender();
+
         ~FontRender();
 
-        void draw_text(uint8_t color, std::string text, mathfu::Vector<float, 2> pos, float layer);
-        void draw_text_aligned(uint8_t color, uint8_t align, std::string text, mathfu::Vector<float, 2> pos, float layer);
+        [[maybe_unused]] void draw_text(uint8_t color, const std::string& text, const mathfu::Vector<float, 2>& pos, float layer);
+
+        void
+        draw_text_aligned(uint8_t color, uint8_t align, const std::string& text, mathfu::Vector<float, 2> pos, float layer);
+
         void clear();
+
         void build();
 
         void draw();
+
     private:
-        void get_color(uint8_t color, Rendering::Color& fg, Rendering::Color& bg, uint8_t alpha = 255);
+        static void get_color(uint8_t color, Rendering::Color &fg, Rendering::Color &bg, uint8_t alpha = 255);
 
         ScopePtr<Graphics::G2D::FontRenderer> fontRenderer;
     };

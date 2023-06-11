@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Utilities/Singleton.hpp>
 #include <Rendering/Texture.hpp>
 #include <ResourcePack.hpp>
@@ -12,29 +13,35 @@ namespace CrossCraft {
     class InGameMenu : public Singleton {
     public:
         InGameMenu();
+
         ~InGameMenu();
 
-        void update(double dt);
-        void draw(double dt);
+        void update();
+
+        void draw();
 
         void toggle();
 
-        inline bool is_open() const {
+        [[nodiscard]] inline bool is_open() const {
             return open;
         }
 
         static auto init() -> void;
-        static auto get() -> InGameMenu&;
 
-        static auto toggle_command(std::any p) -> void {
+        static auto get() -> InGameMenu &;
+
+        static auto toggle_command(const std::any p) -> void {
             get().toggle();
         }
 
         static auto left_click_command(std::any p) -> void;
-        static auto right_click_command(std::any p) -> void;
+
+        static auto right_click_command() -> void;
 
     private:
-        auto draw_button(mathfu::Vector<float, 2> mousePos, mathfu::Vector<float, 2> pos, std::string text, bool disabled) -> void;
+        auto draw_button(const mathfu::Vector<float, 2>& mousePos, mathfu::Vector<float, 2> pos, const std::string& text,
+                         bool disabled) -> void;
+
         bool open;
 
         RefPtr<Graphics::G2D::Sprite> button_selected, button_unselected, button_disabled;

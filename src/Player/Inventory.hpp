@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Utilities/Singleton.hpp>
 #include <Rendering/Texture.hpp>
 #include <ResourcePack.hpp>
@@ -15,33 +16,39 @@ namespace CrossCraft {
     };
 
     class Inventory : public Singleton {
-        public:
+    public:
 
         Inventory();
+
         ~Inventory();
 
         auto try_add_item(ItemData item) -> bool;
 
-        inline static auto get() -> Inventory& {
+        inline static auto get() -> Inventory & {
             static Inventory inventory;
             return inventory;
         }
 
-        inline static auto get_selected() -> ItemData& {
+        inline static auto get_selected() -> ItemData & {
             return get().item_array[get().selection_idx + 36];
         }
 
         auto draw(double dt) -> void;
-        auto draw_block_hand(mathfu::Vector<float, 3> position, mathfu::Vector<float, 2> rotation, double dt) -> void;
+
+        auto draw_block_hand(const mathfu::Vector<float, 3>& position, const mathfu::Vector<float, 2>& rotation, double dt) -> void;
+
         auto draw_hotbar(double dt) -> void;
 
-        static auto increment_selection(std::any p) -> void;
-        static auto decrement_selection(std::any p) -> void;
+        static auto increment_selection(const std::any p) -> void;
+
+        static auto decrement_selection(const std::any p) -> void;
+
         static auto set_selection(std::any p) -> void;
+
         static auto drop_selection(std::any p) -> void;
 
-        private:
-        std::array<ItemData, 45> item_array;
+    private:
+        std::array<ItemData, 45> item_array{};
         uint8_t selection_idx = 0;
 
         RefPtr<FontRender> font_render;

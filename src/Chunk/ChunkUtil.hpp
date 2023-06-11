@@ -1,4 +1,5 @@
 #pragma once
+
 #include <array>
 #include <cstdint>
 #include <mathfu/vector.h>
@@ -10,27 +11,27 @@ namespace CrossCraft {
     using namespace Stardust_Celeste;
 
     struct SurroundingPositions {
-        
-        mathfu::Vector<float, 3> up;
-        mathfu::Vector<float, 3> down;
-        mathfu::Vector<float, 3> left;
-        mathfu::Vector<float, 3> right;
-        mathfu::Vector<float, 3> front;
-        mathfu::Vector<float, 3> back;
+
+        mathfu::Vector<int, 3> up;
+        mathfu::Vector<int, 3> down;
+        mathfu::Vector<int, 3> left;
+        mathfu::Vector<int, 3> right;
+        mathfu::Vector<int, 3> front;
+        mathfu::Vector<int, 3> back;
 
         inline void set(int x, int y, int z) {
-            up = mathfu::Vector<float, 3>(x, y + 1, z);
-            down = mathfu::Vector<float, 3>(x, y - 1, z);
-            left = mathfu::Vector<float, 3>(x - 1, y, z);
-            right = mathfu::Vector<float, 3>(x + 1, y, z);
-            front = mathfu::Vector<float, 3>(x, y, z + 1);
-            back = mathfu::Vector<float, 3>(x, y, z - 1);
+            up = mathfu::Vector<int, 3>(x, y + 1, z);
+            down = mathfu::Vector<int, 3>(x, y - 1, z);
+            left = mathfu::Vector<int, 3>(x - 1, y, z);
+            right = mathfu::Vector<int, 3>(x + 1, y, z);
+            front = mathfu::Vector<int, 3>(x, y, z + 1);
+            back = mathfu::Vector<int, 3>(x, y, z - 1);
         }
     };
 
     struct ChunkMeshInstance {
 
-        inline auto delete_data() -> void{
+        inline auto delete_data() -> void {
             mesh.delete_data();
             idx_counter = 0;
             mesh.vertices.clear();
@@ -72,14 +73,14 @@ namespace CrossCraft {
  * @param index Index of tile to get
  * @return std::array<float, 8>
  */
-    inline auto getTexture(mathfu::Vector<float, 2> sideCount, int index) -> std::array<float, 8> {
-        int row = index / (int)sideCount.x;
-        int column = index % (int)sideCount.y;
+    inline auto getTexture(const mathfu::Vector<float, 2>& sideCount, int index) -> std::array<float, 8> {
+        int row = index / (int) sideCount.x;
+        int column = index % (int) sideCount.y;
 
-        float sizeX = 1.f / ((float)sideCount.x);
-        float sizeY = 1.f / ((float)sideCount.y);
-        float y = (float)row * sizeY;
-        float x = (float)column * sizeX;
+        float sizeX = 1.f / ((float) sideCount.x);
+        float sizeY = 1.f / ((float) sideCount.y);
+        float y = (float) row * sizeY;
+        float x = (float) column * sizeX;
         float h = y + sizeY;
         float w = x + sizeX;
 
@@ -215,7 +216,7 @@ namespace CrossCraft {
                     //{0, 1, 2, 3, 4, 5, 6, 7}
                     //{x, h, w, h, w, y, x, y};
                     return {uv[0], uv[1] * 0.5f, uv[2], uv[3] * 0.5f,
-                            uv[4], uv[5],        uv[6], uv[7]};
+                            uv[4], uv[5], uv[6], uv[7]};
                 } else
                     return getTexture(vec, 6);
             }

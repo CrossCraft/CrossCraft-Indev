@@ -1,4 +1,5 @@
 #pragma once
+
 #include <array>
 
 const std::array<float, 12> frontFace{
@@ -44,28 +45,28 @@ const std::array<float, 12> rightFace{
         1, 1, 1
 };
 
-const std::array<float, 12> frontFaceHalf{
+[[maybe_unused]] const std::array<float, 12> frontFaceHalf{
         0, 0, 1,
         1, 0, 1,
         1, 0.5f, 1,
         0, 0.5f, 1
 };
 
-const std::array<float, 12> backFaceHalf{
+[[maybe_unused]] const std::array<float, 12> backFaceHalf{
         1, 0, 0,
         0, 0, 0,
         0, 0.5f, 0,
         1, 0.5f, 0
 };
 
-const std::array<float, 12> leftFaceHalf{
+[[maybe_unused]] const std::array<float, 12> leftFaceHalf{
         0, 0, 0,
         0, 0, 1,
         0, 0.5f, 1,
         0, 0.5f, 0
 };
 
-const std::array<float, 12> rightFaceHalf{
+[[maybe_unused]] const std::array<float, 12> rightFaceHalf{
         1, 0, 1,
         1, 0, 0,
         1, 0.5f, 0,
@@ -73,28 +74,28 @@ const std::array<float, 12> rightFaceHalf{
 };
 
 
-const std::array<float, 12> xFace1{
+[[maybe_unused]] const std::array<float, 12> xFace1{
         0, 0, 0,
         1, 0, 1,
         1, 1, 1,
         0, 1, 0
 };
 
-const std::array<float, 12> xFace2{
+[[maybe_unused]] const std::array<float, 12> xFace2{
         0, 0, 1,
         1, 0, 0,
         1, 1, 0,
         0, 1, 1
 };
 
-const std::array<float, 12> xFace3{
+[[maybe_unused]] const std::array<float, 12> xFace3{
         0, 0, 0,
         0, 1, 0,
         1, 1, 1,
         1, 0, 1
 };
 
-const std::array<float, 12> xFace4{
+[[maybe_unused]] const std::array<float, 12> xFace4{
         0, 0, 1,
         0, 1, 1,
         1, 1, 0,

@@ -19,7 +19,7 @@ public:
         this->set_state(state);
 
         // Set the background color
-        Rendering::Color color;
+        Rendering::Color color{};
         color.color = 0xFFFFFFFF;
 
         Rendering::RenderContext::get().vsync = false;

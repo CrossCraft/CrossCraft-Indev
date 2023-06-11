@@ -1,9 +1,7 @@
 #include <Chunk/ChunkStack.hpp>
 
 namespace CrossCraft {
-    ChunkStack::ChunkStack(int x, int z) {
-        cX = x;
-        cZ = z;
+    ChunkStack::ChunkStack(int x, int z) : cX(x), cZ(z) {
 
         chunks[0] = new ChunkMesh(x, 0, z);
         chunks[1] = new ChunkMesh(x, 1, z);
@@ -14,7 +12,7 @@ namespace CrossCraft {
     ChunkStack::~ChunkStack() = default;
 
     void ChunkStack::draw(ChunkMeshSelection selection) {
-        for (auto chunk : chunks) {
+        for (auto chunk: chunks) {
             chunk->draw(selection);
         }
     }

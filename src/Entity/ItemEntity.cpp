@@ -7,9 +7,8 @@ namespace CrossCraft {
         data = nullptr;
         lifetimer = 0;
     }
-    ItemEntity::~ItemEntity() {
 
-    }
+    ItemEntity::~ItemEntity() = default;
 
     auto ItemEntity::update(double dt) -> void {
         lifetimer += dt;
@@ -24,28 +23,30 @@ namespace CrossCraft {
             pos.y -= 0.5f;
             block_t blk;
             auto res = CC_World_TryGetBlock(pos.x, pos.y, pos.z, &blk);
-            if(res) {
-                if(blk != BLK_Air && blk != BLK_Water) {
+            if (res) {
+                if (blk != BLK_Air && blk != BLK_Water) {
                     velocity.y = 0;
                 }
             }
-            position.y += velocity.y * (float)dt;
+            position.y += velocity.y * (float) dt;
         }
 
-        position.x += velocity.x * (float)dt;
-        position.z += velocity.z * (float)dt;
+        position.x += velocity.x * (float) dt;
+        position.z += velocity.z * (float) dt;
     }
 
     auto ItemEntity::draw() -> void {
-        if(data != nullptr) {
-            if(data->count > 0) {
-                if(data->id < 256) {
+        if (data != nullptr) {
+            if (data->count > 0) {
+                if (data->id < 256) {
                     position.y += sinf(lifetimer) * 0.1f;
-                    ModelRenderer::get().draw_block(data->id, position, mathfu::Vector<float, 3>(rotation.x, rotation.y, 0));
+                    ModelRenderer::get().draw_block(data->id, position,
+                                                    mathfu::Vector<float, 3>(rotation.x, rotation.y, 0));
                     position.y -= sinf(lifetimer) * 0.1f;
                 } else {
                     position.y += sinf(lifetimer) * 0.1f;
-                    ModelRenderer::get().draw_item(data->id, position, mathfu::Vector<float, 3>(rotation.x, rotation.y, 0));
+                    ModelRenderer::get().draw_item(data->id, position,
+                                                   mathfu::Vector<float, 3>(rotation.x, rotation.y, 0));
                     position.y -= sinf(lifetimer) * 0.1;
                 }
             }

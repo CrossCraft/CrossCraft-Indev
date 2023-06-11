@@ -23,7 +23,7 @@ namespace CrossCraft {
         void toggle();
 
         [[nodiscard]] inline bool is_open() const {
-            return open;
+            return open || is_dead;
         }
 
         static auto init() -> void;
@@ -38,6 +38,7 @@ namespace CrossCraft {
 
         static auto right_click_command() -> void;
 
+        bool is_dead = false;
     private:
         auto draw_button(const mathfu::Vector<float, 2>& mousePos, mathfu::Vector<float, 2> pos, const std::string& text,
                          bool disabled) -> void;
@@ -45,6 +46,7 @@ namespace CrossCraft {
         bool open;
 
         RefPtr<Graphics::G2D::Sprite> button_selected, button_unselected, button_disabled;
+        RefPtr<Graphics::G2D::Sprite> death_overlay;
         RefPtr<Rendering::Primitive::Rectangle> background_rectangle;
 
         RefPtr<FontRender> font_render = nullptr;

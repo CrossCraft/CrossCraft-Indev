@@ -15,10 +15,19 @@ namespace CrossCraft {
     InGameMenu::InGameMenu() {
         open = false;
 
+        //TODO: Blue color <70, 70, 96, 216>
         background_rectangle = create_refptr<Rendering::Primitive::Rectangle>(
                 Rendering::Rectangle{{0,   0},
                                      {480, 272}},
-                Rendering::Color{{0, 0, 0, 128}}, 10);
+                Rendering::Color{{70, 70, 96, 216}}, 10);
+
+        death_overlay = create_refptr<Graphics::G2D::Sprite>(
+                ResourcePack::get().get_texture("death_overlay"),
+                Rendering::Rectangle{{0,   0},
+                                     {480, 272}});
+        death_overlay->set_layer(10);
+        //TODO: Calculate the correct values for the death overlay
+        death_overlay->set_color({192, 144, 168, 192});
 
         font_render = create_refptr<FontRender>();
 
@@ -42,6 +51,7 @@ namespace CrossCraft {
                                      {200,  20}}, Rendering::Rectangle{{0.0f,            86.0f / 256.0f},
                                                                        {200.0f / 256.0f, 20.0f / 256.0f}});
         button_selected->set_layer(11);
+
     }
 
     InGameMenu::~InGameMenu() = default;
@@ -70,14 +80,27 @@ namespace CrossCraft {
         auto mouseVec = mousePos * windowSize;
         mouseVec.y = windowSize.y - mouseVec.y;
 
-        SC_APP_INFO("Mouse: {0}, {1}", mouseVec.x, mouseVec.y);
 
-        if (mouseVec.x >= 190 && mouseVec.x <= 290 && mouseVec.y >= 130 && mouseVec.y <= 150) {
-            get().toggle();
-        } else if (mouseVec.x >= 190 && mouseVec.x <= 290 && mouseVec.y >= 106 && mouseVec.y <= 126) {
-            SC_APP_INFO("Unimplemented");
-        } else if (mouseVec.x >= 190 && mouseVec.x <= 290 && mouseVec.y >= 82 && mouseVec.y <= 102) {
-            World::save(std::move(p));
+        if(get().is_dead) {
+            if (mouseVec.x >= 190 && mouseVec.x <= 290 && mouseVec.y >= 76 && mouseVec.y <= 96) {
+                CC_Event_Push_PlayerRespawn();
+                get().is_dead = false;
+
+
+                Input::set_cursor_center();
+                glfwSetInputMode(GI::window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                Input::set_differential_mode("Mouse", true);
+            } else {
+                SC_APP_INFO("Unimplemented");
+            }
+        } else {
+            if (mouseVec.x >= 190 && mouseVec.x <= 290 && mouseVec.y >= 130 && mouseVec.y <= 150) {
+                get().toggle();
+            } else if (mouseVec.x >= 190 && mouseVec.x <= 290 && mouseVec.y >= 106 && mouseVec.y <= 126) {
+                SC_APP_INFO("Unimplemented");
+            } else if (mouseVec.x >= 190 && mouseVec.x <= 290 && mouseVec.y >= 82 && mouseVec.y <= 102) {
+                World::save(std::move(p));
+            }
         }
     }
 
@@ -114,14 +137,35 @@ namespace CrossCraft {
     }
 
     void InGameMenu::draw() {
-        if (!open)
-            return;
-
         auto cX = Input::get_axis("Mouse", "X");
         auto cY = Input::get_axis("Mouse", "Y");
         auto mouseVec = mathfu::Vector<float, 2>(cX, cY);
 
         Rendering::RenderContext::get().matrix_clear();
+
+        if(is_dead) {
+            death_overlay->draw();
+
+            font_render->clear();
+            font_render->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_CENTER, "Game over!",
+                                           mathfu::Vector<float, 2>(240, 192 - 24), 20.0f);
+            font_render->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_CENTER, "Score: 0",
+                                           mathfu::Vector<float, 2>(240, 168 - 24), 20.0f);
+
+            draw_button(mouseVec, mathfu::Vector<float, 2>(240, 120 - 24), "Respawn", false);
+            draw_button(mouseVec, mathfu::Vector<float, 2>(240, 96 - 24), "Title menu", false);
+
+            font_render->build();
+            Rendering::RenderContext::get().matrix_clear();
+            font_render->draw();
+
+            glfwSetInputMode(GI::window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            Input::set_differential_mode("Mouse", false);
+        }
+
+        if (!open)
+            return;
+
         background_rectangle->draw();
 
         font_render->clear();

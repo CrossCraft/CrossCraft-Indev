@@ -1,5 +1,7 @@
 #include <Chunk/ChunkMesh.hpp>
 #include <Chunk/FaceConst.hpp>
+#include <ResourcePack.hpp>
+#include <Rendering/Texture.hpp>
 
 namespace CrossCraft {
 
@@ -127,6 +129,23 @@ namespace CrossCraft {
         }
     }
 
+    uint16_t convertRGBA8toRGBA4(uint32_t rgba8) {
+        uint16_t r = (rgba8 >> 24) & 0xFF; // Extract 8-bit red
+        uint16_t g = (rgba8 >> 16) & 0xFF; // Extract 8-bit green
+        uint16_t b = (rgba8 >> 8) & 0xFF;  // Extract 8-bit blue
+        uint16_t a = rgba8 & 0xFF;         // Extract 8-bit alpha
+
+        // Convert them into 4-bit by taking the higher 4 bits of each 8-bit value
+        r = r >> 4;
+        g = g >> 4;
+        b = b >> 4;
+        a = a >> 4;
+
+        // Pack them into a 16-bit value
+        return (r << 12) | (g << 8) | (b << 4) | a;
+    }
+
+
     void
     ChunkMesh::add_face_to_mesh(const std::array<float, 12> &face, std::array<float, 8> tex,
                                 const mathfu::Vector<float, 3> &position,
@@ -134,14 +153,18 @@ namespace CrossCraft {
         Rendering::Color c{};
         c.color = value;
 
+        auto texture = ResourcePack::get().get_texture("terrain");
+        auto textureData = Rendering::TextureManager::get().get_texture(texture);
+        auto newColor = convertRGBA8toRGBA4(c.color);
+
         for (size_t i = 0, tx = 0, idx = 0; i < 4; i++) {
-            m.mesh.vertices.push_back(Rendering::Vertex{
-                    tex[tx++],
-                    tex[tx++],
-                    c,
-                    face[idx++] + position.x,
-                    face[idx++] + position.y,
-                    face[idx++] + position.z,
+            m.mesh.vertices.push_back(Rendering::SimpleVertex{
+                    static_cast<uint16_t>(tex[tx++] * 65535),
+                    static_cast<uint16_t>(tex[tx++] * 65535),
+                    newColor,
+                    static_cast<uint16_t>(face[idx++] + position.x),
+                    static_cast<uint16_t>(face[idx++] + position.y),
+                    static_cast<uint16_t>(face[idx++] + position.z),
             });
         }
 

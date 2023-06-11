@@ -53,7 +53,7 @@ namespace CrossCraft {
         }
 
         uint16_t idx_counter;
-        Rendering::Mesh<Rendering::Vertex> mesh;
+        Rendering::Mesh<Rendering::SimpleVertex> mesh;
     };
 
     enum ChunkMeshSelection {

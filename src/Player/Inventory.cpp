@@ -16,7 +16,7 @@ namespace CrossCraft {
 
     Inventory::Inventory() {
         for(int i = 9; i < 45; i++) {
-            item_array[i].id = i + 256;
+            item_array[i].id = i;
             item_array[i].count = i;
         }
 

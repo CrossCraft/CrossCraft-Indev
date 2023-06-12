@@ -57,10 +57,6 @@ namespace CrossCraft {
 
     InGameMenu::~InGameMenu() = default;
 
-    void InGameMenu::update() {
-
-    }
-
     InGameMenu *internal_state;
 
     auto InGameMenu::init() -> void {
@@ -71,7 +67,6 @@ namespace CrossCraft {
         return *internal_state;
     }
 
-
     auto InGameMenu::left_click_command(std::any p) -> void {
         auto cX = Input::get_axis("Mouse", "X");
         auto cY = Input::get_axis("Mouse", "Y");
@@ -80,7 +75,6 @@ namespace CrossCraft {
         mathfu::Vector<float, 2> windowSize(480, 272);
         auto mouseVec = mousePos * windowSize;
         mouseVec.y = windowSize.y - mouseVec.y;
-
 
         if(get().is_dead) {
             if (mouseVec.x >= 190 && mouseVec.x <= 290 && mouseVec.y >= 76 && mouseVec.y <= 96) {
@@ -177,9 +171,8 @@ namespace CrossCraft {
         draw_button(mouseVec, mathfu::Vector<float, 2>(240, 116), "Options", true);
         draw_button(mouseVec, mathfu::Vector<float, 2>(240, 92), "Save Game", false);
 
-        font_render->build();
         Rendering::RenderContext::get().matrix_clear();
-        font_render->draw();
+        font_render->finalize_draw();
     }
 
     void InGameMenu::toggle() {

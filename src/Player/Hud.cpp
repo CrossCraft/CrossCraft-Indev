@@ -59,40 +59,7 @@ namespace CrossCraft {
 
     HUD::~HUD() = default;
 
-    void HUD::draw(Player *player, double dt) {
-        heartTimer += dt;
-        timer += dt;
-        fpsCount++;
-
-        if (timer >= 1.0) {
-            timer = 0.0;
-            currentFPS = fpsCount;
-            fpsCount = 0;
-        }
-
-        if (player->water_face) {
-            water_sprite->draw();
-        }
-
-        crosshair->draw();
-
-
-        Rendering::RenderContext::get().matrix_clear();
-        if (player->air < 300) {
-            for (int i = 0; i < 10; i++) {
-                if (player->air - i * 30 > 0) {
-                    auto diff = player->air - i * 30;
-                    if (diff > 15 || diff == 0) {
-                        bubble->draw();
-                    } else {
-                        bubbleHalf->draw();
-                    }
-                }
-                Rendering::RenderContext::get().matrix_translate(
-                        {9.0f, 0.0f, 0.0f});
-            }
-        }
-
+    auto HUD::draw_hearts(Player *player) -> void {
         int off = 0;
         Rendering::RenderContext::get().matrix_clear();
 
@@ -125,6 +92,44 @@ namespace CrossCraft {
                         {(float) off, 0.0f, 0.0f});
             }
         }
+    }
+    auto HUD::draw_air(Player *player) -> void {
+        Rendering::RenderContext::get().matrix_clear();
+        if (player->air < 300) {
+            for (int i = 0; i < 10; i++) {
+                if (player->air - i * 30 > 0) {
+                    auto diff = player->air - i * 30;
+                    if (diff > 15 || diff == 0) {
+                        bubble->draw();
+                    } else {
+                        bubbleHalf->draw();
+                    }
+                }
+                Rendering::RenderContext::get().matrix_translate(
+                        {9.0f, 0.0f, 0.0f});
+            }
+        }
+    }
+
+    void HUD::draw(Player *player, double dt) {
+        heartTimer += dt;
+        timer += dt;
+        fpsCount++;
+
+        if (timer >= 1.0) {
+            timer = 0.0;
+            currentFPS = fpsCount;
+            fpsCount = 0;
+        }
+
+        if (player->water_face) {
+            water_sprite->draw();
+        }
+
+        crosshair->draw();
+
+        draw_air(player);
+        draw_hearts(player);
 
         Rendering::RenderContext::get().matrix_clear();
         auto ipos = mathfu::Vector<int, 3>(player->position.x, player->position.y, player->position.z);
@@ -135,7 +140,6 @@ namespace CrossCraft {
                                        std::to_string(ipos.z), mathfu::Vector<float, 2>(0, 264), 3.0f);
         font_render->draw_text_aligned(CC_TEXT_COLOR_YELLOW, CC_TEXT_ALIGN_RIGHT, "FPS: " + std::to_string(currentFPS),
                                        mathfu::Vector<float, 2>(480, 264), 3.0f);
-        font_render->build();
-        font_render->draw();
+        font_render->finalize_draw();
     }
 }

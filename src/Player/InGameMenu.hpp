@@ -16,8 +16,6 @@ namespace CrossCraft {
 
         ~InGameMenu();
 
-        void update();
-
         void draw();
 
         void toggle();

@@ -47,6 +47,8 @@ namespace CrossCraft {
 
         void draw();
 
+        void finalize_draw();
+
     private:
         static void get_color(uint8_t color, Rendering::Color &fg, Rendering::Color &bg, uint8_t alpha = 255);
 

@@ -5,6 +5,7 @@
 #include <ResourcePack.hpp>
 #include <Rendering/Texture.hpp>
 #include <Chunk/Frustum.hpp>
+#include <ModelRenderer.hpp>
 
 namespace CrossCraft {
 
@@ -37,8 +38,6 @@ namespace CrossCraft {
 
         if ((size_t) endX > maxX) endX = maxX;
         if ((size_t) endZ > maxZ) endZ = maxZ;
-
-        //SC_APP_DEBUG("SCANNING CHUNKS {0}, {1} -> {2}, {3}", startX, startZ, endX, endZ);
 
         for (int x = startX; x < endX; x++) {
             for (int z = startZ; z < endZ; z++) {
@@ -95,12 +94,15 @@ namespace CrossCraft {
             chunk->draw(ChunkMeshSelection::Opaque);
         }
 
+        EntityManager::get().draw();
+        ModelRenderer::get().draw_break();
+        ModelRenderer::get().draw_block_outline();
+
         // This is done to ensure that the transparent blocks are drawn after the opaque blocks
         for (auto &[val, chunk]: chunks) {
             chunk->draw(ChunkMeshSelection::Transparent);
         }
 
-        EntityManager::get().draw();
     }
 
     // This function generates a chunk vector from a block position

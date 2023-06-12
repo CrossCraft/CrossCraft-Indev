@@ -4,74 +4,6 @@
 #include <Chunk/FaceConst.hpp>
 #include <Player/Player.hpp>
 
-const item_t I_Iron_Shovel = 256;
-const item_t I_Iron_Pickaxe = 257;
-const item_t I_Iron_Axe = 258;
-const item_t I_Flint_and_Steel = 259;
-const item_t I_Apple = 260;
-const item_t I_Bow = 261;
-const item_t I_Arrow = 262;
-const item_t I_Coal = 263;
-const item_t I_Diamond = 264;
-const item_t I_Iron_Ingot = 265;
-const item_t I_Gold_Ingot = 266;
-const item_t I_Iron_Sword = 267;
-const item_t I_Wooden_Sword = 268;
-const item_t I_Wooden_Shovel = 269;
-const item_t I_Wooden_Pickaxe = 270;
-const item_t I_Wooden_Axe = 271;
-const item_t I_Stone_Sword = 272;
-const item_t I_Stone_Shovel = 273;
-const item_t I_Stone_Pickaxe = 274;
-const item_t I_Stone_Axe = 275;
-const item_t I_Diamond_Sword = 276;
-const item_t I_Diamond_Shovel = 277;
-const item_t I_Diamond_Pickaxe = 278;
-const item_t I_Diamond_Axe = 279;
-const item_t I_Stick = 280;
-const item_t I_Bowl = 281;
-const item_t I_Mushroom_Stew = 282;
-const item_t I_Golden_Sword = 283;
-const item_t I_Golden_Shovel = 284;
-const item_t I_Golden_Pickaxe = 285;
-const item_t I_Golden_Axe = 286;
-const item_t I_String = 287;
-const item_t I_Feather = 288;
-const item_t I_Gunpowder = 289;
-const item_t I_Wooden_Hoe = 290;
-const item_t I_Stone_Hoe = 291;
-const item_t I_Iron_Hoe = 292;
-const item_t I_Diamond_Hoe = 293;
-const item_t I_Golden_Hoe = 294;
-const item_t I_Seeds = 295;
-const item_t I_Wheat = 296;
-const item_t I_Bread = 297;
-const item_t I_Leather_Cap = 298;
-const item_t I_Leather_Tunic = 299;
-const item_t I_Leather_Pants = 300;
-const item_t I_Leather_Boots = 301;
-const item_t I_Chain_Helmet = 302;
-const item_t I_Chain_Chestplate = 303;
-const item_t I_Chain_Leggings = 304;
-const item_t I_Chain_Boots = 305;
-const item_t I_Iron_Helmet = 306;
-const item_t I_Iron_Chestplate = 307;
-const item_t I_Iron_Leggings = 308;
-const item_t I_Iron_Boots = 309;
-const item_t I_Diamond_Helmet = 310;
-const item_t I_Diamond_Chestplate = 311;
-const item_t I_Diamond_Leggings = 312;
-const item_t I_Diamond_Boots = 313;
-const item_t I_Golden_Helmet = 314;
-const item_t I_Golden_Chestplate = 315;
-const item_t I_Golden_Leggings = 316;
-const item_t I_Golden_Boots = 317;
-const item_t I_Flint = 318;
-const item_t I_Raw_Porkchop = 319;
-const item_t I_Cooked_Porkchop = 320;
-const item_t I_Painting = 321;
-
-
 namespace CrossCraft {
 
     ModelRenderer *gModelRenderer;
@@ -92,211 +24,85 @@ namespace CrossCraft {
                                     {16.0f / 256.0f,             16.0f / 256.0f}};
     }
 
-#define makeIndex(x, y) ((x) + (y) * 16)
+    constexpr int makeIndex(int x, int y) {
+        return x + y * 16;
+    }
 
-    //TODO: NUKE THIS
     auto get_mapped_item_index(int id) -> int {
         id += 256;
 
-        switch (id) {
-            case I_Iron_Shovel: {
-                return makeIndex(2, 5);
-            }
-            case I_Iron_Pickaxe: {
-                return makeIndex(2, 6);
-            }
-            case I_Iron_Axe: {
-                return makeIndex(2, 7);
-            }
-            case I_Flint_and_Steel: {
-                return makeIndex(5, 0);
-            }
-            case I_Apple: {
-                return makeIndex(10, 0);
-            }
-            case I_Bow: {
-                return makeIndex(5, 1);
-            }
-            case I_Arrow: {
-                return makeIndex(5, 2);
-            }
-            case I_Coal: {
-                return makeIndex(7, 0);
-            }
-            case I_Diamond: {
-                return makeIndex(7, 3);
-            }
-            case I_Iron_Ingot: {
-                return makeIndex(7, 1);
-            }
-            case I_Gold_Ingot: {
-                return makeIndex(7, 2);
-            }
-            case I_Iron_Sword: {
-                return makeIndex(2, 4);
-            }
-            case I_Wooden_Sword: {
-                return makeIndex(0, 4);
-            }
-            case I_Wooden_Shovel: {
-                return makeIndex(0, 5);
-            }
-            case I_Wooden_Pickaxe: {
-                return makeIndex(0, 6);
-            }
-            case I_Wooden_Axe: {
-                return makeIndex(0, 7);
-            }
-            case I_Stone_Sword: {
-                return makeIndex(1, 4);
-            }
-            case I_Stone_Shovel: {
-                return makeIndex(1, 5);
-            }
-            case I_Stone_Pickaxe: {
-                return makeIndex(1, 6);
-            }
-            case I_Stone_Axe: {
-                return makeIndex(1, 7);
-            }
-            case I_Diamond_Sword: {
-                return makeIndex(3, 4);
-            }
-            case I_Diamond_Shovel: {
-                return makeIndex(3, 5);
-            }
-            case I_Diamond_Pickaxe: {
-                return makeIndex(3, 6);
-            }
-            case I_Diamond_Axe: {
-                return makeIndex(3, 7);
-            }
-            case I_Stick: {
-                return makeIndex(5, 3);
-            }
-            case I_Bowl: {
-                return makeIndex(7, 4);
-            }
-            case I_Mushroom_Stew: {
-                return makeIndex(8, 4);
-            }
-            case I_Golden_Sword: {
-                return makeIndex(4, 4);
-            }
-            case I_Golden_Shovel: {
-                return makeIndex(4, 5);
-            }
-            case I_Golden_Pickaxe: {
-                return makeIndex(4, 6);
-            }
-            case I_Golden_Axe: {
-                return makeIndex(4, 7);
-            }
-            case I_String: {
-                return makeIndex(8, 0);
-            }
-            case I_Feather: {
-                return makeIndex(8, 1);
-            }
-            case I_Gunpowder: {
-                return makeIndex(8, 2);
-            }
-            case I_Wooden_Hoe: {
-                return makeIndex(0, 8);
-            }
-            case I_Stone_Hoe: {
-                return makeIndex(1, 8);
-            }
-            case I_Iron_Hoe: {
-                return makeIndex(2, 8);
-            }
-            case I_Diamond_Hoe: {
-                return makeIndex(3, 8);
-            }
-            case I_Golden_Hoe: {
-                return makeIndex(4, 8);
-            }
-            case I_Seeds: {
-                return makeIndex(9, 0);
-            }
-            case I_Wheat: {
-                return makeIndex(9, 1);
-            }
-            case I_Bread: {
-                return makeIndex(9, 2);
-            }
-            case I_Leather_Cap: {
-                return makeIndex(0, 0);
-            }
-            case I_Leather_Tunic: {
-                return makeIndex(0, 1);
-            }
-            case I_Leather_Pants: {
-                return makeIndex(0, 2);
-            }
-            case I_Leather_Boots: {
-                return makeIndex(0, 3);
-            }
-            case I_Chain_Helmet: {
-                return makeIndex(1, 0);
-            }
-            case I_Chain_Chestplate: {
-                return makeIndex(1, 1);
-            }
-            case I_Chain_Leggings: {
-                return makeIndex(1, 2);
-            }
-            case I_Chain_Boots: {
-                return makeIndex(1, 3);
-            }
-            case I_Iron_Helmet: {
-                return makeIndex(2, 0);
-            }
-            case I_Iron_Chestplate: {
-                return makeIndex(2, 1);
-            }
-            case I_Iron_Leggings: {
-                return makeIndex(2, 2);
-            }
-            case I_Iron_Boots: {
-                return makeIndex(2, 3);
-            }
-            case I_Diamond_Helmet: {
-                return makeIndex(3, 0);
-            }
-            case I_Diamond_Chestplate: {
-                return makeIndex(3, 1);
-            }
-            case I_Diamond_Leggings: {
-                return makeIndex(3, 2);
-            }
-            case I_Diamond_Boots: {
-                return makeIndex(3, 3);
-            }
-            case I_Golden_Helmet: {
-                return makeIndex(4, 0);
-            }
-            case I_Golden_Chestplate: {
-                return makeIndex(4, 1);
-            }
-            case I_Golden_Leggings: {
-                return makeIndex(4, 2);
-            }
-            case I_Golden_Boots: {
-                return makeIndex(4, 3);
-            }
-            case I_Flint: {
-                return makeIndex(6, 0);
-            }
-            case I_Raw_Porkchop: {
-                return makeIndex(7, 5);
-            }
-            case I_Cooked_Porkchop: {
-                return makeIndex(8, 5);
-            }
-            case I_Painting: {
-                return makeIndex(10, 1);
-            }
+        static const std::unordered_map<int, int> itemIndexMap = {
+                {ITM_Iron_Shovel, makeIndex(2, 5)},
+                {ITM_Iron_Pickaxe, makeIndex(2, 6)},
+                {ITM_Iron_Axe, makeIndex(2, 7)},
+                {ITM_Flint_and_Steel, makeIndex(5, 0)},
+                {ITM_Apple, makeIndex(10, 0)},
+                {ITM_Bow, makeIndex(5, 1)},
+                {ITM_Arrow, makeIndex(5, 2)},
+                {ITM_Coal, makeIndex(7, 0)},
+                {ITM_Diamond, makeIndex(7, 3)},
+                {ITM_Iron_Ingot, makeIndex(7, 1)},
+                {ITM_Gold_Ingot, makeIndex(7, 2)},
+                {ITM_Iron_Sword, makeIndex(2, 4)},
+                {ITM_Wooden_Sword, makeIndex(0, 4)},
+                {ITM_Wooden_Shovel, makeIndex(0, 5)},
+                {ITM_Wooden_Pickaxe, makeIndex(0, 6)},
+                {ITM_Wooden_Axe, makeIndex(0, 7)},
+                {ITM_Stone_Sword, makeIndex(1, 4)},
+                {ITM_Stone_Shovel, makeIndex(1, 5)},
+                {ITM_Stone_Pickaxe, makeIndex(1, 6)},
+                {ITM_Stone_Axe, makeIndex(1, 7)},
+                {ITM_Diamond_Sword, makeIndex(3, 4)},
+                {ITM_Diamond_Shovel, makeIndex(3, 5)},
+                {ITM_Diamond_Pickaxe, makeIndex(3, 6)},
+                {ITM_Diamond_Axe, makeIndex(3, 7)},
+                {ITM_Stick, makeIndex(5, 3)},
+                {ITM_Bowl, makeIndex(7, 4)},
+                {ITM_Mushroom_Stew, makeIndex(8, 4)},
+                {ITM_Golden_Sword, makeIndex(4, 4)},
+                {ITM_Golden_Shovel, makeIndex(4, 5)},
+                {ITM_Golden_Pickaxe, makeIndex(4, 6)},
+                {ITM_Golden_Axe, makeIndex(4, 7)},
+                {ITM_String, makeIndex(8, 0)},
+                {ITM_Feather, makeIndex(8, 1)},
+                {ITM_Gunpowder, makeIndex(8, 2)},
+                {ITM_Wooden_Hoe, makeIndex(0, 8)},
+                {ITM_Stone_Hoe, makeIndex(1, 8)},
+                {ITM_Iron_Hoe, makeIndex(2, 8)},
+                {ITM_Diamond_Hoe, makeIndex(3, 8)},
+                {ITM_Golden_Hoe, makeIndex(4, 8)},
+                {ITM_Seeds, makeIndex(9, 0)},
+                {ITM_Wheat, makeIndex(9, 1)},
+                {ITM_Bread, makeIndex(9, 2)},
+                {ITM_Leather_Cap, makeIndex(0, 0)},
+                {ITM_Leather_Tunic, makeIndex(0, 1)},
+                {ITM_Leather_Pants, makeIndex(0, 2)},
+                {ITM_Leather_Boots, makeIndex(0, 3)},
+                {ITM_Chain_Helmet, makeIndex(1, 0)},
+                {ITM_Chain_Chestplate, makeIndex(1, 1)},
+                {ITM_Chain_Leggings, makeIndex(1, 2)},
+                {ITM_Chain_Boots, makeIndex(1, 3)},
+                {ITM_Iron_Helmet, makeIndex(2, 0)},
+                {ITM_Iron_Chestplate, makeIndex(2, 1)},
+                {ITM_Iron_Leggings, makeIndex(2, 2)},
+                {ITM_Iron_Boots, makeIndex(2, 3)},
+                {ITM_Diamond_Helmet, makeIndex(3, 0)},
+                {ITM_Diamond_Chestplate, makeIndex(3, 1)},
+                {ITM_Diamond_Leggings, makeIndex(3, 2)},
+                {ITM_Diamond_Boots, makeIndex(3, 3)},
+                {ITM_Golden_Helmet, makeIndex(4, 0)},
+                {ITM_Golden_Chestplate, makeIndex(4, 1)},
+                {ITM_Golden_Leggings, makeIndex(4, 2)},
+                {ITM_Golden_Boots, makeIndex(4, 3)},
+                {ITM_Flint, makeIndex(6, 0)},
+                {ITM_Raw_Porkchop, makeIndex(7, 5)},
+                {ITM_Cooked_Porkchop, makeIndex(8, 5)},
+                {ITM_Painting, makeIndex(10, 1)}
+        };
+
+        auto it = itemIndexMap.find(id);
+        if (it != itemIndexMap.end()) {
+            return it->second;
         }
 
         return -1;

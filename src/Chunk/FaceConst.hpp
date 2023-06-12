@@ -24,6 +24,13 @@ const std::array<float, 12> topFace{
         0, 1, 0
 };
 
+const std::array<float, 12> waterTopFace{
+        0, 0.9f, 1,
+        1, 0.9f, 1,
+        1, 0.9f, 0,
+        0, 0.9f, 0
+};
+
 const std::array<float, 12> bottomFace{
         0, 0, 0,
         1, 0, 0,

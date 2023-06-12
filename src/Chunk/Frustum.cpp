@@ -48,30 +48,48 @@ auto Frustum::update_frustum() -> void {
 
 // http://iquilezles.org/www/articles/frustumcorrect/frustumcorrect.htm
 bool Frustum::IsBoxVisible(const mathfu::Vector<float ,3>& minp, const mathfu::Vector<float ,3>& maxp) const {
+    // Precompute corner vectors
+    const mathfu::Vector<float, 4> boxCorners[8] = {
+            {minp.x, minp.y, minp.z, 1.0f},
+            {maxp.x, minp.y, minp.z, 1.0f},
+            {minp.x, maxp.y, minp.z, 1.0f},
+            {maxp.x, maxp.y, minp.z, 1.0f},
+            {minp.x, minp.y, maxp.z, 1.0f},
+            {maxp.x, minp.y, maxp.z, 1.0f},
+            {minp.x, maxp.y, maxp.z, 1.0f},
+            {maxp.x, maxp.y, maxp.z, 1.0f}
+    };
+
     // check box outside/inside of frustum
-    for (int i = 0; i < Count; i++)
-    {
-        if ((mathfu::DotProductHelper(m_planes[i], mathfu::Vector<float, 4>(minp.x, minp.y, minp.z, 1.0f)) < 0.0) &&
-            (mathfu::DotProductHelper(m_planes[i], mathfu::Vector<float, 4>(maxp.x, minp.y, minp.z, 1.0f)) < 0.0) &&
-            (mathfu::DotProductHelper(m_planes[i], mathfu::Vector<float, 4>(minp.x, maxp.y, minp.z, 1.0f)) < 0.0) &&
-            (mathfu::DotProductHelper(m_planes[i], mathfu::Vector<float, 4>(maxp.x, maxp.y, minp.z, 1.0f)) < 0.0) &&
-            (mathfu::DotProductHelper(m_planes[i], mathfu::Vector<float, 4>(minp.x, minp.y, maxp.z, 1.0f)) < 0.0) &&
-            (mathfu::DotProductHelper(m_planes[i], mathfu::Vector<float, 4>(maxp.x, minp.y, maxp.z, 1.0f)) < 0.0) &&
-            (mathfu::DotProductHelper(m_planes[i], mathfu::Vector<float, 4>(minp.x, maxp.y, maxp.z, 1.0f)) < 0.0) &&
-            (mathfu::DotProductHelper(m_planes[i], mathfu::Vector<float, 4>(maxp.x, maxp.y, maxp.z, 1.0f)) < 0.0))
-        {
-            return false;
+    for (int i = 0; i < Count; i++) {
+        bool isInside = false;
+        for (const auto& corner : boxCorners) {
+            if (mathfu::DotProductHelper(m_planes[i], corner) >= 0.0f) {
+                isInside = true;
+                break;
+            }
         }
+        if (!isInside) return false;
     }
 
     // check frustum outside/inside box
+    constexpr int NUM_POINTS = 8;
     int out;
-    out = 0; for (int i = 0; i<8; i++) out += ((m_points[i].x > maxp.x) ? 1 : 0); if (out == 8) return false;
-    out = 0; for (int i = 0; i<8; i++) out += ((m_points[i].x < minp.x) ? 1 : 0); if (out == 8) return false;
-    out = 0; for (int i = 0; i<8; i++) out += ((m_points[i].y > maxp.y) ? 1 : 0); if (out == 8) return false;
-    out = 0; for (int i = 0; i<8; i++) out += ((m_points[i].y < minp.y) ? 1 : 0); if (out == 8) return false;
-    out = 0; for (int i = 0; i<8; i++) out += ((m_points[i].z > maxp.z) ? 1 : 0); if (out == 8) return false;
-    out = 0; for (int i = 0; i<8; i++) out += ((m_points[i].z < minp.z) ? 1 : 0); if (out == 8) return false;
+    for (int i = 0; i < NUM_POINTS; i++) {
+        if (m_points[i].x <= maxp.x && m_points[i].x >= minp.x &&
+            m_points[i].y <= maxp.y && m_points[i].y >= minp.y &&
+            m_points[i].z <= maxp.z && m_points[i].z >= minp.z) {
+            return true;
+        }
+        out = 0;
+        out += (m_points[i].x > maxp.x) ? 1 : 0;
+        out += (m_points[i].x < minp.x) ? 1 : 0;
+        out += (m_points[i].y > maxp.y) ? 1 : 0;
+        out += (m_points[i].y < minp.y) ? 1 : 0;
+        out += (m_points[i].z > maxp.z) ? 1 : 0;
+        out += (m_points[i].z < minp.z) ? 1 : 0;
+        if (out == NUM_POINTS) return false;
+    }
 
     return true;
 }

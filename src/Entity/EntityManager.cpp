@@ -12,16 +12,16 @@ namespace CrossCraft {
         for (auto &[id, entity]: entities) {
             entity->update(dt);
 
-            auto diff = player->position - entity->position;
-            auto length = diff.Length();
 
-            if (length < 1) {
-                ItemEntity *item;
-                if ((item = dynamic_cast<ItemEntity *>(entity)) && item->data != nullptr && item->data->count > 0 &&
-                    item->lifetimer > 0.5f) {
-                    if (Inventory::get().try_add_item(*item->data)) {
-                        CC_Event_Push_DestroyEntity(item->eid);
-                    }
+            ItemEntity *item;
+            if ((item = dynamic_cast<ItemEntity *>(entity)) && item->data != nullptr && item->data->count > 0 &&
+                item->lifetimer > 0.5f) {
+
+                auto diff = player->position - entity->position;
+                auto length = diff.Length();
+
+                if (length < 1 && Inventory::get().try_add_item(*item->data)) {
+                    CC_Event_Push_DestroyEntity(item->eid);
                 }
             }
         }

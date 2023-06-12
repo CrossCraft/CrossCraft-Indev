@@ -116,14 +116,27 @@ namespace CrossCraft {
 
     }
 
-    double poll_time = 10.0f;
 
-    void GameState::on_update(Core::Application *app, double dt) {
+    void GameState::check_poll_input(double dt) {
         poll_time += dt;
         if(poll_time > (1.0f / 240.0f)) {
             Input::update();
             poll_time = 0.0f;
         }
+    }
+
+    void GameState::tick(double dt) {
+        tick_time += dt;
+
+        if(tick_time > (1.0f / 20.0f)) {
+            tick_time = 0.0f;
+            player->tick();
+        }
+    }
+
+    void GameState::on_update(Core::Application *app, double dt) {
+        check_poll_input(dt);
+        tick(dt);
 
         player->update(dt);
         world->update(dt);
@@ -131,7 +144,11 @@ namespace CrossCraft {
 
         CC_Core_Update(dt);
 
-        //TODO: Move this to a better place
+        handle_events(dt);
+    }
+
+
+    void GameState::handle_events(double dt) {
         CC_Event *event;
         while ((event = CC_Event_Poll()) != nullptr) {
             switch (event->type) {
@@ -192,9 +209,6 @@ namespace CrossCraft {
 
     void GameState::on_draw(Core::Application *app, double dt) {
         world->draw();
-
-        ModelRenderer::get().draw_break();
-        ModelRenderer::get().draw_block_outline();
 
         Inventory::get().draw_block_hand(player->position, player->rotation, dt);
 

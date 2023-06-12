@@ -53,37 +53,48 @@ namespace CrossCraft {
         return -1;
     }
 
+    auto ResourcePack::get_path_index(std::string path) -> int {
+        int path_index = -1;
+
+        for (long int idx = packQueue.size() - 1; idx >= 0; idx--) {
+            if (unzLocateFile(packs[packQueue[idx]], path.c_str(), 0) == UNZ_OK) {
+                path_index = idx;
+                break;
+            }
+        }
+
+        if (path_index == -1) {
+            throw std::runtime_error("Resource not found: " + path);
+        }
+
+        return path_index;
+    }
+
+
+    auto ResourcePack::read_file_to_buffer(std::string packname, size_t& length) -> uint8_t* {
+        unzOpenCurrentFile(packs[packname]);
+
+        unz_file_info file_info;
+        unzGetCurrentFileInfo(packs[packname], &file_info, nullptr, 0, nullptr, 0, nullptr, 0);
+
+        length = file_info.uncompressed_size;
+        auto dataBuffer = malloc(sizeof(uint8_t) * length);
+
+        unzReadCurrentFile(packs[packname], dataBuffer, length);
+        return (uint8_t *)dataBuffer;
+    }
+
     auto ResourcePack::load_resource(std::string name, ResourceType type, const std::string& path) -> void {
         if (type == ResourceType::TEXTURE) {
-            int path_index = -1;
+            auto packname = packQueue[get_path_index(path)];
 
-            for (long int idx = packQueue.size() - 1; idx >= 0; idx--) {
-                if (unzLocateFile(packs[packQueue[idx]], path.c_str(), 0) == UNZ_OK) {
-                    path_index = idx;
-                    break;
-                }
-            }
-
-            if (path_index == -1) {
-                throw std::runtime_error("Resource not found: " + path);
-            }
-
-            auto packname = packQueue[path_index];
-
-            unzOpenCurrentFile(packs[packname]);
-
-            unz_file_info file_info;
-            unzGetCurrentFileInfo(packs[packname], &file_info, nullptr, 0, nullptr, 0, nullptr, 0);
-
-            auto arrayLength = file_info.uncompressed_size;
-            auto dataBuffer = new uint8_t[arrayLength];
-
-            unzReadCurrentFile(packs[packname], dataBuffer, arrayLength);
-
+            size_t arrayLength;
+            auto dataBuffer = read_file_to_buffer(packname, arrayLength);
             auto result = Rendering::TextureManager::get().load_texture_ram(dataBuffer, arrayLength,
                                                                             SC_TEX_FILTER_NEAREST,
                                                                             SC_TEX_FILTER_NEAREST, true);
-            delete[] dataBuffer;
+
+            free(dataBuffer);
 
             ResourceValue res{};
             res.type = ResourceType::TEXTURE;

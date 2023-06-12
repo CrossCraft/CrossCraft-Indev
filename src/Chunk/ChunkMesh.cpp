@@ -103,18 +103,20 @@ namespace CrossCraft {
         try_add_face(wd, backFace, block, vector3, positions.back, LIGHT_SIDE_Z);
     }
 
-    int stat = 0;
-
     void ChunkMesh::try_add_face(const WorldData *wd, const std::array<float, 12> &data, block_t block,
                                  const mathfu::Vector<float, 3> &actual_pos, const mathfu::Vector<int, 3> &check_pos,
                                  uint32_t lightValue) {
-        auto check_pos_wx = (int) check_pos.x + cX * 16;
-        auto check_pos_wy = (int) check_pos.y + cY * 16;
-        auto check_pos_wz = (int) check_pos.z + cZ * 16;
+        int offsetX = cX * 16;
+        int offsetY = cY * 16;
+        int offsetZ = cZ * 16;
 
-        if (check_pos_wx < 0 || check_pos_wx >= (int) wd->x ||
-            check_pos_wy < 0 || check_pos_wy >= (int) wd->y ||
-            check_pos_wz < 0 || check_pos_wz >= (int) wd->z) {
+        int check_pos_wx = check_pos.x + offsetX;
+        int check_pos_wy = check_pos.y + offsetY;
+        int check_pos_wz = check_pos.z + offsetZ;
+
+        if (check_pos_wx < 0 || check_pos_wx >= static_cast<int>(wd->x) ||
+            check_pos_wy < 0 || check_pos_wy >= static_cast<int>(wd->y) ||
+            check_pos_wz < 0 || check_pos_wz >= static_cast<int>(wd->z)) {
             return;
         }
 
@@ -123,16 +125,11 @@ namespace CrossCraft {
 
         if (block_check == BLK_Air || block_check == BLK_Water || block_check == BLK_Leaves) {
             if (block == BLK_Water && block_check != BLK_Water) {
-                std::array<float, 12> data2 = data;
                 if (lightValue == LIGHT_TOP) {
-                    data2[1] *= 0.9f;
-                    data2[4] *= 0.9f;
-                    data2[7] *= 0.9f;
-                    data2[10] *= 0.9f;
-
-                    stat += 1;
+                    add_face_to_mesh(waterTopFace, getTexCoord(block, lightValue), actual_pos, lightValue, mesh.transparent);
+                } else {
+                    add_face_to_mesh(data, getTexCoord(block, lightValue), actual_pos, lightValue, mesh.transparent);
                 }
-                add_face_to_mesh(data2, getTexCoord(block, lightValue), actual_pos, lightValue, mesh.transparent);
             } else if (block == BLK_Leaves) {
                 add_face_to_mesh(data, getTexCoord(block, lightValue), actual_pos, lightValue, mesh.opaque);
             } else {
@@ -159,35 +156,31 @@ namespace CrossCraft {
         return (r << 12) | (g << 8) | (b << 4) | a;
     }
 
+    const std::array<uint16_t, 6> indexOrder = {0, 1, 2, 2, 3, 0};
 
     void
     ChunkMesh::add_face_to_mesh(const std::array<float, 12> &face, std::array<float, 8> tex,
                                 const mathfu::Vector<float, 3> &position,
                                 uint32_t value, ChunkMeshInstance &m) {
-        Rendering::Color c{};
-        c.color = value;
-
-        auto texture = ResourcePack::get().get_texture("terrain");
-        auto textureData = Rendering::TextureManager::get().get_texture(texture);
-        auto newColor = convertRGBA8toRGBA4(c.color);
+        constexpr uint16_t maxTextureCoordinate = 65535;
+        constexpr uint16_t scaleFactor = 32;
+        auto newColor = convertRGBA8toRGBA4(value);
 
         for (size_t i = 0, tx = 0, idx = 0; i < 4; i++) {
             m.mesh.vertices.push_back(Rendering::SimpleVertex{
-                    static_cast<uint16_t>(tex[tx++] * 65535),
-                    static_cast<uint16_t>(tex[tx++] * 65535),
+                    static_cast<uint16_t>(tex[tx++] * maxTextureCoordinate),
+                    static_cast<uint16_t>(tex[tx++] * maxTextureCoordinate),
                     newColor,
                     static_cast<uint16_t>(face[idx++] + position.x),
-                    static_cast<uint16_t>(face[idx++] * 32 + position.y * 32),
+                    static_cast<uint16_t>(face[idx++] * scaleFactor + position.y * scaleFactor),
                     static_cast<uint16_t>(face[idx++] + position.z),
             });
         }
 
-        m.mesh.indices.push_back(m.idx_counter + 0);
-        m.mesh.indices.push_back(m.idx_counter + 1);
-        m.mesh.indices.push_back(m.idx_counter + 2);
-        m.mesh.indices.push_back(m.idx_counter + 2);
-        m.mesh.indices.push_back(m.idx_counter + 3);
-        m.mesh.indices.push_back(m.idx_counter + 0);
+        for (size_t i = 0; i < 6; i++) {
+            m.mesh.indices.push_back(m.idx_counter + indexOrder[i]);
+        }
         m.idx_counter += 4;
     }
+
 }

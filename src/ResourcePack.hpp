@@ -50,6 +50,9 @@ namespace CrossCraft {
     private:
         ResourcePack();
 
+        auto get_path_index(std::string path) -> int;
+        auto read_file_to_buffer(std::string packname, size_t& length) -> uint8_t*;
+
         auto load_resource(std::string name, ResourceType type, const std::string& path) -> void;
 
         std::map<std::string, ResourceValue> resources;

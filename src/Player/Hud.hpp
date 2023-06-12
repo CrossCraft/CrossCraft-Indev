@@ -16,6 +16,9 @@ namespace CrossCraft {
         void draw(Player *player, double dt);
 
     private:
+        auto draw_hearts(Player *player) -> void;
+        auto draw_air(Player *player) -> void;
+
         RefPtr<FontRender> font_render;
 
         ScopePtr<Graphics::G2D::Sprite> heartBG, heartHalf, heartFull;

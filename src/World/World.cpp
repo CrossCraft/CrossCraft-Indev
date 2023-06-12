@@ -87,6 +87,7 @@ namespace CrossCraft {
     }
 
     void World::draw() {
+        GI::enable(GI_FOG);
         Frustum::update();
 
         Rendering::TextureManager::get().bind_texture(terrainTexID);

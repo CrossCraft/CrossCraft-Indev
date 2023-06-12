@@ -10,6 +10,10 @@
 namespace CrossCraft {
     using namespace Stardust_Celeste;
 
+    struct PassOnData {
+        float cX, cY;
+    };
+
     class InGameMenu : public Singleton {
     public:
         InGameMenu();

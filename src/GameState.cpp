@@ -21,7 +21,7 @@ namespace CrossCraft {
     auto GameState::on_action_left(std::any p) -> void {
         auto player = std::any_cast<Player *>(p);
 
-        if (InGameMenu::get().is_open()) {
+        if (InGameMenu::get().is_open() || Inventory::is_open()) {
             InGameMenu::left_click_command(p);
         } else {
             Player::break_block(player);
@@ -31,7 +31,7 @@ namespace CrossCraft {
     auto GameState::on_action_right(std::any p) -> void {
         auto player = std::any_cast<Player *>(p);
 
-        if (InGameMenu::get().is_open()) {
+        if (InGameMenu::get().is_open() || Inventory::is_open()) {
             InGameMenu::right_click_command();
         } else {
             Player::place_block(player);
@@ -122,6 +122,7 @@ namespace CrossCraft {
         if(poll_time > (1.0f / 240.0f)) {
             Input::update();
             poll_time = 0.0f;
+            Inventory::get().update();
         }
     }
 

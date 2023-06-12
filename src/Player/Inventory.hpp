@@ -37,6 +37,10 @@ namespace CrossCraft {
             return get().open;
         }
 
+        static auto left_action(std::any p) -> void;
+        static auto right_action(std::any p) -> void;
+
+        auto update() -> void;
         auto draw(double dt) -> void;
 
         auto draw_block_hand(const mathfu::Vector<float, 3>& position, const mathfu::Vector<float, 2>& rotation, double dt) -> void;
@@ -56,12 +60,18 @@ namespace CrossCraft {
     private:
         bool open;
         std::array<ItemData, 45> item_array{};
+        ItemData pickup_slot;
         uint8_t selection_idx = 0;
+        mathfu::Vector<float, 2> mouse_pos;
 
         RefPtr<FontRender> font_render_hotbar, font_render_inventory;
         ScopePtr<Graphics::G2D::Sprite> hotbar, hotbar_select;
 
         RefPtr<Rendering::Primitive::Rectangle> background_rectangle;
         ScopePtr<Graphics::G2D::Sprite> inventory_background;
+
+
+        bool is_mouse_pressed = false;
+        bool is_mouse_held = false;
     };
 }

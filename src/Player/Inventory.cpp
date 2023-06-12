@@ -51,6 +51,9 @@ namespace CrossCraft {
 
         font_render_hotbar = create_refptr<FontRender>();
         font_render_inventory = create_refptr<FontRender>();
+
+        pickup_slot.id = 0;
+        pickup_slot.count = 0;
     }
 
     Inventory::~Inventory() = default;
@@ -87,6 +90,69 @@ namespace CrossCraft {
             }
         }
 
+        // Draw stuff in lower slots
+        if(item_array[0].id != 0) {
+            Rendering::RenderContext::get().matrix_clear();
+            if (item_array[0].id < 256) {
+                ModelRenderer::get().draw_block_isometric(item_array[0].id, {143 + 153 + 8, 53 + (176 - 36 - 18),  12.0f});
+            } else {
+                ModelRenderer::get().draw_item_isometric(item_array[0].id, {143 + 153, 53 + (176 - 36 - 18), 12.0f});
+            }
+
+            if (item_array[0].count > 1) {
+                font_render_inventory->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_RIGHT, std::to_string(item_array[0].count),
+                                                         {143 + 153 + 17, 53 + (176 - 36 - 18 - 9)}, 20.0f);
+            }
+        }
+
+        // Draw the crafting slots
+        for(int i = 0; i < 4; i++) {
+            if(item_array[i + 1].id != 0) {
+                Rendering::RenderContext::get().matrix_clear();
+                if (item_array[i + 1].id < 256) {
+                    ModelRenderer::get().draw_block_isometric(item_array[i + 1].id, {static_cast<float>(248 + 18 * (i%2)), static_cast<float>(185 - 18 * (i/2)),  12.0f});
+                } else {
+                    ModelRenderer::get().draw_item_isometric(item_array[i + 1].id, {static_cast<float>(248 + 18 * (i%2)), static_cast<float>(185 - 18 * (i/2)), 12.0f});
+                }
+
+                if (item_array[i + 1].count > 1) {
+                    font_render_inventory->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_RIGHT, std::to_string(item_array[i + 1].count),
+                                                             {static_cast<float>(248 + 18 * (i%2) + 9), static_cast<float>(185 - 18 * (i/2)) - 9}, 20.0f);
+                }
+            }
+        }
+
+        // Draw the armor slots
+        for(int i = 0; i < 4; i++) {
+            if(item_array[i + 5].id != 0) {
+                Rendering::RenderContext::get().matrix_clear();
+                if (item_array[i + 5].id < 256) {
+                    ModelRenderer::get().draw_block_isometric(item_array[i + 5].id, {168, static_cast<float>(203 - 18 * i),  12.0f});
+                } else {
+                    ModelRenderer::get().draw_item_isometric(item_array[i + 5].id, {168, static_cast<float>(203 - 18 * i), 12.0f});
+                }
+
+                if (item_array[i + 5].count > 1) {
+                    font_render_inventory->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_RIGHT, std::to_string(item_array[i + 5].count),
+                                                             {168 + 9, static_cast<float>(203 - 18 * i) - 9}, 20.0f);
+                }
+            }
+        }
+
+        // Draw the selected block(s)
+        if(pickup_slot.id != 0) {
+            if (pickup_slot.id < 256) {
+                ModelRenderer::get().draw_block_isometric(pickup_slot.id, {mouse_pos, 24.0f});
+            } else {
+                ModelRenderer::get().draw_item_isometric(pickup_slot.id, {mouse_pos, 24.0f});
+            }
+            if(pickup_slot.count > 1) {
+                font_render_inventory->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_RIGHT,
+                                                         std::to_string(pickup_slot.count),
+                                                         mouse_pos - mathfu::Vector<float, 2>(-8.0f, 8.0f), 32.0f);
+            }
+        }
+
         Rendering::RenderContext::get().matrix_clear();
         font_render_inventory->build();
         font_render_inventory->draw();
@@ -114,6 +180,119 @@ namespace CrossCraft {
             return;
         }
         get().selection_idx = new_idx;
+    }
+
+    auto Inventory::update() -> void {
+        if(get().is_mouse_pressed) {
+            get().is_mouse_pressed = false;
+        } else if(get().is_mouse_held && !get().is_mouse_pressed) {
+            get().is_mouse_held = false;
+        }
+
+        auto cX = Input::get_axis("Mouse", "X");
+        auto cY = Input::get_axis("Mouse", "Y");
+        mouse_pos = {cX * 480.0f, 272.0f + -cY * 272.0f};
+    }
+
+    auto get_inventory_index(mathfu::Vector<int, 2> pd) -> int {
+        int idx = -1;
+        pd.x -= 159;
+        pd.y -= 53;
+
+        if(pd.y > 83) {
+            //This is the main inventory area.
+            int ix = pd.x / 18.0f;
+            int iy = pd.y / 18.0f - 5.0f + 0.277f;
+
+            idx = ix + iy * 9 + 9;
+        } else {
+            if(pd.x < 18) {
+                // This is the armor area
+                int ix = pd.x / 18.0f;
+                int iy = pd.y / 20.0f;
+
+                idx = ix + iy + 5;
+            } else if(pd.x > 62 && pd.x < 62 + 48) {
+                pd.x -= 62 + 18;
+                pd.y -= 24;
+
+                // This is the crafting area
+                int ix = pd.x / 18.0f;
+                int iy = pd.y / 20.0f;
+
+                idx = ix + iy * 2 + 1;
+            } else if(pd.x > 140 && pd.x < 160 && pd.y > 34 && pd.y < 54) {
+                idx = 0;
+            }
+        }
+
+        return idx;
+    }
+
+    auto Inventory::left_action(std::any p) -> void {
+        auto pd = std::any_cast<PassOnData>(p);
+        pd.cX *= 480;
+        pd.cY *= 272;
+        get().mouse_pos = {pd.cX, pd.cY};
+
+        get().is_mouse_pressed = true;
+
+        if(!get().is_mouse_held) {
+            get().is_mouse_held = true;
+        } else {
+            get().is_mouse_held = true;
+            return;
+        }
+
+        // Out of bound
+        if(pd.cX < 159 || pd.cX > (159 + 161))
+            return;
+
+        // Out of bound
+        if(pd.cY < 53 || pd.cY > (53 + 157))
+            return;
+
+        auto idx = get_inventory_index({static_cast<int>(pd.cX), static_cast<int>(pd.cY)});
+
+        if(idx == -1) return;
+
+        SC_APP_INFO("INVENTORY SELECTED: {}", idx);
+
+        auto& inst = get();
+        if(inst.pickup_slot.id == 0 && inst.item_array[idx].id != 0) {
+            inst.pickup_slot = inst.item_array[idx];
+            inst.item_array[idx] = {0, 0, 0};
+        } else if(inst.pickup_slot.id != 0 && inst.item_array[idx].id == 0) {
+            inst.item_array[idx] = inst.pickup_slot;
+            inst.pickup_slot = {0, 0, 0};
+        }
+
+        /*
+        auto ix = (pd.x - 168.0f) / 18.0f;
+
+        int extra_off = 0;
+        if(i >= 36) {
+            extra_off = -4;
+        }
+
+        Rendering::RenderContext::get().matrix_clear();
+        if (slot.id < 256) {
+            ModelRenderer::get().draw_block_isometric(slot.id, {168 + 18.0f * (float)(i % 9), 127.0f - 18.0f * (float)(i/9 - 1) + (float)extra_off, 12.0f});
+        } else {
+            ModelRenderer::get().draw_item_isometric(slot.id, {168 + 18.0f * (float)(i % 9), 127.0f - 18.0f * (float)(i/9 - 1) + (float)extra_off, 12.0f});
+        }
+
+
+        SC_APP_INFO("Left action: {} {}",pd.x, pd.y);
+         */
+    }
+
+    auto Inventory::right_action(std::any p) -> void {
+        auto pd = std::any_cast<PassOnData>(p);
+        pd.cX *= 480;
+        pd.cY *= 272;
+
+        SC_APP_INFO("Right action: {} {}",pd.cX, pd.cY);
     }
 
     auto Inventory::try_add_item(ItemData item) -> bool {

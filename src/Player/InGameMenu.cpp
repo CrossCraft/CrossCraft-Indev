@@ -70,6 +70,12 @@ namespace CrossCraft {
     auto InGameMenu::left_click_command(std::any p) -> void {
         auto cX = Input::get_axis("Mouse", "X");
         auto cY = Input::get_axis("Mouse", "Y");
+
+        if(Inventory::is_open()) {
+            Inventory::left_action(PassOnData{cX, cY});
+            return;
+        }
+
         auto mousePos = mathfu::Vector<float, 2>(cX, cY);
 
         mathfu::Vector<float, 2> windowSize(480, 272);
@@ -100,7 +106,11 @@ namespace CrossCraft {
     }
 
     auto InGameMenu::right_click_command() -> void {
-
+        auto cX = Input::get_axis("Mouse", "X");
+        auto cY = Input::get_axis("Mouse", "Y");
+        if(Inventory::is_open()) {
+            Inventory::right_action(PassOnData{cX, cY});
+        }
     }
 
     auto InGameMenu::draw_button(const mathfu::Vector<float, 2>& mousePos, mathfu::Vector<float, 2> pos, const std::string& text,

@@ -142,14 +142,14 @@ namespace CrossCraft {
         // Draw the selected block(s)
         if(pickup_slot.id != 0) {
             if (pickup_slot.id < 256) {
-                ModelRenderer::get().draw_block_isometric(pickup_slot.id, {mouse_pos, 24.0f});
+                ModelRenderer::get().draw_block_isometric(pickup_slot.id, {mouse_pos, 24.0f}, 1.2f);
             } else {
                 ModelRenderer::get().draw_item_isometric(pickup_slot.id, {mouse_pos, 24.0f});
             }
             if(pickup_slot.count > 1) {
                 font_render_inventory->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_RIGHT,
                                                          std::to_string(pickup_slot.count),
-                                                         mouse_pos - mathfu::Vector<float, 2>(-8.0f, 8.0f), 32.0f);
+                                                         mouse_pos - mathfu::Vector<float, 2>(-10.0f, 8.0f), 36.0f);
             }
         }
 
@@ -233,7 +233,14 @@ namespace CrossCraft {
         auto pd = std::any_cast<PassOnData>(p);
         pd.cX *= 480;
         pd.cY *= 272;
-        get().mouse_pos = {pd.cX, pd.cY};
+
+        // Out of bound
+        if(pd.cX < 159 || pd.cX > (159 + 161))
+            return;
+
+        // Out of bound
+        if(pd.cY < 53 || pd.cY > (53 + 157))
+            return;
 
         get().is_mouse_pressed = true;
 
@@ -243,14 +250,6 @@ namespace CrossCraft {
             get().is_mouse_held = true;
             return;
         }
-
-        // Out of bound
-        if(pd.cX < 159 || pd.cX > (159 + 161))
-            return;
-
-        // Out of bound
-        if(pd.cY < 53 || pd.cY > (53 + 157))
-            return;
 
         auto idx = get_inventory_index({static_cast<int>(pd.cX), static_cast<int>(pd.cY)});
 
@@ -263,8 +262,21 @@ namespace CrossCraft {
             inst.pickup_slot = inst.item_array[idx];
             inst.item_array[idx] = {0, 0, 0};
         } else if(inst.pickup_slot.id != 0 && inst.item_array[idx].id == 0) {
+            if(idx == 0) return;
+
             inst.item_array[idx] = inst.pickup_slot;
             inst.pickup_slot = {0, 0, 0};
+        } else if(inst.pickup_slot.id == inst.item_array[idx].id) {
+            // Add them together
+            auto total = inst.pickup_slot.count + inst.item_array[idx].count;
+            if(total > 64) {
+                // We can't add them together fully
+                inst.pickup_slot.count = total - 64;
+                inst.item_array[idx].count = 64;
+            } else { // Add fully
+                inst.item_array[idx].count += inst.pickup_slot.count;
+                inst.pickup_slot = {0, 0, 0};
+            }
         }
 
         /*
@@ -292,7 +304,60 @@ namespace CrossCraft {
         pd.cX *= 480;
         pd.cY *= 272;
 
-        SC_APP_INFO("Right action: {} {}",pd.cX, pd.cY);
+        // Out of bound
+        if(pd.cX < 159 || pd.cX > (159 + 161))
+            return;
+
+        // Out of bound
+        if(pd.cY < 53 || pd.cY > (53 + 157))
+            return;
+
+        get().is_mouse_pressed = true;
+
+        if(!get().is_mouse_held) {
+            get().is_mouse_held = true;
+        } else {
+            get().is_mouse_held = true;
+            return;
+        }
+
+        auto idx = get_inventory_index({static_cast<int>(pd.cX), static_cast<int>(pd.cY)});
+
+        if(idx == -1) return;
+
+        auto& inst = get();
+        if(inst.pickup_slot.id == 0) {
+            inst.pickup_slot = inst.item_array[idx];
+            inst.item_array[idx].count /= 2;
+            inst.pickup_slot.count -= inst.item_array[idx].count;
+            if(inst.item_array[idx].count == 0) {
+                inst.item_array[idx] = {0, 0, 0};
+            }
+        } else {
+            if(idx == 0) return;
+
+            // We have an item -- can we add them
+            if(inst.pickup_slot.id == inst.item_array[idx].id) {
+                // Try add one
+                auto total = 1 + inst.item_array[idx].count;
+                if(total < 64) {
+                    // We can't add them together
+                    inst.pickup_slot.count -= 1;
+                    inst.item_array[idx].count += 1;
+                    if(inst.pickup_slot.count == 0) {
+                        inst.pickup_slot = {0, 0, 0};
+                    }
+                }
+            } else if(inst.item_array[idx].id == 0) {
+                // We can add one
+                inst.item_array[idx] = inst.pickup_slot;
+                inst.item_array[idx].count = 1;
+                inst.pickup_slot.count -= 1;
+                if(inst.pickup_slot.count == 0) {
+                    inst.pickup_slot = {0, 0, 0};
+                }
+            }
+        }
     }
 
     auto Inventory::try_add_item(ItemData item) -> bool {

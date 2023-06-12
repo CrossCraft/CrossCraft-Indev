@@ -30,7 +30,7 @@ namespace CrossCraft {
 
         auto draw_item_hand(unsigned short id, const mathfu::Vector<float, 2>& rotation) -> void;
 
-        auto draw_block_isometric(uint8_t id, const mathfu::Vector<float, 3>& position) -> void;
+        auto draw_block_isometric(uint8_t id, const mathfu::Vector<float, 3>& position, float scale = 1.0f) -> void;
 
         auto draw_item_isometric(uint16_t id, const mathfu::Vector<float, 3>& position) -> void;
 

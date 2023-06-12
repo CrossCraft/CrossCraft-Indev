@@ -434,7 +434,7 @@ namespace CrossCraft {
         Rendering::RenderContext::get().matrix_pop();
     }
 
-    auto ModelRenderer::draw_block_isometric(block_t id, const mathfu::Vector<float, 3>& position) -> void {
+    auto ModelRenderer::draw_block_isometric(block_t id, const mathfu::Vector<float, 3>& position, float scale) -> void {
         Rendering::TextureManager::get().bind_texture(terrainTexID);
         Rendering::RenderContext::get().matrix_clear();
 
@@ -442,7 +442,7 @@ namespace CrossCraft {
 
         Rendering::RenderContext::get().matrix_push();
         Rendering::RenderContext::get().matrix_rotate({30.0f, 45.0f, 0.0f});
-        Rendering::RenderContext::get().matrix_scale({10.0f, 10.0f, 10.0f});
+        Rendering::RenderContext::get().matrix_scale({10.0f * scale, 10.0f * scale, 10.0f * scale});
 
         blockModels[id]->draw();
         Rendering::RenderContext::get().matrix_pop();

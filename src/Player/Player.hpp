@@ -43,6 +43,8 @@ namespace CrossCraft {
 
         void update(double dt);
 
+        void tick();
+
         void draw(double dt);
 
         static auto move_forward(std::any p) -> void;
@@ -85,6 +87,8 @@ namespace CrossCraft {
 
         int16_t health{};
         int16_t air{};
+
+        void compute_breaking(double dt);
 
         void do_rotate();
 

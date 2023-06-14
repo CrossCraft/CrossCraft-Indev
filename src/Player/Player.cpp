@@ -137,10 +137,10 @@ namespace CrossCraft {
 
                 // Okay let's check the player inventory for the block they want to place
                 auto &itm = Inventory::get().get_selected();
-                if (itm.id == 0 || itm.count == 0) {
+                if (itm.item_id == 0 || itm.count == 0) {
                     return;
                 }
-                auto id = itm.id;
+                auto id = itm.item_id;
                 if (id >= 256) {
                     //DON'T PLACE ITEMS!
                     return;
@@ -149,7 +149,7 @@ namespace CrossCraft {
                 itm.count--;
 
                 if (itm.count == 0) {
-                    itm.id = 0;
+                    itm.item_id = 0;
                 }
                 CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_PLACE, id);
             }

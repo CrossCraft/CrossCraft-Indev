@@ -16,7 +16,7 @@ namespace CrossCraft {
 
     Inventory::Inventory() {
         for(int i = 9; i < 45; i++) {
-            item_array[i].id = i;
+            item_array[i].item_id = i;
             item_array[i].count = i;
         }
 
@@ -52,7 +52,7 @@ namespace CrossCraft {
         font_render_hotbar = create_refptr<FontRender>();
         font_render_inventory = create_refptr<FontRender>();
 
-        pickup_slot.id = 0;
+        pickup_slot.item_id = 0;
         pickup_slot.count = 0;
     }
 
@@ -68,7 +68,7 @@ namespace CrossCraft {
         for (int i = 9; i < 45; i++) {
             auto slot = item_array[i];
 
-            if (slot.id == 0 || slot.count == 0) {
+            if (slot.item_id == 0 || slot.count == 0) {
                 continue;
             }
 
@@ -78,10 +78,10 @@ namespace CrossCraft {
             }
 
             Rendering::RenderContext::get().matrix_clear();
-            if (slot.id < 256) {
-                ModelRenderer::get().draw_block_isometric(slot.id, {168 + 18.0f * (float)(i % 9), 127.0f - 18.0f * (float)(i/9 - 1) + (float)extra_off, 12.0f});
+            if (slot.item_id < 256) {
+                ModelRenderer::get().draw_block_isometric(slot.item_id, {168 + 18.0f * (float)(i % 9), 127.0f - 18.0f * (float)(i/9 - 1) + (float)extra_off, 12.0f});
             } else {
-                ModelRenderer::get().draw_item_isometric(slot.id, {168 + 18.0f * (float)(i % 9), 127.0f - 18.0f * (float)(i/9 - 1) + (float)extra_off, 12.0f});
+                ModelRenderer::get().draw_item_isometric(slot.item_id, {168 + 18.0f * (float)(i % 9), 127.0f - 18.0f * (float)(i/9 - 1) + (float)extra_off, 12.0f});
             }
 
             if (slot.count > 1) {
@@ -91,12 +91,12 @@ namespace CrossCraft {
         }
 
         // Draw stuff in lower slots
-        if(item_array[0].id != 0) {
+        if(item_array[0].item_id != 0) {
             Rendering::RenderContext::get().matrix_clear();
-            if (item_array[0].id < 256) {
-                ModelRenderer::get().draw_block_isometric(item_array[0].id, {143 + 153 + 8, 53 + (176 - 36 - 18),  12.0f});
+            if (item_array[0].item_id < 256) {
+                ModelRenderer::get().draw_block_isometric(item_array[0].item_id, {143 + 153 + 8, 53 + (176 - 36 - 18),  12.0f});
             } else {
-                ModelRenderer::get().draw_item_isometric(item_array[0].id, {143 + 153, 53 + (176 - 36 - 18), 12.0f});
+                ModelRenderer::get().draw_item_isometric(item_array[0].item_id, {143 + 153, 53 + (176 - 36 - 18), 12.0f});
             }
 
             if (item_array[0].count > 1) {
@@ -107,12 +107,12 @@ namespace CrossCraft {
 
         // Draw the crafting slots
         for(int i = 0; i < 4; i++) {
-            if(item_array[i + 1].id != 0) {
+            if(item_array[i + 1].item_id != 0) {
                 Rendering::RenderContext::get().matrix_clear();
-                if (item_array[i + 1].id < 256) {
-                    ModelRenderer::get().draw_block_isometric(item_array[i + 1].id, {static_cast<float>(248 + 18 * (i%2)), static_cast<float>(185 - 18 * (i/2)),  12.0f});
+                if (item_array[i + 1].item_id < 256) {
+                    ModelRenderer::get().draw_block_isometric(item_array[i + 1].item_id, {static_cast<float>(248 + 18 * (i%2)), static_cast<float>(185 - 18 * (i/2)),  12.0f});
                 } else {
-                    ModelRenderer::get().draw_item_isometric(item_array[i + 1].id, {static_cast<float>(248 + 18 * (i%2)), static_cast<float>(185 - 18 * (i/2)), 12.0f});
+                    ModelRenderer::get().draw_item_isometric(item_array[i + 1].item_id, {static_cast<float>(248 + 18 * (i%2)), static_cast<float>(185 - 18 * (i/2)), 12.0f});
                 }
 
                 if (item_array[i + 1].count > 1) {
@@ -124,12 +124,12 @@ namespace CrossCraft {
 
         // Draw the armor slots
         for(int i = 0; i < 4; i++) {
-            if(item_array[i + 5].id != 0) {
+            if(item_array[i + 5].item_id != 0) {
                 Rendering::RenderContext::get().matrix_clear();
-                if (item_array[i + 5].id < 256) {
-                    ModelRenderer::get().draw_block_isometric(item_array[i + 5].id, {168, static_cast<float>(203 - 18 * i),  12.0f});
+                if (item_array[i + 5].item_id < 256) {
+                    ModelRenderer::get().draw_block_isometric(item_array[i + 5].item_id, {168, static_cast<float>(203 - 18 * i),  12.0f});
                 } else {
-                    ModelRenderer::get().draw_item_isometric(item_array[i + 5].id, {168, static_cast<float>(203 - 18 * i), 12.0f});
+                    ModelRenderer::get().draw_item_isometric(item_array[i + 5].item_id, {168, static_cast<float>(203 - 18 * i), 12.0f});
                 }
 
                 if (item_array[i + 5].count > 1) {
@@ -140,11 +140,11 @@ namespace CrossCraft {
         }
 
         // Draw the selected block(s)
-        if(pickup_slot.id != 0) {
-            if (pickup_slot.id < 256) {
-                ModelRenderer::get().draw_block_isometric(pickup_slot.id, {mouse_pos, 24.0f}, 1.2f);
+        if(pickup_slot.item_id != 0) {
+            if (pickup_slot.item_id < 256) {
+                ModelRenderer::get().draw_block_isometric(pickup_slot.item_id, {mouse_pos, 24.0f}, 1.2f);
             } else {
-                ModelRenderer::get().draw_item_isometric(pickup_slot.id, {mouse_pos, 24.0f});
+                ModelRenderer::get().draw_item_isometric(pickup_slot.item_id, {mouse_pos, 24.0f});
             }
             if(pickup_slot.count > 1) {
                 font_render_inventory->draw_text_aligned(CC_TEXT_COLOR_WHITE, CC_TEXT_ALIGN_RIGHT,
@@ -258,15 +258,15 @@ namespace CrossCraft {
         SC_APP_INFO("INVENTORY SELECTED: {}", idx);
 
         auto& inst = get();
-        if(inst.pickup_slot.id == 0 && inst.item_array[idx].id != 0) {
+        if(inst.pickup_slot.item_id == 0 && inst.item_array[idx].item_id != 0) {
             inst.pickup_slot = inst.item_array[idx];
             inst.item_array[idx] = {0, 0, 0};
-        } else if(inst.pickup_slot.id != 0 && inst.item_array[idx].id == 0) {
+        } else if(inst.pickup_slot.item_id != 0 && inst.item_array[idx].item_id == 0) {
             if(idx == 0) return;
 
             inst.item_array[idx] = inst.pickup_slot;
             inst.pickup_slot = {0, 0, 0};
-        } else if(inst.pickup_slot.id == inst.item_array[idx].id) {
+        } else if(inst.pickup_slot.item_id == inst.item_array[idx].item_id) {
             // Add them together
             auto total = inst.pickup_slot.count + inst.item_array[idx].count;
             if(total > 64) {
@@ -288,10 +288,10 @@ namespace CrossCraft {
         }
 
         Rendering::RenderContext::get().matrix_clear();
-        if (slot.id < 256) {
-            ModelRenderer::get().draw_block_isometric(slot.id, {168 + 18.0f * (float)(i % 9), 127.0f - 18.0f * (float)(i/9 - 1) + (float)extra_off, 12.0f});
+        if (slot.item_id < 256) {
+            ModelRenderer::get().draw_block_isometric(slot.item_id, {168 + 18.0f * (float)(i % 9), 127.0f - 18.0f * (float)(i/9 - 1) + (float)extra_off, 12.0f});
         } else {
-            ModelRenderer::get().draw_item_isometric(slot.id, {168 + 18.0f * (float)(i % 9), 127.0f - 18.0f * (float)(i/9 - 1) + (float)extra_off, 12.0f});
+            ModelRenderer::get().draw_item_isometric(slot.item_id, {168 + 18.0f * (float)(i % 9), 127.0f - 18.0f * (float)(i/9 - 1) + (float)extra_off, 12.0f});
         }
 
 
@@ -326,7 +326,7 @@ namespace CrossCraft {
         if(idx == -1) return;
 
         auto& inst = get();
-        if(inst.pickup_slot.id == 0) {
+        if(inst.pickup_slot.item_id == 0) {
             inst.pickup_slot = inst.item_array[idx];
             inst.item_array[idx].count /= 2;
             inst.pickup_slot.count -= inst.item_array[idx].count;
@@ -337,7 +337,7 @@ namespace CrossCraft {
             if(idx == 0) return;
 
             // We have an item -- can we add them
-            if(inst.pickup_slot.id == inst.item_array[idx].id) {
+            if(inst.pickup_slot.item_id == inst.item_array[idx].item_id) {
                 // Try add one
                 auto total = 1 + inst.item_array[idx].count;
                 if(total < 64) {
@@ -348,7 +348,7 @@ namespace CrossCraft {
                         inst.pickup_slot = {0, 0, 0};
                     }
                 }
-            } else if(inst.item_array[idx].id == 0) {
+            } else if(inst.item_array[idx].item_id == 0) {
                 // We can add one
                 inst.item_array[idx] = inst.pickup_slot;
                 inst.item_array[idx].count = 1;
@@ -366,14 +366,14 @@ namespace CrossCraft {
         //TODO: Rewrite so items are added from left to right
         for (int it = 44; it >= 9; it--) {
             auto &i = item_array[it];
-            if (i.id == item.id && i.count < 64) {
+            if (i.item_id == item.item_id && i.count < 64) {
                 i.count += item.count;
                 return true;
             }
         }
         for (int it = 44; it >= 9; it--) {
             auto &i = item_array[it];
-            if (i.id == 0) {
+            if (i.item_id == 0) {
                 i = item;
                 return true;
             }
@@ -385,8 +385,8 @@ namespace CrossCraft {
 
     auto Inventory::draw_block_hand(const mathfu::Vector<float, 3>& position, const mathfu::Vector<float, 2>& rotation,
                                     double dt) -> void {
-        if (item_array[selection_idx + 36].id != 0 && item_array[selection_idx + 36].count != 0) {
-            auto id = item_array[selection_idx + 36].id;
+        if (item_array[selection_idx + 36].item_id != 0 && item_array[selection_idx + 36].count != 0) {
+            auto id = item_array[selection_idx + 36].item_id;
 
             if (id < 256) {
                 ModelRenderer::get().draw_block_hand(id, mathfu::Vector<float, 2>());
@@ -399,7 +399,7 @@ namespace CrossCraft {
     auto Inventory::drop_selection(std::any p) -> void {
         auto &itm = get().item_array[get().selection_idx + 36];
 
-        if (itm.id == 0 || itm.count == 0) {
+        if (itm.item_id == 0 || itm.count == 0) {
             return;
         }
 
@@ -422,7 +422,7 @@ namespace CrossCraft {
 
         itm.count--;
         if (itm.count == 0) {
-            itm.id = 0;
+            itm.item_id = 0;
         }
     }
 
@@ -439,16 +439,16 @@ namespace CrossCraft {
         for (int i = 0; i < 9; i++) {
             auto slot = item_array[i + 36];
 
-            if (slot.id == 0 || slot.count == 0) {
+            if (slot.item_id == 0 || slot.count == 0) {
                 continue;
             }
 
 
             Rendering::RenderContext::get().matrix_clear();
-            if (slot.id < 256) {
-                ModelRenderer::get().draw_block_isometric(slot.id, {160.0f + 20.0f * (float) i, 12.0f, 2.0f});
+            if (slot.item_id < 256) {
+                ModelRenderer::get().draw_block_isometric(slot.item_id, {160.0f + 20.0f * (float) i, 12.0f, 2.0f});
             } else {
-                ModelRenderer::get().draw_item_isometric(slot.id, {160.0f + 20.0f * (float) i, 12.0f, 2.0f});
+                ModelRenderer::get().draw_item_isometric(slot.item_id, {160.0f + 20.0f * (float) i, 12.0f, 2.0f});
             }
 
             if (slot.count > 1) {

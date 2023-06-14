@@ -38,14 +38,14 @@ namespace CrossCraft {
     auto ItemEntity::draw() -> void {
         if (data != nullptr) {
             if (data->count > 0) {
-                if (data->id < 256) {
+                if (data->item_id < 256) {
                     position.y += sinf(lifetimer) * 0.1f;
-                    ModelRenderer::get().draw_block(data->id, position,
+                    ModelRenderer::get().draw_block(data->item_id, position,
                                                     mathfu::Vector<float, 3>(rotation.x, rotation.y, 0));
                     position.y -= sinf(lifetimer) * 0.1f;
                 } else {
                     position.y += sinf(lifetimer) * 0.1f;
-                    ModelRenderer::get().draw_item(data->id, position,
+                    ModelRenderer::get().draw_item(data->item_id, position,
                                                    mathfu::Vector<float, 3>(rotation.x, rotation.y, 0));
                     position.y -= sinf(lifetimer) * 0.1;
                 }

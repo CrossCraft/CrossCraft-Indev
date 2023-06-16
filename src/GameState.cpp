@@ -7,6 +7,8 @@
 #include <Player/Inventory.hpp>
 #include <ModelRenderer.hpp>
 #include <Entity/EntityManager.hpp>
+#include <CC/eventloop.h>
+#include <CC/alphaindev.pb-c.h>
 
 namespace CrossCraft {
 
@@ -46,6 +48,38 @@ namespace CrossCraft {
 
         // Initialize the core library.
         CC_Core_Init();
+
+        // Create the server-side event loop for SP
+        auto event_loop = CC_EventLoop_Init();
+
+        // Create the client-side event loop for SP
+        client_event_loop = CC_EventLoop_Init();
+
+        // Create the server-side data bus for SP
+        auto server_bus = SharedDataBus_Init();
+
+        // Create che client-side data bus for SP
+        auto data_bus = SharedDataBus_Init();
+
+        // Set the inbound bus for the event loop.
+        CC_EventLoop_SetInboundBus(event_loop, &data_bus->bus, data_bus);
+        CC_EventLoop_SetOutboundBus(event_loop, &server_bus->bus, server_bus);
+
+        // Set the inbound bus for the client event loop.
+        CC_EventLoop_SetInboundBus(client_event_loop, &server_bus->bus, server_bus);
+        CC_EventLoop_SetOutboundBus(client_event_loop, &data_bus->bus, data_bus);
+
+        // Set the server event loop for the core library.
+        CC_Core_SetEventLoop(event_loop);
+
+        // Send the handshake to the server.
+        EventPacket handshake_packet;
+        handshake_packet.type = CC_PACKET_TYPE_HANDSHAKE;
+        std::string username = "IridescentRose";
+        handshake_packet.data.handshake_cs.username.length = username.length();
+        handshake_packet.data.handshake_cs.username.data = static_cast<uint8_t *>(malloc(username.length()));
+        memcpy(handshake_packet.data.handshake_cs.username.data, username.c_str(), username.length());
+        CC_EventLoop_PushPacketOutbound(client_event_loop, &handshake_packet);
 
         // Send initial player position.
         CC_Event_Push_PlayerUpdate(PLAYER_SELF, 128.0f, 48.0f, 128.0f, 0.0f, 0.0f, false);
@@ -113,7 +147,6 @@ namespace CrossCraft {
         Rendering::RenderContext::get().set_mode_3D();
 
         world = create_refptr<World>();
-
     }
 
 
@@ -133,6 +166,8 @@ namespace CrossCraft {
             tick_time = 0.0f;
             player->tick();
         }
+
+        CC_EventLoop_Update(client_event_loop);
     }
 
     void GameState::on_update(Core::Application *app, double dt) {

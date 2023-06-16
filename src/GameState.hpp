@@ -3,6 +3,7 @@
 #include <Stardust-Celeste.hpp>
 #include <World/World.hpp>
 #include <Player/Player.hpp>
+#include <CC/databus.h>
 
 using namespace Stardust_Celeste;
 
@@ -37,5 +38,7 @@ namespace CrossCraft {
         Utilities::Controller *mb_controller;
         double poll_time = 10.0f;
         double tick_time = 10.0f;
+
+        EventLoop* client_event_loop;
     };
 }

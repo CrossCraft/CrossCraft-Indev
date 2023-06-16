@@ -13,7 +13,6 @@ namespace CrossCraft {
         player_chunk = mathfu::Vector<int, 2>(-1, -1);
 
         terrainTexID = ResourcePack::get().get_texture("terrain");
-        SC_APP_INFO("Terrain texture ID: {0}", terrainTexID);
     }
 
     World::~World() = default;

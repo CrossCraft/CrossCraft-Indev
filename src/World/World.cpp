@@ -135,10 +135,10 @@ namespace CrossCraft {
 
     }
 
-    void World::handle_spawn_item(int16_t eid, float x, float y, float z, float vx, float vy, float vz, ItemData item) {
+    void World::handle_spawn_item(int16_t eid, float x, float y, float z, float vx, float vy, float vz, Item item) {
         auto entity = new ItemEntity();
         entity->eid = eid;
-        entity->data = new ItemData();
+        entity->data = new Item();
         entity->data->item_id = item.item_id;
         entity->data->damage = item.damage;
         entity->data->count = item.count;

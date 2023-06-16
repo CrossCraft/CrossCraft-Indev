@@ -14,6 +14,6 @@ namespace CrossCraft {
         auto draw() -> void override;
 
         float lifetimer;
-        ItemData *data;
+        Item *data;
     };
 }

@@ -22,14 +22,14 @@ namespace CrossCraft {
 
         ~Inventory();
 
-        auto try_add_item(ItemData item) -> bool;
+        auto try_add_item(Item item) -> bool;
 
         inline static auto get() -> Inventory & {
             static Inventory inventory;
             return inventory;
         }
 
-        inline static auto get_selected() -> ItemData & {
+        inline static auto get_selected() -> Item & {
             return get().item_array[get().selection_idx + 36];
         }
 
@@ -59,8 +59,8 @@ namespace CrossCraft {
 
     private:
         bool open;
-        std::array<ItemData, 45> item_array{};
-        ItemData pickup_slot;
+        std::array<Item, 45> item_array{};
+        Item pickup_slot;
         uint8_t selection_idx = 0;
         mathfu::Vector<float, 2> mouse_pos;
 

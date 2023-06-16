@@ -24,7 +24,7 @@ namespace CrossCraft {
         /// @param z The z position of the block
         void handle_block_update(uint32_t x, uint32_t y, uint32_t z);
 
-        static void handle_spawn_item(int16_t eid, float x, float y, float z, float vx, float vy, float vz, ItemData item);
+        static void handle_spawn_item(int16_t eid, float x, float y, float z, float vx, float vy, float vz, Item item);
 
         static auto save(const std::any p) -> void;
 

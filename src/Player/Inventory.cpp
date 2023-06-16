@@ -360,7 +360,7 @@ namespace CrossCraft {
         }
     }
 
-    auto Inventory::try_add_item(ItemData item) -> bool {
+    auto Inventory::try_add_item(Item item) -> bool {
         //TODO: Check if item is stackable
         //TODO: Rewrite so hotbar is prioritized
         //TODO: Rewrite so items are added from left to right

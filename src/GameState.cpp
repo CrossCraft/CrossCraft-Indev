@@ -9,8 +9,11 @@
 #include <Entity/EntityManager.hpp>
 #include <CC/eventloop.h>
 #include <CC/alphaindev.pb-c.h>
+#include <CC/eventpackets.h>
 
 namespace CrossCraft {
+
+    bool gLoggedIn = false;
 
     using namespace Stardust_Celeste::Utilities;
 
@@ -73,13 +76,42 @@ namespace CrossCraft {
         CC_Core_SetEventLoop(event_loop);
 
         // Send the handshake to the server.
-        EventPacket handshake_packet;
-        handshake_packet.type = CC_PACKET_TYPE_HANDSHAKE;
-        std::string username = "IridescentRose";
-        handshake_packet.data.handshake_cs.username.length = username.length();
-        handshake_packet.data.handshake_cs.username.data = static_cast<uint8_t *>(malloc(username.length()));
-        memcpy(handshake_packet.data.handshake_cs.username.data, username.c_str(), username.length());
+        EventPacket handshake_packet = CC_EventPacket_Create_Handshake("IridescentRose", false);
         CC_EventLoop_PushPacketOutbound(client_event_loop, &handshake_packet);
+        CC_EventLoop_Update(client_event_loop);
+
+        CC_EventLoop_RegisterHandler(client_event_loop, CC_PACKET_TYPE_HANDSHAKE, [](void* loop, EventPacket* packet) {
+            auto handshake = packet->data.handshake_sc.response.data;
+            if(handshake[0] == '-') {
+                SC_APP_INFO("Handshake successful! Logging in!");
+                auto p = CC_EventPacket_Create_LoginClient("IridescentRose", "password");
+                CC_EventLoop_PushPacketOutbound((EventLoop*)loop, &p);
+            } else {
+                throw std::runtime_error("Handshake failed!");
+            }
+        });
+
+        CC_EventLoop_RegisterHandler(client_event_loop, CC_PACKET_TYPE_LOGIN, [](void* loop, EventPacket* packet) {
+            gLoggedIn = true;
+        });
+        CC_EventLoop_RegisterHandler(client_event_loop, CC_PACKET_TYPE_SPAWN_POSITION, [](void* loop, EventPacket* packet) {
+            auto spawn = packet->data.spawn_position;
+            SC_APP_INFO("Spawn position: {0}, {1}, {2}", spawn.x, spawn.y, spawn.z);
+        });
+        CC_EventLoop_RegisterHandler(client_event_loop, CC_PACKET_TYPE_PLAYER_POSITION_AND_LOOK, [](void* loop, EventPacket* packet) {
+            auto p = packet->data.player_position_and_look_sc;
+            SC_APP_INFO("Player position: {0}, {1}, {2}", p.x, p.y, p.z);
+            SC_APP_INFO("Player look: {0}, {1}", p.yaw, p.pitch);
+        });
+        CC_EventLoop_RegisterHandler(client_event_loop, CC_PACKET_TYPE_UPDATE_HEALTH, [](void* loop, EventPacket* packet) {
+            auto p = packet->data.update_health;
+            SC_APP_INFO("Player health: {0}", p.health);
+        });
+
+        while(!gLoggedIn) {
+            CC_Core_Update(1);
+            CC_EventLoop_Update(client_event_loop);
+        }
 
         // Send initial player position.
         CC_Event_Push_PlayerUpdate(PLAYER_SELF, 128.0f, 48.0f, 128.0f, 0.0f, 0.0f, false);
@@ -258,6 +290,7 @@ namespace CrossCraft {
 
     void GameState::on_cleanup() {
         CC_Core_Term();
+        CC_EventLoop_Destroy(client_event_loop);
     }
 
 } // namespace CrossCraft

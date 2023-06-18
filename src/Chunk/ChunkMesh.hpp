@@ -11,7 +11,9 @@ namespace CrossCraft {
 
         ~ChunkMesh();
 
+        void prepare_mesh();
         void generate_mesh();
+        void finalize_mesh();
 
         void draw(ChunkMeshSelection selection);
 

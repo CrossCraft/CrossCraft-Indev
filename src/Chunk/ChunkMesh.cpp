@@ -1,7 +1,5 @@
 #include <Chunk/ChunkMesh.hpp>
 #include <Chunk/FaceConst.hpp>
-#include <ResourcePack.hpp>
-#include <Rendering/Texture.hpp>
 #include <Chunk/Frustum.hpp>
 #include <Chunk/ChunkMeta.hpp>
 
@@ -13,12 +11,22 @@ namespace CrossCraft {
 
     ChunkMesh::~ChunkMesh() = default;
 
-    void ChunkMesh::generate_mesh() {
+    void ChunkMesh::finalize_mesh() {
+        // Finalize
+        mesh.opaque.finalize();
+        mesh.transparent.finalize();
+
+        dirty = false;
+    }
+
+    void ChunkMesh::prepare_mesh() {
         // Delete Data
         mesh.transparent.delete_data();
         mesh.opaque.delete_data();
         mesh.opaque.pre_allocate();
+    }
 
+    void ChunkMesh::generate_mesh() {
         SurroundingPositions surround_pos;
         uint32_t index;
         block_t block;
@@ -58,12 +66,7 @@ namespace CrossCraft {
         }
 
 end:
-
-        // Finalize
-        mesh.opaque.finalize();
-        mesh.transparent.finalize();
-
-        dirty = false;
+        return;
     }
 
     void ChunkMesh::draw(CrossCraft::ChunkMeshSelection selection) {
@@ -72,7 +75,9 @@ end:
         }
 
         if (dirty) {
+            prepare_mesh();
             generate_mesh();
+            finalize_mesh();
         }
 
         switch (selection) {

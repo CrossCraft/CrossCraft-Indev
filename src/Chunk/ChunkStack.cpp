@@ -11,9 +11,21 @@ namespace CrossCraft {
 
     ChunkStack::~ChunkStack() = default;
 
+    void ChunkStack::prepare() {
+        for (auto chunk: chunks) {
+            chunk->prepare_mesh();
+        }
+    }
+
     void ChunkStack::generate() {
         for (auto chunk: chunks) {
             chunk->generate_mesh();
+        }
+    }
+
+    void ChunkStack::finalize() {
+        for (auto chunk: chunks) {
+            chunk->finalize_mesh();
         }
     }
 

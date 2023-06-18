@@ -44,7 +44,9 @@ namespace CrossCraft{
 
         for (int i = 0; i < SAMPLE_COUNT; i++) {
             for (auto &[id, chunk]: chunks) {
+                chunk->prepare();
                 chunk->generate();
+                chunk->finalize();
             }
         }
         auto endTime = std::chrono::high_resolution_clock::now();

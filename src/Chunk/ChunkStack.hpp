@@ -13,7 +13,10 @@ namespace CrossCraft {
         ~ChunkStack();
 
         // THIS IS A FORCEFUL METHOD DO NOT USE IN PRODUCTION
+        void prepare();
         void generate();
+        void finalize();
+
         void draw(ChunkMeshSelection selection);
 
         std::array<ChunkMesh *, 4> chunks{};

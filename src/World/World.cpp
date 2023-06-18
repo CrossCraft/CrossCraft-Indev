@@ -27,7 +27,7 @@ namespace CrossCraft {
         int endX = player_chunk.x + CHUNK_RADIUS_REAL + 1;
         int endZ = player_chunk.y + CHUNK_RADIUS_REAL + 1;
 
-        std::map<uint64_t, ChunkStack *> new_chunks;
+        std::unordered_map<uint64_t, ChunkStack *> new_chunks;
 
         if (startX < 0) startX = 0;
         if (startZ < 0) startZ = 0;

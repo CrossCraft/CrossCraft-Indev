@@ -27,5 +27,6 @@ target_include_directories(Indev-CCR PRIVATE src Core/include ext/SDC/ext/mathfu
 target_compile_options(Indev-CCR PRIVATE -Wall)
 target_link_libraries(Indev-CCR PRIVATE Stardust-Celeste SC-Entry CC-Core)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")

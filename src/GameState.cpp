@@ -10,6 +10,7 @@
 #include <CC/eventloop.h>
 #include <CC/alphaindev.pb-c.h>
 #include <CC/eventpackets.h>
+#include <Chunk/ChunkMeta.hpp>
 
 namespace CrossCraft {
 
@@ -51,6 +52,8 @@ namespace CrossCraft {
 
         // Initialize the core library.
         CC_Core_Init();
+
+        ChunkMeta::get().generate();
 
         // Create the server-side event loop for SP
         auto event_loop = CC_EventLoop_Init();

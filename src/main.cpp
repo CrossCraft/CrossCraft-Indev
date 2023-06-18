@@ -1,5 +1,6 @@
 #include <Stardust-Celeste.hpp>
 #include <GameState.hpp>
+#include <Debug/OptimizerState.hpp>
 
 #ifdef _WIN32
 extern "C" {
@@ -14,7 +15,7 @@ class GameApplication : public Core::Application {
 public:
     void on_start() override {
         // Create new Game State
-        auto state = create_refptr<CrossCraft::GameState>();
+        auto state = create_refptr<CrossCraft::OptimizerState>();
         // Set to our state
         this->set_state(state);
 

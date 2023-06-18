@@ -2,7 +2,7 @@
 
 #include <CC/core.h>
 #include <Chunk/ChunkStack.hpp>
-#include <map>
+#include <unordered_map>
 
 namespace CrossCraft {
 
@@ -34,7 +34,7 @@ namespace CrossCraft {
 
         void update_chunks_list();
 
-        std::map<uint64_t, ChunkStack *> chunks;
+        std::unordered_map<uint64_t, ChunkStack *> chunks;
         mathfu::Vector<int, 2> player_chunk;
         uint32_t terrainTexID;
     };

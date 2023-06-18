@@ -7,7 +7,12 @@
 namespace CrossCraft {
 
     Player::Player() : camera(mathfu::Vector<float, 3>{0.0f, 0.0f, 0.0f}, mathfu::Vector<float, 3>{0.0f, 0.0f, 0.0f},
-                              70.0f, 16.0f / 9.0f, 0.3f, 256.0f) {
+                              70.0f, 16.0f / 9.0f, 0.2f,
+#if PSP
+                              256.0f) {
+#else
+                              1024.0f) {
+#endif
         auto pd = CC_Player_GetData();
 
         position = mathfu::Vector<float, 3>{pd->x, pd->y, pd->z};

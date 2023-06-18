@@ -7,12 +7,12 @@
 namespace CrossCraft {
 
     Player::Player() : camera(mathfu::Vector<float, 3>{0.0f, 0.0f, 0.0f}, mathfu::Vector<float, 3>{0.0f, 0.0f, 0.0f},
-                              70.0f, 16.0f / 9.0f, 0.1f, 1000.0f) {
+                              70.0f, 16.0f / 9.0f, 0.3f, 256.0f) {
         auto pd = CC_Player_GetData();
 
         position = mathfu::Vector<float, 3>{pd->x, pd->y, pd->z};
         velocity = mathfu::Vector<float, 3>{pd->vx, pd->vy, pd->vz};
-        rotation = mathfu::Vector<float, 2>{pd->pitch, pd->yaw};
+        rotation = mathfu::Vector<float, 2>{0, 0};
         on_ground = pd->on_ground;
         in_water = false;
         water_face = false;
@@ -202,6 +202,10 @@ namespace CrossCraft {
 
         // Compute breaking and selection
         compute_breaking(dt);
+
+#if PSP
+        rotation.y += 45.0f * dt;
+#endif
     }
 
     void Player::draw(double dt) {

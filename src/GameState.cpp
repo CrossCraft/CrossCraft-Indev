@@ -12,6 +12,10 @@
 #include <CC/eventpackets.h>
 #include <Chunk/ChunkMeta.hpp>
 
+#if PSP
+#include <pspsdk.h>
+#endif
+
 namespace CrossCraft {
 
     bool gLoggedIn = false;
@@ -45,6 +49,7 @@ namespace CrossCraft {
     }
 
     void GameState::on_start() {
+
         ResourcePack::get().add_pack("resourcepacks/default.zip");
         ResourcePack::get().load();
         ModelRenderer::init();
@@ -179,9 +184,11 @@ namespace CrossCraft {
         Input::set_differential_mode("Mouse", true);
         Input::set_cursor_center();
 
+        SC_APP_INFO("Game State Initialized");
         Rendering::RenderContext::get().set_mode_3D();
 
         world = create_refptr<World>();
+        SC_APP_INFO("WORLD INITIALIZED");
     }
 
 

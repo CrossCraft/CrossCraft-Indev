@@ -2,12 +2,8 @@
 #include <Utilities/Input.hpp>
 #include <World/World.hpp>
 #include <utility>
-#include <GLFW/glfw3.h>
 #include <Player/Inventory.hpp>
 
-namespace GI {
-    extern GLFWwindow *window;
-}
 
 namespace CrossCraft {
     using namespace Stardust_Celeste;
@@ -89,7 +85,6 @@ namespace CrossCraft {
 
 
                 Input::set_cursor_center();
-                glfwSetInputMode(GI::window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
                 Input::set_differential_mode("Mouse", true);
             } else {
                 SC_APP_INFO("Unimplemented");
@@ -164,7 +159,6 @@ namespace CrossCraft {
             Rendering::RenderContext::get().matrix_clear();
             font_render->draw();
 
-            glfwSetInputMode(GI::window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             Input::set_differential_mode("Mouse", false);
         }
 
@@ -192,11 +186,9 @@ namespace CrossCraft {
         open = !open;
 
         if (open) {
-            glfwSetInputMode(GI::window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             Input::set_differential_mode("Mouse", false);
         } else {
             Input::set_cursor_center();
-            glfwSetInputMode(GI::window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             Input::set_differential_mode("Mouse", true);
         }
     }

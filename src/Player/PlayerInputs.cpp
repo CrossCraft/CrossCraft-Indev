@@ -1,5 +1,4 @@
 #include <Player/Player.hpp>
-#include <GLFW/glfw3.h>
 #include <Player/Inventory.hpp>
 #include <Player/InGameMenu.hpp>
 

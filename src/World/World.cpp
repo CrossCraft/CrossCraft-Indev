@@ -6,6 +6,7 @@
 #include <Rendering/Texture.hpp>
 #include <Chunk/Frustum.hpp>
 #include <ModelRenderer.hpp>
+#include <Chunk/ChunkMeta.hpp>
 
 namespace CrossCraft {
 
@@ -17,8 +18,12 @@ namespace CrossCraft {
 
     World::~World() = default;
 
-    const int CHUNK_RADIUS_OPTION = 16;
-    constexpr int CHUNK_RADIUS_REAL = CHUNK_RADIUS_OPTION + 1;
+#if PSP
+    const int CHUNK_RADIUS_OPTION = 4;
+#else
+    const int CHUNK_RADIUS_OPTION = 8;
+#endif
+    constexpr int CHUNK_RADIUS_REAL = CHUNK_RADIUS_OPTION; // TODO: This should be +1 in infdev+
 
     void World::update_chunks_list() {
         int startX = player_chunk.x - CHUNK_RADIUS_REAL;
@@ -41,6 +46,17 @@ namespace CrossCraft {
         for (int x = startX; x < endX; x++) {
             for (int z = startZ; z < endZ; z++) {
                 mathfu::Vector<int, 2> pos(x, z);
+
+
+
+                // SQRT 2 = 1.41421356237
+                // SQRT 2 / 2 = 0.70710678118
+                if(CHUNK_RADIUS_REAL >= 3) {
+                    auto fpos = mathfu::Vector<float, 2>(x, z);
+                    auto fppos = mathfu::Vector<float, 2>(player_chunk.x, player_chunk.y);
+                    auto dist = (fpos - fppos).Length();
+                    if (dist > CHUNK_RADIUS_REAL + 0.5f) continue;
+                }
 
                 uint64_t id = ((uint64_t) pos.x) << 32 | (uint64_t) pos.y;
 
@@ -86,12 +102,27 @@ namespace CrossCraft {
 
     void World::draw() {
         GI::enable(GI_FOG);
+        GI::enable(GI_BLEND);
+        GI::blend_func(GI_SRC_ALPHA, GI_ONE_MINUS_SRC_ALPHA);
+        GI::enable(GI_ALPHA_TEST);
+        GI::alpha_func(GI_GREATER, 0x20, 0xFF);
+
+#if BUILD_PSP
+        GI::disable(GI_BLEND);
+        GI::disable(GI_ALPHA_TEST);
+#endif
+
         Frustum::update();
 
         Rendering::TextureManager::get().bind_texture(terrainTexID);
         for (auto &[val, chunk]: chunks) {
             chunk->draw(ChunkMeshSelection::Opaque);
         }
+
+#if BUILD_PSP
+        GI::enable(GI_BLEND);
+        GI::enable(GI_ALPHA_TEST);
+#endif
 
         EntityManager::get().draw();
         ModelRenderer::get().draw_break();
@@ -101,7 +132,6 @@ namespace CrossCraft {
         for (auto &[val, chunk]: chunks) {
             chunk->draw(ChunkMeshSelection::Transparent);
         }
-
     }
 
     // This function generates a chunk vector from a block position
@@ -128,7 +158,10 @@ namespace CrossCraft {
             uint64_t id = ((uint64_t) chunk.x) << 32 | (uint64_t) chunk.z;
 
             if (chunks.find(id) != chunks.end()) {
-                chunks[id]->chunks[chunk.y]->dirty = true;
+                auto cptr = chunks[id]->chunks[chunk.y];
+                cptr->dirty = true;
+                ChunkMeta::getData(cptr->cX, cptr->cY, cptr->cZ).isEmpty = false;
+                ChunkMeta::getData(cptr->cX, cptr->cY, cptr->cZ).isFull = false;
             }
         }
 

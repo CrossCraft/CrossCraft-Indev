@@ -13,8 +13,8 @@ namespace CrossCraft {
             entity->update(dt);
 
 
-            ItemEntity *item;
-            if ((item = dynamic_cast<ItemEntity *>(entity)) && item->data != nullptr && item->data->count > 0 &&
+            auto *item = reinterpret_cast<ItemEntity *>(entity);
+            if (item->data != nullptr && item->data->count > 0 &&
                 item->lifetimer > 0.5f) {
 
                 auto diff = player->position - entity->position;

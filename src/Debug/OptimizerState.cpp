@@ -13,6 +13,7 @@ namespace CrossCraft{
 
         // Initialize the core library.
         CC_Core_Init();
+        SC_APP_INFO("TEST SUCCESS!");
 
         std::unordered_map<uint64_t, ChunkStack *> chunks;
 

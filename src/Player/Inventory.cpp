@@ -1,14 +1,15 @@
 #include <Player/Inventory.hpp>
 #include <ModelRenderer.hpp>
 #include <Player/Player.hpp>
-#include <GLFW/glfw3.h>
 #include <Utilities/Input.hpp>
 #include <Player/InGameMenu.hpp>
 
+#if BUILD_PLAT == BUILD_WINDOWS || BUILD_PLAT == BUILD_POSIX
+#include <GLFW/glfw3.h>
 namespace GI {
     extern GLFWwindow *window;
 }
-
+#endif
 
 namespace CrossCraft {
     using namespace Stardust_Celeste;
@@ -469,11 +470,9 @@ namespace CrossCraft {
         get().open = !get().open;
 
         if (get().open) {
-            glfwSetInputMode(GI::window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             Input::set_differential_mode("Mouse", false);
         } else {
             Input::set_cursor_center();
-            glfwSetInputMode(GI::window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             Input::set_differential_mode("Mouse", true);
         }
     }

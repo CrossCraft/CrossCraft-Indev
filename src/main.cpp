@@ -15,7 +15,7 @@ class GameApplication : public Core::Application {
 public:
     void on_start() override {
         // Create new Game State
-        auto state = create_refptr<CrossCraft::OptimizerState>();
+        auto state = create_refptr<CrossCraft::GameState>();
         // Set to our state
         this->set_state(state);
 

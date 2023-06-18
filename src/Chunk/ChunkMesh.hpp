@@ -18,8 +18,8 @@ namespace CrossCraft {
         void draw(ChunkMeshSelection selection);
 
         bool dirty = false;
-    private:
         int cX, cY, cZ;
+    private:
 
         ChunkMeshCollection mesh;
 
@@ -28,12 +28,12 @@ namespace CrossCraft {
 
         void try_add_face(const WorldData *wd, const std::array<float, 12> &data, block_t block,
                           const mathfu::Vector<int, 3> &actual_pos, const mathfu::Vector<int, 3> &check_pos,
-                          uint16_t lightValue);
+                          uint32_t lightValue);
 
         static void
         add_face_to_mesh(const std::array<float, 12> &array1, std::array<float, 8> array2,
                          const mathfu::Vector<int, 3> &vector3,
-                         uint16_t value,
+                         uint32_t value,
                          ChunkMeshInstance &instance);
     };
 }

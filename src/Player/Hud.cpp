@@ -119,6 +119,7 @@ namespace CrossCraft {
         if (timer >= 1.0) {
             timer = 0.0;
             currentFPS = fpsCount;
+            SC_APP_INFO("FPS: {0}", currentFPS);
             fpsCount = 0;
         }
 

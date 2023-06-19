@@ -136,11 +136,27 @@ namespace CrossCraft {
 
     void add_cube(block_t id, const mathfu::Vector<float, 3>& position, Rendering::Mesh<Rendering::Vertex> &mesh) {
         uint32_t idx_counter = 0;
-        add_face_to_mesh(topFace, getTexCoord(id, LIGHT_TOP), position, LIGHT_TOP, mesh, idx_counter);
-        add_face_to_mesh(bottomFace, getTexCoord(id, LIGHT_BOT), position, LIGHT_BOT, mesh, idx_counter);
 
+        if(id == BLK_Slab) {
+            add_face_to_mesh(bottomFace, getTexCoord(id, LIGHT_BOT), position, LIGHT_BOT, mesh, idx_counter);
+            add_face_to_mesh(topFaceHalf, getTexCoord(id, LIGHT_TOP), position, LIGHT_TOP, mesh, idx_counter);
+            add_face_to_mesh(frontFaceHalf, getTexCoord(id, LIGHT_SIDE_Z), position, LIGHT_SIDE_Z, mesh, idx_counter);
+            add_face_to_mesh(backFaceHalf, getTexCoord(id, LIGHT_SIDE_Z), position, LIGHT_SIDE_Z, mesh, idx_counter);
+            add_face_to_mesh(leftFaceHalf, getTexCoord(id, LIGHT_SIDE_X), position, LIGHT_SIDE_X, mesh, idx_counter);
+            add_face_to_mesh(rightFaceHalf, getTexCoord(id, LIGHT_SIDE_X), position, LIGHT_SIDE_X, mesh, idx_counter);
+            mesh.setup_buffer();
+            return;
+        }
+
+        if(id == BLK_Flower1 || id == BLK_Flower2 || id == BLK_Mushroom1 || id == BLK_Mushroom2) {
+            add_face_to_mesh(leftFace, getTexCoord(id, LIGHT_SIDE_X), position + mathfu::Vector<float,3>(0.25f, 0.0f, 0.25f), LIGHT_SIDE_X, mesh, idx_counter);
+            mesh.setup_buffer();
+            return;
+        }
         add_face_to_mesh(leftFace, getTexCoord(id, LIGHT_SIDE_X), position, LIGHT_SIDE_X, mesh, idx_counter);
         add_face_to_mesh(rightFace, getTexCoord(id, LIGHT_SIDE_X), position, LIGHT_SIDE_X, mesh, idx_counter);
+        add_face_to_mesh(topFace, getTexCoord(id, LIGHT_TOP), position, LIGHT_TOP, mesh, idx_counter);
+        add_face_to_mesh(bottomFace, getTexCoord(id, LIGHT_BOT), position, LIGHT_BOT, mesh, idx_counter);
 
         add_face_to_mesh(frontFace, getTexCoord(id, LIGHT_SIDE_Z), position, LIGHT_SIDE_Z, mesh, idx_counter);
         add_face_to_mesh(backFace, getTexCoord(id, LIGHT_SIDE_Z), position, LIGHT_SIDE_Z, mesh, idx_counter);
@@ -438,11 +454,20 @@ namespace CrossCraft {
         Rendering::TextureManager::get().bind_texture(terrainTexID);
         Rendering::RenderContext::get().matrix_clear();
 
-        Rendering::RenderContext::get().matrix_translate(position);
+        if(id == BLK_Flower1 || id == BLK_Flower2 || id == BLK_Mushroom1 || id == BLK_Mushroom2) {
+            Rendering::RenderContext::get().matrix_translate(position + mathfu::Vector<float, 3>(0.0f, 2.0f, 0.0f));
+        } else {
+            Rendering::RenderContext::get().matrix_translate(position);
+        }
 
         Rendering::RenderContext::get().matrix_push();
         Rendering::RenderContext::get().matrix_rotate({30.0f, 45.0f, 0.0f});
-        Rendering::RenderContext::get().matrix_scale({10.0f * scale, 10.0f * scale, 10.0f * scale});
+
+        if(id == BLK_Flower1 || id == BLK_Flower2 || id == BLK_Mushroom1 || id == BLK_Mushroom2) {
+            Rendering::RenderContext::get().matrix_scale({16.0f * scale, 16.0f * scale, 16.0f * scale});
+        } else {
+            Rendering::RenderContext::get().matrix_scale({10.0f * scale, 10.0f * scale, 10.0f * scale});
+        }
 
         blockModels[id]->draw();
         Rendering::RenderContext::get().matrix_pop();

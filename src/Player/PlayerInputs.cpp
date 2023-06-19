@@ -89,7 +89,7 @@ namespace CrossCraft {
         block_t block;
         bool res = CC_World_TryGetBlock(pos.x, pos.y, pos.z, &block);
 
-        return (block != BLK_Air && block != BLK_Water) || !res;
+        return (block != BLK_Air && block != BLK_Water && block != BLK_Flower1 && block != BLK_Flower2 && block != BLK_Mushroom1 && block != BLK_Mushroom2) || !res;
     }
 
     void Player::test_collide(double dt) {

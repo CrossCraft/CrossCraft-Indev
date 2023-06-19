@@ -60,6 +60,28 @@ namespace CrossCraft {
                     surround_pos.set(x, y, z);
                     v = mathfu::Vector<int, 3>(x, y, z);
 
+                    if (block == BLK_Flower1 || block == BLK_Flower2 || block == BLK_Mushroom1 || block == BLK_Mushroom2) {
+                        auto texCoord = getTexCoord(block, LIGHT_TOP);
+                        std::array<float, 8> texCoord2 = {texCoord[2], texCoord[3], texCoord[4], texCoord[5], texCoord[6], texCoord[7], texCoord[0], texCoord[1]};
+                        add_face_to_mesh(xFace1, texCoord, v, LIGHT_TOP, mesh.transparent);
+                        add_face_to_mesh(xFace2, texCoord, v, LIGHT_TOP, mesh.transparent);
+                        add_face_to_mesh(xFace3, texCoord2, v, LIGHT_TOP, mesh.transparent);
+                        add_face_to_mesh(xFace4, texCoord2, v, LIGHT_TOP, mesh.transparent);
+                        continue;
+                    }
+
+                    if(block == BLK_Slab) {
+                        add_face_to_mesh(topFaceHalf, getTexCoord(block, LIGHT_TOP), v, LIGHT_TOP, mesh.opaque);
+                        try_add_face(wd, bottomFace, block, v, surround_pos.down, LIGHT_BOT);
+
+                        try_add_face(wd, leftFaceHalf, block, v, surround_pos.left, LIGHT_SIDE_X);
+                        try_add_face(wd, rightFaceHalf, block, v, surround_pos.right, LIGHT_SIDE_X);
+
+                        try_add_face(wd, frontFaceHalf, block, v, surround_pos.front, LIGHT_SIDE_Z);
+                        try_add_face(wd, backFaceHalf, block, v, surround_pos.back, LIGHT_SIDE_Z);
+                        continue;
+                    }
+
                     add_block_to_mesh(wd, block, v, surround_pos);
                 }
             }
@@ -142,6 +164,9 @@ end:
         auto block_check = wd->blocks[index];
 
         if (block_check == BLK_Air || block_check == BLK_Water
+        || block_check == BLK_Flower1 || block_check == BLK_Flower2
+        || block_check == BLK_Mushroom1 || block_check == BLK_Mushroom2
+        || block_check == BLK_Slab
 #ifndef PSP
         || block_check == BLK_Leaves
 #endif

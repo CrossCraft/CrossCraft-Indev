@@ -206,13 +206,12 @@ end:
                                 uint32_t value, ChunkMeshInstance &m) {
         constexpr uint16_t maxTextureCoordinate = 32768;
         constexpr uint16_t scaleFactor = 32;
-        auto newColor = convertRGBA8toRGBA4(value);
 
         for (size_t i = 0, tx = 0, idx = 0; i < 4; i++) {
             m.mesh.vertices.emplace_back(
                     static_cast<uint16_t>(tex[tx++] * maxTextureCoordinate),
                     static_cast<uint16_t>(tex[tx++] * maxTextureCoordinate),
-                    newColor,
+                    value,
                     face[idx++] + position.x,
                     (face[idx++] + position.y) * scaleFactor,
                     face[idx++] + position.z

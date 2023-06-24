@@ -38,9 +38,10 @@ namespace CrossCraft {
             goto end;
         }
         // Check if chunk is full
-        if (ChunkMeta::getData(cX, cY, cZ).isFull) {
+
+/*        if (ChunkMeta::getData(cX, cY, cZ).isFull) {
             goto end;
-        }
+        }*/
 
         for (int y = 0; y < 16; y++) {
             for (int z = 0; z < 16; z++) {

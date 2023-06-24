@@ -27,6 +27,9 @@ namespace CrossCraft {
 
         hud = create_scopeptr<HUD>();
         tickTimer = 0.0f;
+
+        mX = 0.0f;
+        mY = 0.0f;
     }
 
     Player::~Player() = default;
@@ -190,7 +193,7 @@ namespace CrossCraft {
     void Player::update(double dt) {
         // Handle input updates
         if (!InGameMenu::get().is_open() && !Inventory::is_open()) {
-            do_rotate();
+            do_rotate(dt);
         }
 
         // Calculate velocity
@@ -207,10 +210,6 @@ namespace CrossCraft {
 
         // Compute breaking and selection
         compute_breaking(dt);
-
-#if PSP
-        rotation.y += 45.0f * dt;
-#endif
     }
 
     void Player::draw(double dt) {

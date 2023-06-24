@@ -90,7 +90,7 @@ namespace CrossCraft {
 
         void compute_breaking(double dt);
 
-        void do_rotate();
+        void do_rotate(double dt);
 
         void do_move(double dt);
 
@@ -104,6 +104,8 @@ namespace CrossCraft {
 
         Rendering::Camera camera;
         ScopePtr<HUD> hud;
+
+        float mX, mY;
     };
 
 }

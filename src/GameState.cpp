@@ -1,7 +1,6 @@
 #include <GameState.hpp>
 #include <CC/core.h>
-#include <Utilities/Controllers/KeyboardController.hpp>
-#include <Utilities/Controllers/MouseController.hpp>
+
 #include <ResourcePack.hpp>
 #include <Player/InGameMenu.hpp>
 #include <Player/Inventory.hpp>
@@ -20,7 +19,6 @@ namespace CrossCraft {
 
     bool gLoggedIn = false;
 
-    using namespace Stardust_Celeste::Utilities;
 
     auto GameState::on_action_left_up(std::any p) -> void {
         auto player = std::any_cast<Player *>(p);
@@ -131,81 +129,34 @@ namespace CrossCraft {
         player = create_refptr<Player>();
         InGameMenu::init();
 
-        // Setup controls
-        kb_controller = new Utilities::Input::KeyboardController();
-
-        //TODO: Clean this up
-        kb_controller->add_command({(int) Input::Keys::W, KeyFlag::Release},
-                                   {Player::move_release, player.get()});
-        kb_controller->add_command({(int) Input::Keys::S, KeyFlag::Release},
-                                   {Player::move_release, player.get()});
-        kb_controller->add_command({(int) Input::Keys::A, KeyFlag::Release},
-                                   {Player::move_release, player.get()});
-        kb_controller->add_command({(int) Input::Keys::D, KeyFlag::Release},
-                                   {Player::move_release, player.get()});
-        kb_controller->add_command({(int) Input::Keys::W, KeyFlag::Press | KeyFlag::Held},
-                                   {Player::move_forward, player.get()});
-        kb_controller->add_command({(int) Input::Keys::S, KeyFlag::Press | KeyFlag::Held},
-                                   {Player::move_backward, player.get()});
-        kb_controller->add_command({(int) Input::Keys::A, KeyFlag::Press | KeyFlag::Held},
-                                   {Player::move_left, player.get()});
-        kb_controller->add_command({(int) Input::Keys::D, KeyFlag::Press | KeyFlag::Held},
-                                   {Player::move_right, player.get()});
-        kb_controller->add_command({(int) Input::Keys::Space, KeyFlag::Press | KeyFlag::Held},
-                                   {Player::jump, player.get()});
-        kb_controller->add_command({(int) Input::Keys::Enter, KeyFlag::Press}, {World::save, nullptr});
-        kb_controller->add_command({(int) Input::Keys::Escape, KeyFlag::Press}, {InGameMenu::toggle_command, nullptr});
-        kb_controller->add_command({(int) Input::Keys::Num1, KeyFlag::Press}, {Inventory::set_selection, SelData{0}});
-        kb_controller->add_command({(int) Input::Keys::Num2, KeyFlag::Press}, {Inventory::set_selection, SelData{1}});
-        kb_controller->add_command({(int) Input::Keys::Num3, KeyFlag::Press}, {Inventory::set_selection, SelData{2}});
-        kb_controller->add_command({(int) Input::Keys::Num4, KeyFlag::Press}, {Inventory::set_selection, SelData{3}});
-        kb_controller->add_command({(int) Input::Keys::Num5, KeyFlag::Press}, {Inventory::set_selection, SelData{4}});
-        kb_controller->add_command({(int) Input::Keys::Num6, KeyFlag::Press}, {Inventory::set_selection, SelData{5}});
-        kb_controller->add_command({(int) Input::Keys::Num7, KeyFlag::Press}, {Inventory::set_selection, SelData{6}});
-        kb_controller->add_command({(int) Input::Keys::Num8, KeyFlag::Press}, {Inventory::set_selection, SelData{7}});
-        kb_controller->add_command({(int) Input::Keys::Num9, KeyFlag::Press}, {Inventory::set_selection, SelData{8}});
-        kb_controller->add_command({(int) Input::Keys::Q, KeyFlag::Press}, {Inventory::drop_selection, player.get()});
-        kb_controller->add_command({(int) Input::Keys::E, KeyFlag::Press}, {Inventory::toggle_inventory, player.get()});
-
-        // TODO: Clean This Up
-        mb_controller = new Utilities::Input::MouseController();
-        mb_controller->add_command({(int) Input::MouseButtons::Left, KeyFlag::Release | KeyFlag::Untouched},
-                                   {on_action_left_up, player.get()});
-        mb_controller->add_command({(int) Input::MouseButtons::Left, KeyFlag::Press | KeyFlag::Held},
-                                   {on_action_left, player.get()});
-        mb_controller->add_command({(int) Input::MouseButtons::Right, KeyFlag::Press}, {on_action_right, player.get()});
-        mb_controller->add_command({(int) Input::MouseButtons::MWheelUp, KeyFlag::Press},
-                                   {Inventory::decrement_selection, nullptr});
-        mb_controller->add_command({(int) Input::MouseButtons::MWheelDown, KeyFlag::Press},
-                                   {Inventory::increment_selection, nullptr});
-
-        Input::add_controller(kb_controller);
-        Input::add_controller(mb_controller);
-        Input::set_differential_mode("Mouse", true);
-        Input::set_cursor_center();
+        setup_input();
 
         SC_APP_INFO("Game State Initialized");
         Rendering::RenderContext::get().set_mode_3D();
 
         world = create_refptr<World>();
         SC_APP_INFO("WORLD INITIALIZED");
+
+        sky = create_refptr<Sky>();
     }
 
 
     void GameState::check_poll_input(double dt) {
         poll_time += dt;
         if(poll_time > (1.0f / 240.0f)) {
-            Input::update();
+            Utilities::Input::update();
             poll_time = 0.0f;
             Inventory::get().update();
         }
     }
 
+    auto tick_count = 0;
     void GameState::tick(double dt) {
         tick_time += dt;
 
         if(tick_time > (1.0f / 20.0f)) {
             tick_time = 0.0f;
+            tick_count++;
             player->tick();
         }
 
@@ -286,6 +237,8 @@ namespace CrossCraft {
     float x = 0;
 
     void GameState::on_draw(Core::Application *app, double dt) {
+        sky->draw(player->position, tick_count);
+
         world->draw();
 
         Inventory::get().draw_block_hand(player->position, player->rotation, dt);

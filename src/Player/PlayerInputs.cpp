@@ -3,12 +3,35 @@
 #include <Player/InGameMenu.hpp>
 
 namespace CrossCraft {
-    void Player::do_rotate() {
+    void Player::do_rotate(double dt) {
+
+#if BUILD_PLAT == BUILD_PSP
+        float cX = Utilities::Input::get_axis("PSP", "X"); // TODO: Sensitivity
+        float cY = Utilities::Input::get_axis("PSP", "Y"); // TODO: Sensitivity
+
+        if(cX < 0.3f && cX > -0.3f) {
+            cX = 0.0f;
+        }
+
+        if(cY < 0.3f && cY > -0.3f) {
+            cY = 0.0f;
+        }
+
+        horizInput = cX;
+        vertInput = -cY;
+
+        cX = mX * 480.0f * dt;
+        cY = mY * 272.0f * dt;
+
+        mX = 0.0f;
+        mY = 0.0f;
+#else
         float cX = Utilities::Input::get_axis("Mouse", "X") * 0.1; // TODO: Sensitivity
         float cY = Utilities::Input::get_axis("Mouse", "Y") * 0.1; // TODO: Sensitivity
 
         cX *= 960;
         cY *= 544;
+#endif
 
 
         if(lastCX == cX && lastCY == cY) {
@@ -200,7 +223,11 @@ namespace CrossCraft {
         auto player = std::any_cast<Player *>(p);
 
         if (!InGameMenu::get().is_open() && !Inventory::is_open()) {
+#if PSP
+            player->mY = -1.0f;
+#else
             player->vertInput += 1.0f;
+#endif
         }
     }
 
@@ -208,7 +235,11 @@ namespace CrossCraft {
         auto player = std::any_cast<Player *>(p);
 
         if (!InGameMenu::get().is_open() && !Inventory::is_open()) {
+#if PSP
+            player->mY = 1.0f;
+#else
             player->vertInput -= 1.0f;
+#endif
         }
     }
 
@@ -216,7 +247,11 @@ namespace CrossCraft {
         auto player = std::any_cast<Player *>(p);
 
         if (!InGameMenu::get().is_open() && !Inventory::is_open()) {
+#if PSP
+            player->mX = -1.0f;
+#else
             player->horizInput -= 1.0f;
+#endif
         }
     }
 
@@ -233,7 +268,11 @@ namespace CrossCraft {
         auto player = std::any_cast<Player *>(p);
 
         if (!InGameMenu::get().is_open() && !Inventory::is_open()) {
+#if PSP
+            player->mX = 1.0f;
+#else
             player->horizInput = 1.0f;
+#endif
         }
     }
 

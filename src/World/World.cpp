@@ -19,7 +19,7 @@ namespace CrossCraft {
     World::~World() = default;
 
 #if PSP
-    const int CHUNK_RADIUS_OPTION = 4;
+    const int CHUNK_RADIUS_OPTION = 3;
 #else
     const int CHUNK_RADIUS_OPTION = 8;
 #endif
@@ -55,7 +55,7 @@ namespace CrossCraft {
                     auto fpos = mathfu::Vector<float, 2>(x, z);
                     auto fppos = mathfu::Vector<float, 2>(player_chunk.x, player_chunk.y);
                     auto dist = (fpos - fppos).Length();
-                    if (dist > CHUNK_RADIUS_REAL + 0.5f) continue;
+                    if (dist > CHUNK_RADIUS_REAL + 0.44f) continue;
                 }
 
                 uint64_t id = ((uint64_t) pos.x) << 32 | (uint64_t) pos.y;
@@ -101,7 +101,6 @@ namespace CrossCraft {
     }
 
     void World::draw() {
-        GI::enable(GI_FOG);
         GI::enable(GI_BLEND);
         GI::blend_func(GI_SRC_ALPHA, GI_ONE_MINUS_SRC_ALPHA);
         GI::enable(GI_ALPHA_TEST);

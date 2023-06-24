@@ -79,10 +79,17 @@ namespace CrossCraft {
         float movementX = horizInput * cosf(yrad) + vertInput * sinf(yrad);
         float movementZ = horizInput * sinf(yrad) - vertInput * cosf(yrad);
 
-        velocity.x = movementX * moveSpeed;
-        velocity.z = movementZ * moveSpeed;
+        if(freecam) {
+            velocity.x = movementX * moveSpeed * 5.0f;
+            velocity.z = movementZ * moveSpeed * 5.0f;
+        } else {
+            velocity.x = movementX * moveSpeed;
+            velocity.z = movementZ * moveSpeed;
+        }
 
-        velocity.y -= GRAVITY * dt;
+        if(!freecam) {
+            velocity.y -= GRAVITY * dt;
+        }
     }
 
     void Player::do_move(double dt) {
@@ -262,6 +269,10 @@ namespace CrossCraft {
         if (!InGameMenu::get().is_open() && !Inventory::is_open()) {
             player->vertInput = 0.0f;
             player->horizInput = 0.0f;
+
+            if(player->freecam) {
+                player->velocity.y = 0.0f;
+            }
         }
     }
     auto Player::move_right(std::any p) -> void {
@@ -283,6 +294,27 @@ namespace CrossCraft {
             if (player->on_ground) {
                 player->velocity.y = 8.367f;
                 player->on_ground = false;
+            }
+
+            if(player->freecam) {
+                player->velocity.y = 8.367f;
+            }
+        }
+    }
+
+    auto Player::toggle_freecam(std::any p) -> void {
+        auto player = std::any_cast<Player *>(p);
+
+        if(!InGameMenu::get().is_open() && !Inventory::is_open()) {
+            player->freecam = !player->freecam;
+        }
+    }
+
+    auto Player::sneak_sink(std::any p) -> void {
+        auto player = std::any_cast<Player *>(p);
+        if(!InGameMenu::get().is_open() && !Inventory::is_open()) {
+            if (player->freecam) {
+                player->velocity.y = -8.367f;
             }
         }
     }

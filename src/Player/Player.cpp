@@ -200,10 +200,12 @@ namespace CrossCraft {
         calculate_velocity(dt);
 
         // Test for collisions
-        test_collide(dt);
+        if(!freecam) {
+            test_collide(dt);
 
-        // Check the Player's status
-        perform_checks();
+            // Check the Player's status
+            perform_checks();
+        }
 
         // Move the player
         do_move(dt);

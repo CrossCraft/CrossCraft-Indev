@@ -47,6 +47,11 @@ namespace CrossCraft {
 
         void draw(double dt);
 
+
+        static auto toggle_freecam(std::any p) -> void;
+
+        static auto sneak_sink(std::any p) -> void;
+
         static auto move_forward(std::any p) -> void;
 
         static auto move_backward(std::any p) -> void;
@@ -104,6 +109,7 @@ namespace CrossCraft {
 
         Rendering::Camera camera;
         ScopePtr<HUD> hud;
+        bool freecam = false;
 
         float mX, mY;
     };

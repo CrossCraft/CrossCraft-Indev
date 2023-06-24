@@ -21,6 +21,10 @@ namespace CrossCraft{
                                    {Player::move_release, player.get()});
         kb_controller->add_command({(int) Input::Keys::D, KeyFlag::Release},
                                    {Player::move_release, player.get()});
+        kb_controller->add_command({(int) Input::Keys::Space, KeyFlag::Release},
+                                   {Player::move_release, player.get()});
+        kb_controller->add_command({(int) Input::Keys::LShift, KeyFlag::Release},
+                                   {Player::move_release, player.get()});
         kb_controller->add_command({(int) Input::Keys::W, KeyFlag::Press | KeyFlag::Held},
                                    {Player::move_forward, player.get()});
         kb_controller->add_command({(int) Input::Keys::S, KeyFlag::Press | KeyFlag::Held},
@@ -44,6 +48,8 @@ namespace CrossCraft{
         kb_controller->add_command({(int) Input::Keys::Num9, KeyFlag::Press}, {Inventory::set_selection, SelData{8}});
         kb_controller->add_command({(int) Input::Keys::Q, KeyFlag::Press}, {Inventory::drop_selection, player.get()});
         kb_controller->add_command({(int) Input::Keys::E, KeyFlag::Press}, {Inventory::toggle_inventory, player.get()});
+        kb_controller->add_command({(int) Input::Keys::LShift, KeyFlag::Press | KeyFlag::Held}, {Player::sneak_sink, player.get()});
+        kb_controller->add_command({(int) Input::Keys::Backslash, KeyFlag::Press}, {Player::toggle_freecam, player.get()});
 
         mb_controller = new Utilities::Input::MouseController();
         mb_controller->add_command({(int) Input::MouseButtons::Left, KeyFlag::Release | KeyFlag::Untouched},

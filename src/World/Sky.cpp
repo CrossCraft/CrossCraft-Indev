@@ -251,7 +251,6 @@ namespace CrossCraft {
         }
 
         Rendering::RenderContext::get().set_color(AtmosphereColor);
-        Rendering::RenderContext::get().clear();
 
         GI::fog_color(AtmosphereColor);
         GI::enable(GI_FOG);

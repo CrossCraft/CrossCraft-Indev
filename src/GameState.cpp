@@ -10,6 +10,7 @@
 #include <CC/alphaindev.pb-c.h>
 #include <CC/eventpackets.h>
 #include <Chunk/ChunkMeta.hpp>
+#include <ELoop.hpp>
 
 #if PSP
 #include <pspsdk.h>
@@ -62,7 +63,7 @@ namespace CrossCraft {
         auto event_loop = CC_EventLoop_Init();
 
         // Create the client-side event loop for SP
-        client_event_loop = CC_EventLoop_Init();
+        ELoop::get().client_event_loop = CC_EventLoop_Init();
 
         // Create the server-side data bus for SP
         auto server_bus = SharedDataBus_Init();
@@ -75,18 +76,18 @@ namespace CrossCraft {
         CC_EventLoop_SetOutboundBus(event_loop, &server_bus->bus, server_bus);
 
         // Set the inbound bus for the client event loop.
-        CC_EventLoop_SetInboundBus(client_event_loop, &server_bus->bus, server_bus);
-        CC_EventLoop_SetOutboundBus(client_event_loop, &data_bus->bus, data_bus);
+        CC_EventLoop_SetInboundBus(ELoop::get().client_event_loop, &server_bus->bus, server_bus);
+        CC_EventLoop_SetOutboundBus(ELoop::get().client_event_loop, &data_bus->bus, data_bus);
 
         // Set the server event loop for the core library.
         CC_Core_SetEventLoop(event_loop);
 
         // Send the handshake to the server.
         EventPacket handshake_packet = CC_EventPacket_Create_Handshake("IridescentRose", false);
-        CC_EventLoop_PushPacketOutbound(client_event_loop, &handshake_packet);
-        CC_EventLoop_Update(client_event_loop);
+        CC_EventLoop_PushPacketOutbound(ELoop::get().client_event_loop, &handshake_packet);
+        CC_EventLoop_Update(ELoop::get().client_event_loop);
 
-        CC_EventLoop_RegisterHandler(client_event_loop, CC_PACKET_TYPE_HANDSHAKE, [](void* loop, EventPacket* packet) {
+        CC_EventLoop_RegisterHandler(ELoop::get().client_event_loop, CC_PACKET_TYPE_HANDSHAKE, [](void* loop, EventPacket* packet) {
             auto handshake = packet->data.handshake_sc.response.data;
             if(handshake[0] == '-') {
                 SC_APP_INFO("Handshake successful! Logging in!");
@@ -97,36 +98,27 @@ namespace CrossCraft {
             }
         });
 
-        CC_EventLoop_RegisterHandler(client_event_loop, CC_PACKET_TYPE_LOGIN, [](void* loop, EventPacket* packet) {
+        CC_EventLoop_RegisterHandler(ELoop::get().client_event_loop, CC_PACKET_TYPE_LOGIN, [](void* loop, EventPacket* packet) {
             gLoggedIn = true;
         });
-        CC_EventLoop_RegisterHandler(client_event_loop, CC_PACKET_TYPE_SPAWN_POSITION, [](void* loop, EventPacket* packet) {
+        CC_EventLoop_RegisterHandler(ELoop::get().client_event_loop, CC_PACKET_TYPE_SPAWN_POSITION, [](void* loop, EventPacket* packet) {
             auto spawn = packet->data.spawn_position;
-            SC_APP_INFO("Spawn position: {0}, {1}, {2}", spawn.x, spawn.y, spawn.z);
+            Player::get().position = {static_cast<float>(spawn.x), static_cast<float>(spawn.y), static_cast<float>(spawn.z)};
         });
-        CC_EventLoop_RegisterHandler(client_event_loop, CC_PACKET_TYPE_PLAYER_POSITION_AND_LOOK, [](void* loop, EventPacket* packet) {
+
+        CC_EventLoop_RegisterHandler(ELoop::get().client_event_loop, CC_PACKET_TYPE_PLAYER_POSITION_AND_LOOK, [](void* loop, EventPacket* packet) {
             auto p = packet->data.player_position_and_look_sc;
-            SC_APP_INFO("Player position: {0}, {1}, {2}", p.x, p.y, p.z);
-            SC_APP_INFO("Player look: {0}, {1}", p.yaw, p.pitch);
+            Player::get().position = {static_cast<float>(p.x), static_cast<float>(p.y), static_cast<float>(p.z)};
+            Player::get().rotation = {static_cast<float>(p.yaw), static_cast<float>(p.pitch)};
         });
-        CC_EventLoop_RegisterHandler(client_event_loop, CC_PACKET_TYPE_UPDATE_HEALTH, [](void* loop, EventPacket* packet) {
-            auto p = packet->data.update_health;
-            SC_APP_INFO("Player health: {0}", p.health);
+        CC_EventLoop_RegisterHandler(ELoop::get().client_event_loop, CC_PACKET_TYPE_UPDATE_HEALTH, [](void* loop, EventPacket* packet) {
+            Player::handle_health_update(HealthUpdate{&Player::get(), packet->data.update_health.health});
         });
 
         while(!gLoggedIn) {
             CC_Core_Update(1);
-            CC_EventLoop_Update(client_event_loop);
+            CC_EventLoop_Update(ELoop::get().client_event_loop);
         }
-
-        // Send initial player position.
-        CC_Event_Push_PlayerUpdate(PLAYER_SELF, 128.0f, 48.0f, 128.0f, 0.0f, 0.0f, false);
-
-        // Make sure player position is handled.
-        CC_Core_Update(0.0);
-
-        // Create the player.
-        player = create_refptr<Player>();
         InGameMenu::init();
 
         setup_input();
@@ -157,19 +149,21 @@ namespace CrossCraft {
         if(tick_time > (1.0f / 20.0f)) {
             tick_time = 0.0f;
             tick_count++;
-            player->tick();
-        }
+            Player::get().tick();
 
-        CC_EventLoop_Update(client_event_loop);
+            auto packet = CC_EventPacket_Create_PlayerPositionAndLookClient(Player::get().position.x, Player::get().position.y, Player::get().position.z, Player::get().rotation.x, Player::get().rotation.y, Player::get().on_ground);
+            CC_EventLoop_PushPacketOutbound(ELoop::get().client_event_loop, &packet);
+            CC_EventLoop_Update(ELoop::get().client_event_loop);
+        }
     }
 
     void GameState::on_update(Core::Application *app, double dt) {
         check_poll_input(dt);
         tick(dt);
 
-        player->update(dt);
+        Player::get().update(dt);
         world->update(dt);
-        EntityManager::get().update(player.get(), dt);
+        EntityManager::get().update(&Player::get(), dt);
 
         CC_Core_Update(dt);
 
@@ -200,21 +194,6 @@ namespace CrossCraft {
                     break;
                 }
 
-                case CC_EVENT_SET_PLAYER_HEALTH: {
-                    Player::handle_health_update(HealthUpdate{player.get(), event->data.set_player_health.health});
-                    break;
-                }
-
-                case CC_EVENT_ENTITY_TELEPORT: {
-                    EntityManager::get().handle_teleport(event->data.entity_teleport.eid, event->data.entity_teleport.x,
-                                                         event->data.entity_teleport.y, event->data.entity_teleport.z,
-                                                         event->data.entity_teleport.vx, event->data.entity_teleport.vy,
-                                                         event->data.entity_teleport.vz,
-                                                         event->data.entity_teleport.yaw,
-                                                         event->data.entity_teleport.pitch);
-                    break;
-                }
-
                 default:
                     SC_APP_INFO("Unhandled event type: {}", event->type);
                     break;
@@ -237,15 +216,15 @@ namespace CrossCraft {
     float x = 0;
 
     void GameState::on_draw(Core::Application *app, double dt) {
-        sky->draw(player->position, tick_count);
+        sky->draw(Player::get().position, tick_count);
 
         world->draw();
 
-        Inventory::get().draw_block_hand(player->position, player->rotation, dt);
+        Inventory::get().draw_block_hand(Player::get().position, Player::get().rotation, dt);
 
         setup_2d_rendering();
 
-        player->draw(dt);
+        Player::get().draw(dt);
         Inventory::get().draw(dt);
 
         setup_3d_rendering();
@@ -253,7 +232,7 @@ namespace CrossCraft {
 
     void GameState::on_cleanup() {
         CC_Core_Term();
-        CC_EventLoop_Destroy(client_event_loop);
+        CC_EventLoop_Destroy(ELoop::get().client_event_loop);
     }
 
 } // namespace CrossCraft

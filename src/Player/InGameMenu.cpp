@@ -3,6 +3,8 @@
 #include <World/World.hpp>
 #include <utility>
 #include <Player/Inventory.hpp>
+#include "CC/eventpackets.h"
+#include "ELoop.hpp"
 
 
 namespace CrossCraft {
@@ -80,7 +82,9 @@ namespace CrossCraft {
 
         if(get().is_dead) {
             if (mouseVec.x >= 190 && mouseVec.x <= 290 && mouseVec.y >= 76 && mouseVec.y <= 96) {
-                CC_Event_Push_PlayerRespawn();
+                auto packet = CC_EventPacket_Create_PlayerRespawn();
+                CC_EventLoop_PushPacketOutbound(ELoop::get().client_event_loop, &packet);
+
                 get().is_dead = false;
 
 

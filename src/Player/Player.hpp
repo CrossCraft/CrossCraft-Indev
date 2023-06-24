@@ -47,6 +47,10 @@ namespace CrossCraft {
 
         void draw(double dt);
 
+        static auto get() -> Player & {
+            static Player instance;
+            return instance;
+        }
 
         static auto toggle_freecam(std::any p) -> void;
 
@@ -75,6 +79,8 @@ namespace CrossCraft {
         mathfu::Vector<float, 3> position;
         mathfu::Vector<float, 3> velocity;
         mathfu::Vector<float, 2> rotation;
+        bool on_ground;
+
     private:
         friend class HUD;
 
@@ -86,7 +92,6 @@ namespace CrossCraft {
         float horizInput;
         float vertInput;
 
-        bool on_ground;
         bool in_water;
         bool water_face;
 

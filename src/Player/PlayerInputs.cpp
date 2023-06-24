@@ -1,6 +1,8 @@
 #include <Player/Player.hpp>
 #include <Player/Inventory.hpp>
 #include <Player/InGameMenu.hpp>
+#include <CC/core.h>
+#include <CC/eventpackets.h>
 
 namespace CrossCraft {
     void Player::do_rotate(double dt) {
@@ -103,8 +105,6 @@ namespace CrossCraft {
             position.z += velocity.z * dt;
         }
 
-        CC_Event_Push_PlayerUpdate(PLAYER_SELF, position.x, position.y + 1.625f, position.z, rotation.x, rotation.y,
-                                   on_ground);
         camera.pos = -position;
         camera.pos.y -= 1.5f;
         camera.rot = mathfu::Vector<float, 3>{rotation.x, rotation.y, 0.0f};

@@ -15,8 +15,8 @@ namespace CrossCraft {
 #endif
         auto pd = CC_Player_GetData();
 
-        position = mathfu::Vector<float, 3>{pd->x, pd->y, pd->z};
-        velocity = mathfu::Vector<float, 3>{pd->vx, pd->vy, pd->vz};
+        position = mathfu::Vector<float, 3>{0, 0, 0};
+        velocity = mathfu::Vector<float, 3>{0, 0, 0};
         rotation = mathfu::Vector<float, 2>{0, 0};
         on_ground = pd->on_ground;
         in_water = false;

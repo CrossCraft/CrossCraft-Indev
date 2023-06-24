@@ -1,5 +1,8 @@
 #include <Player/Hud.hpp>
 #include <ResourcePack.hpp>
+#if PSP
+#include <pspsdk.h>
+#endif
 
 namespace CrossCraft {
 
@@ -120,6 +123,10 @@ namespace CrossCraft {
             timer = 0.0;
             currentFPS = fpsCount;
             SC_APP_INFO("FPS: {0}", currentFPS);
+#if PSP
+            auto freeRam = pspSdkTotalFreeUserMemSize() / 1024;
+            SC_APP_INFO("Free RAM: {0} KB", freeRam);
+#endif
             fpsCount = 0;
         }
 

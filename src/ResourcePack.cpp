@@ -84,7 +84,7 @@ namespace CrossCraft {
         return (uint8_t *)dataBuffer;
     }
 
-    auto ResourcePack::load_resource(std::string name, ResourceType type, const std::string& path) -> void {
+    auto ResourcePack::load_resource(std::string name, ResourceType type, const std::string& path, bool needPix) -> void {
         if (type == ResourceType::TEXTURE) {
             auto packname = packQueue[get_path_index(path)];
 
@@ -92,7 +92,7 @@ namespace CrossCraft {
             auto dataBuffer = read_file_to_buffer(packname, arrayLength);
             auto result = Rendering::TextureManager::get().load_texture_ram(dataBuffer, arrayLength,
                                                                             SC_TEX_FILTER_NEAREST,
-                                                                            SC_TEX_FILTER_NEAREST, true);
+                                                                            SC_TEX_FILTER_NEAREST, true, false, false, needPix);
 
             free(dataBuffer);
 
@@ -105,7 +105,7 @@ namespace CrossCraft {
     }
 
     void ResourcePack::load() {
-        load_resource("default", ResourceType::TEXTURE, "assets/minecraft/textures/default.png");
+        load_resource("default", ResourceType::TEXTURE, "assets/minecraft/textures/default.png", true);
         load_resource("terrain", ResourceType::TEXTURE, "assets/minecraft/textures/terrain.png");
         load_resource("water_overlay", ResourceType::TEXTURE, "assets/minecraft/textures/water.png");
         load_resource("gui_common", ResourceType::TEXTURE, "assets/minecraft/textures/gui/gui.png");

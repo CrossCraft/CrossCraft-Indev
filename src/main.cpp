@@ -1,6 +1,9 @@
 #include <Stardust-Celeste.hpp>
 #include <GameState.hpp>
 #include <Debug/OptimizerState.hpp>
+#if PSP
+#include <pspsdk.h>
+#endif
 
 #ifdef _WIN32
 extern "C" {
@@ -11,9 +14,15 @@ extern "C" {
 
 using namespace Stardust_Celeste;
 
+int freeRamPSP;
+
 class GameApplication : public Core::Application {
 public:
     void on_start() override {
+#if PSP
+        freeRamPSP = pspSdkTotalFreeUserMemSize() / 1024;
+#endif
+
         // Create new Game State
         auto state = create_refptr<CrossCraft::GameState>();
         // Set to our state

@@ -2,7 +2,9 @@
 #include <ResourcePack.hpp>
 #if PSP
 #include <pspsdk.h>
+extern int freeRamPSP;
 #endif
+
 
 namespace CrossCraft {
 
@@ -125,7 +127,9 @@ namespace CrossCraft {
             SC_APP_INFO("FPS: {0}", currentFPS);
 #if PSP
             auto freeRam = pspSdkTotalFreeUserMemSize() / 1024;
+            auto usedRam = freeRamPSP - freeRam;
             SC_APP_INFO("Free RAM: {0} KB", freeRam);
+            SC_APP_INFO("Used RAM: {0} KB", usedRam);
 #endif
             fpsCount = 0;
         }

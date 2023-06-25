@@ -481,8 +481,8 @@ u32 ChunkMesh::calculateLighting(const WorldData *wd, uint32_t lightValue,
 	mathfu::Vector<float, 3> light = { 0.25f, 0.25f, 0.25f };
 	auto lv = wd->lightmap[index];
 
-	uint8_t block_light = lv >> 4;
-	uint8_t sky_light = lv & 0xF;
+	uint8_t sky_light = lv >> 4;
+	uint8_t block_light = lv & 0xF;
 	float result = std::max(block_light, sky_light);
 
 	light += mathfu::Vector<float, 3>(result / 15.0f, result / 15.0f, result / 15.0f) * 0.75f;
@@ -519,6 +519,7 @@ void ChunkMesh::add_face_to_mesh(const std::array<float, 12> &face,
 
 	for (size_t i = 0, tx = 0, idx = 0; i < 4; i++) {
 		c.color = value;
+		/*
 		if (value == LIGHT_TOP)
 			c.color -= (getAOY(i, position, this, 1, 0)) * 0x151515;
 		else if (value == LIGHT_BOT)
@@ -533,7 +534,7 @@ void ChunkMesh::add_face_to_mesh(const std::array<float, 12> &face,
 				c.color -= (getAOZ(i, position, this, 1, 2)) * 0x151515;
 			} else
 				c.color -= (getAOZ(i, position, this, -1, 0)) * 0x151515;
-
+*/
 		m.mesh.vertices.emplace_back(
 			static_cast<uint16_t>(tex[tx++] * maxTextureCoordinate),
 			static_cast<uint16_t>(tex[tx++] * maxTextureCoordinate),

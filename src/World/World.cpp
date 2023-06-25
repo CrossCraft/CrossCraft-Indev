@@ -159,12 +159,35 @@ void World::handle_block_update(uint32_t x, uint32_t y, uint32_t z)
 
 	// This updates the chunk that the block is in, and checks the 6 possible surrounding chunks
 	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y, z));
-	chunks_to_update_vec.emplace_back(generate_chunk_vector(x + 1, y, z));
-	chunks_to_update_vec.emplace_back(generate_chunk_vector(x - 1, y, z));
-	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y + 1, z));
-	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y - 1, z));
-	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y, z + 1));
-	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y, z - 1));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x + 16, y, z));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x - 16, y, z));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y + 16, z));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y - 16, z));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y, z + 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y, z - 16));
+
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x + 16, y + 16, z));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x - 16, y + 16, z));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x + 16, y - 16, z));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x - 16, y - 16, z));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x + 16, y, z + 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x - 16, y, z + 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x + 16, y, z - 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x - 16, y, z - 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y + 16, z + 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y - 16, z + 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y + 16, z - 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y - 16, z - 16));
+
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x + 16, y + 16, z + 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x - 16, y + 16, z + 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x + 16, y - 16, z + 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x - 16, y - 16, z + 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x + 16, y + 16, z - 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x - 16, y + 16, z - 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x + 16, y - 16, z - 16));
+	chunks_to_update_vec.emplace_back(generate_chunk_vector(x - 16, y - 16, z - 16));
+
 
 	// Update the chunks
 	for (auto &chunk : chunks_to_update_vec) {

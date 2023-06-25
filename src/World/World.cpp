@@ -8,6 +8,8 @@
 #include <ModelRenderer.hpp>
 #include <Chunk/ChunkMeta.hpp>
 
+bool firstRun = true;
+
 namespace CrossCraft
 {
 
@@ -62,14 +64,21 @@ void World::update_chunks_list()
 				auto fppos = mathfu::Vector<float, 2>(
 					player_chunk.x, player_chunk.y);
 				auto dist = (fpos - fppos).Length();
-				if (dist > CHUNK_RADIUS_REAL + 0.44f)
+				if (dist > CHUNK_RADIUS_REAL + 0.5f)
 					continue;
 			}
 
 			uint64_t id = ((uint64_t)pos.x) << 32 | (uint64_t)pos.y;
 
 			if (chunks.find(id) == chunks.end()) {
-				new_chunks.emplace(id, new ChunkStack(x, z));
+				auto chk = new ChunkStack(x, z);
+				new_chunks.emplace(id, chk);
+
+				if(firstRun) {
+					chk->prepare();
+					chk->generate();
+					chk->finalize();
+				}
 			} else {
 				new_chunks.emplace(id, chunks[id]);
 				chunks.erase(id);
@@ -81,6 +90,9 @@ void World::update_chunks_list()
 		delete chunk.second;
 	}
 
+	if(firstRun) {
+		firstRun = false;
+	}
 	chunks = new_chunks;
 }
 
@@ -109,6 +121,8 @@ void World::update(double dt)
 
 void World::draw()
 {
+	reset_chunk_frame();
+
 	// Configure the GI
 	GI::enable(GI_BLEND);
 	GI::blend_func(GI_SRC_ALPHA, GI_ONE_MINUS_SRC_ALPHA);

@@ -6,6 +6,8 @@ namespace CrossCraft
 {
 using namespace Stardust_Celeste;
 
+	void reset_chunk_frame();
+
 class ChunkMesh {
     public:
 	ChunkMesh(int x, int y, int z);
@@ -36,7 +38,7 @@ class ChunkMesh {
 	void add_face_to_mesh(const std::array<float, 12> &array1,
 				     std::array<float, 8> array2,
 				     const mathfu::Vector<int, 3> &vector3,
-				     uint32_t value,
+				     uint32_t value, uint32_t value2,
 				     ChunkMeshInstance &instance);
 	u32 calculateLighting(const WorldData *wd, uint32_t lightValue,
 			      size_t index) const;

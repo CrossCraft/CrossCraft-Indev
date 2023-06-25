@@ -6,6 +6,11 @@
 namespace CrossCraft
 {
 
+static int chunksLastFrame = 0;
+void reset_chunk_frame() {
+	chunksLastFrame = 0;
+}
+
 ChunkMesh::ChunkMesh(int x, int y, int z)
 	: cX(x)
 	, cY(y)
@@ -77,16 +82,16 @@ void ChunkMesh::generate_mesh()
 					};
 					add_face_to_mesh(xFace1, texCoord, v,
 							 LIGHT_TOP,
-							 mesh.transparent);
+							 LIGHT_TOP, mesh.transparent);
 					add_face_to_mesh(xFace2, texCoord, v,
 							 LIGHT_TOP,
-							 mesh.transparent);
+							 LIGHT_TOP, mesh.transparent);
 					add_face_to_mesh(xFace3, texCoord2, v,
 							 LIGHT_TOP,
-							 mesh.transparent);
+							 LIGHT_TOP, mesh.transparent);
 					add_face_to_mesh(xFace4, texCoord2, v,
 							 LIGHT_TOP,
-							 mesh.transparent);
+							 LIGHT_TOP, mesh.transparent);
 					continue;
 				}
 
@@ -94,7 +99,7 @@ void ChunkMesh::generate_mesh()
 					add_face_to_mesh(
 						topFaceHalf,
 						getTexCoord(block, LIGHT_TOP),
-						v, LIGHT_TOP, mesh.opaque);
+						v, LIGHT_TOP, LIGHT_TOP, mesh.opaque);
 					try_add_face(wd, bottomFace, block, v,
 						     surround_pos.down,
 						     LIGHT_BOT);
@@ -124,6 +129,12 @@ end:
 	return;
 }
 
+#if PSP
+#define CHUNKS_PER_FRAME 1
+#else
+#define CHUNKS_PER_FRAME 16
+#endif
+
 void ChunkMesh::draw(CrossCraft::ChunkMeshSelection selection)
 {
 	if (!Frustum::get().IsBoxVisible(
@@ -133,7 +144,8 @@ void ChunkMesh::draw(CrossCraft::ChunkMeshSelection selection)
 		return;
 	}
 
-	if (dirty) {
+	if (dirty && chunksLastFrame < CHUNKS_PER_FRAME) {
+		chunksLastFrame++;
 		prepare_mesh();
 		generate_mesh();
 		finalize_mesh();
@@ -224,14 +236,14 @@ void ChunkMesh::try_add_face(const WorldData *wd,
 		    lightValue == LIGHT_TOP) {
 			add_face_to_mesh(waterTopFace,
 					 getTexCoord(block, lightValue),
-					 actual_pos, lightColorI,
+					 actual_pos, lightValue, lightColorI,
 					 mesh.transparent);
 		} else if (block == BLK_Leaves) {
 			add_face_to_mesh(data, getTexCoord(block, lightValue),
-					 actual_pos, lightColorI, mesh.opaque);
+					 actual_pos, lightValue, lightColorI, mesh.opaque);
 		} else if (block != BLK_Water && block != BLK_Glass) {
 			add_face_to_mesh(data, getTexCoord(block, lightValue),
-					 actual_pos, lightColorI, mesh.opaque);
+					 actual_pos, lightValue, lightColorI, mesh.opaque);
 		}
 	}
 }
@@ -507,10 +519,12 @@ u32 ChunkMesh::calculateLighting(const WorldData *wd, uint32_t lightValue,
 
 const std::array<uint16_t, 6> indexOrder = { 0, 1, 2, 2, 3, 0 };
 
+#define FANCY_LIGHTING 1
+
 void ChunkMesh::add_face_to_mesh(const std::array<float, 12> &face,
 				 std::array<float, 8> tex,
 				 const mathfu::Vector<int, 3> &position,
-				 uint32_t value, ChunkMeshInstance &m)
+				 uint32_t value, uint32_t value2, ChunkMeshInstance &m)
 {
 	constexpr uint16_t maxTextureCoordinate = 32768;
 	constexpr uint16_t scaleFactor = 32;
@@ -518,23 +532,29 @@ void ChunkMesh::add_face_to_mesh(const std::array<float, 12> &face,
 	Rendering::Color c{};
 
 	for (size_t i = 0, tx = 0, idx = 0; i < 4; i++) {
-		c.color = value;
-		/*
+		c.color = value2;
+
+#if FANCY_LIGHTING
+		mathfu::Vector<float, 3> col = { (float)c.rgba.r, (float)c.rgba.g, (float)c.rgba.b };
+
 		if (value == LIGHT_TOP)
-			c.color -= (getAOY(i, position, this, 1, 0)) * 0x151515;
+			col *= (1.0f - (float)(getAOY(i, position, this, 1, 0)) * 0.15f);
 		else if (value == LIGHT_BOT)
-			c.color -= (getAOY(i, position, this, -1, 2)) * 0x151515;
+			col *= (1.0f - (float)(getAOY(i, position, this, -1, 2)) * 0.15f);
 		else if (value == LIGHT_SIDE_Z)
 			if (face[0] == 0 && face[2] == 1) {
-				c.color -= (getAOX(i, position, this, 1, 0)) * 0x151515;
+				col *= (1.0f -(float)(getAOX(i, position, this, 1, 0)) * 0.15f);
 			} else
-				c.color -= (getAOX(i, position, this, -1, 2)) * 0x151515;
+				col *= (1.0f -(float)(getAOX(i, position, this, -1, 2)) * 0.15f);
 		else if (value == LIGHT_SIDE_X)
 			if (face[0] == 1 && face[2] == 1) {
-				c.color -= (getAOZ(i, position, this, 1, 2)) * 0x151515;
+				col *= (1.0f -(float)(getAOZ(i, position, this, 1, 2)) * 0.15f);
 			} else
-				c.color -= (getAOZ(i, position, this, -1, 0)) * 0x151515;
-*/
+				col *= (1.0f -(float)(getAOZ(i, position, this, -1, 0)) * 0.15f);
+
+		c = Rendering::Color{{static_cast<u8>(col.x), static_cast<u8>(col.y), static_cast<u8>(col.z), c.rgba.a}};
+#endif
+
 		m.mesh.vertices.emplace_back(
 			static_cast<uint16_t>(tex[tx++] * maxTextureCoordinate),
 			static_cast<uint16_t>(tex[tx++] * maxTextureCoordinate),

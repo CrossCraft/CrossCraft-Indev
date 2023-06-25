@@ -256,11 +256,16 @@ namespace CrossCraft {
         GI::enable(GI_FOG);
         GI::disable(GI_TEXTURE_2D);
 
-        auto realY = 80.0f - cam_pos.y;
+        auto realY = 68.0f - cam_pos.y;
 
         Rendering::RenderContext::get().matrix_clear();
+#if PSP
+        Rendering::RenderContext::get().matrix_translate(mathfu::Vector<float, 3>(-128.0f, realY, -128.0f) + cam_pos);
+        Rendering::RenderContext::get().matrix_scale({1.0f, 1.0f, 1.0f});
+#else
         Rendering::RenderContext::get().matrix_translate(mathfu::Vector<float, 3>(-256.0f, realY, -256.0f) + cam_pos);
         Rendering::RenderContext::get().matrix_scale({2.0f, 1.0f, 2.0f});
+#endif
 
         mesh->draw();
 

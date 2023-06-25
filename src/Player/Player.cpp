@@ -3,6 +3,8 @@
 #include <Utilities/Input.hpp>
 #include <Player/InGameMenu.hpp>
 #include <Player/Inventory.hpp>
+#include <CC/eventpackets.h>
+#include <ELoop.hpp>
 
 namespace CrossCraft {
 
@@ -98,6 +100,8 @@ namespace CrossCraft {
                 BreakInformation::get().gBreakingPos = mathfu::Vector<int, 3>{static_cast<int>(out.x),
                                                                               static_cast<int>(out.y),
                                                                               static_cast<int>(out.z)};
+                CC_EventPacket_Create_PlayerDigging(out.x, out.y, out.z, 0, BREAK_START);
+                return;
             }
 
             if (BreakInformation::get().gBreaking) {
@@ -106,12 +110,18 @@ namespace CrossCraft {
                     BreakInformation::get().gBreakingPos.z != (int) out.z) {
                     BreakInformation::get().gBreaking = false;
                     BreakInformation::get().gBreakingTotal = 0.0f;
+                    CC_EventPacket_Create_PlayerDigging(out.x, out.y, out.z, 0, BREAK_ABORT);
+                    return;
                 }
 
+                CC_EventPacket_Create_PlayerDigging(out.x, out.y, out.z, 0, BREAK_DIG);
+
                 if (BreakInformation::get().gBreakingTimer < 0.0f) {
-                    CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_BREAK, 0);
+                    CC_EventPacket_Create_PlayerDigging(out.x, out.y, out.z, 0, BREAK_FINISH);
+
                     BreakInformation::get().gBreaking = false;
                     BreakInformation::get().gBreakingTotal = 0.0f;
+                    return;
                 }
             }
         }
@@ -159,7 +169,7 @@ namespace CrossCraft {
                 if (itm.count == 0) {
                     itm.item_id = 0;
                 }
-                CC_Event_Push_SetBlock(out.x, out.y, out.z, SET_BLOCK_MODE_PLACE, id);
+                CC_EventPacket_Create_PlayerPlace(out.x, out.y, out.z, 0, id);
             }
         }
     }

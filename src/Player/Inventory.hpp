@@ -8,70 +8,74 @@
 #include <UI/FontRender.hpp>
 #include <CC/core.h>
 
-namespace CrossCraft {
-    using namespace Stardust_Celeste;
+namespace CrossCraft
+{
+using namespace Stardust_Celeste;
 
-    struct SelData {
-        uint8_t idx;
-    };
+struct SelData {
+	uint8_t idx;
+};
 
-    class Inventory : public Singleton {
+class Inventory : public Singleton {
     public:
+	Inventory();
 
-        Inventory();
+	~Inventory();
 
-        ~Inventory();
+	auto try_add_item(Item item) -> bool;
 
-        auto try_add_item(Item item) -> bool;
+	inline static auto get() -> Inventory &
+	{
+		static Inventory inventory;
+		return inventory;
+	}
 
-        inline static auto get() -> Inventory & {
-            static Inventory inventory;
-            return inventory;
-        }
+	inline static auto get_selected() -> Item &
+	{
+		return get().item_array[get().selection_idx + 36];
+	}
 
-        inline static auto get_selected() -> Item & {
-            return get().item_array[get().selection_idx + 36];
-        }
+	inline static auto is_open() -> bool
+	{
+		return get().open;
+	}
 
-        inline static auto is_open() -> bool {
-            return get().open;
-        }
+	static auto left_action(std::any p) -> void;
+	static auto right_action(std::any p) -> void;
 
-        static auto left_action(std::any p) -> void;
-        static auto right_action(std::any p) -> void;
+	auto update() -> void;
+	auto draw(double dt) -> void;
 
-        auto update() -> void;
-        auto draw(double dt) -> void;
+	auto draw_block_hand(const mathfu::Vector<float, 3> &position,
+			     const mathfu::Vector<float, 2> &rotation,
+			     double dt) -> void;
 
-        auto draw_block_hand(const mathfu::Vector<float, 3>& position, const mathfu::Vector<float, 2>& rotation, double dt) -> void;
+	auto draw_hotbar(double dt) -> void;
 
-        auto draw_hotbar(double dt) -> void;
+	static auto increment_selection(const std::any p) -> void;
 
-        static auto increment_selection(const std::any p) -> void;
+	static auto decrement_selection(const std::any p) -> void;
 
-        static auto decrement_selection(const std::any p) -> void;
+	static auto set_selection(std::any p) -> void;
 
-        static auto set_selection(std::any p) -> void;
+	static auto drop_selection(std::any p) -> void;
 
-        static auto drop_selection(std::any p) -> void;
-
-        static auto toggle_inventory(const std::any p) -> void;
+	static auto toggle_inventory(const std::any p) -> void;
 
     private:
-        bool open;
-        std::array<Item, 45> item_array{};
-        Item pickup_slot;
-        uint8_t selection_idx = 0;
-        mathfu::Vector<float, 2> mouse_pos;
+	bool open;
+	std::array<Item, 45> item_array{};
+	Item pickup_slot;
+	uint8_t selection_idx = 0;
+	mathfu::Vector<float, 2> mouse_pos;
 
-        RefPtr<FontRender> font_render_hotbar, font_render_inventory;
-        ScopePtr<Graphics::G2D::Sprite> hotbar, hotbar_select;
+	RefPtr<FontRender> font_render_hotbar, font_render_inventory;
+	ScopePtr<Graphics::G2D::Sprite> hotbar, hotbar_select;
 
-        RefPtr<Rendering::Primitive::Rectangle> background_rectangle;
-        ScopePtr<Graphics::G2D::Sprite> inventory_background;
+	RefPtr<Rendering::Primitive::Rectangle> background_rectangle;
+	ScopePtr<Graphics::G2D::Sprite> inventory_background;
 
-
-        bool is_mouse_pressed = false;
-        bool is_mouse_held = false;
-    };
+	bool is_mouse_pressed = false;
+	bool is_mouse_held = false;
+};
 }

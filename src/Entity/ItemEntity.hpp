@@ -1,19 +1,20 @@
 #include <Entity/Entity.hpp>
 #include <CC/item.h>
 
-namespace CrossCraft {
+namespace CrossCraft
+{
 
-    class ItemEntity : public Entity {
+class ItemEntity : public Entity {
     public:
-        ItemEntity();
+	ItemEntity();
 
-        ~ItemEntity() override;
+	~ItemEntity() override;
 
-        auto update(double dt) -> void override;
+	auto update(double dt) -> void override;
 
-        auto draw() -> void override;
+	auto draw() -> void override;
 
-        float lifetimer;
-        Item *data;
-    };
+	float lifetimer;
+	Item *data;
+};
 }

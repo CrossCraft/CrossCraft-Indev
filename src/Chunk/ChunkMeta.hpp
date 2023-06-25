@@ -1,27 +1,30 @@
 #pragma once
 
-namespace CrossCraft {
-    struct ChunkMetaData {
-        bool isEmpty = true;
-        bool isFull = false;
-    };
+namespace CrossCraft
+{
+struct ChunkMetaData {
+	bool isEmpty = true;
+};
 
-    class ChunkMeta {
+class ChunkMeta {
     public:
-        ChunkMeta() = default;
-        ~ChunkMeta() = default;
+	ChunkMeta() = default;
+	~ChunkMeta() = default;
 
-        inline static auto get() -> ChunkMeta& {
-            static ChunkMeta meta;
-            return meta;
-        }
+	inline static auto get() -> ChunkMeta &
+	{
+		static ChunkMeta meta;
+		return meta;
+	}
 
-        inline static auto getData(int x, int y, int z) -> ChunkMetaData& {
-            return get().data[x][y][z];
-        }
+	inline static auto getData(int x, int y, int z) -> ChunkMetaData &
+	{
+		return get().data[x][y][z];
+	}
 
-        void generate();
+	void generate();
+
     private:
-        ChunkMetaData data[32][4][32];
-    };
+	ChunkMetaData data[32][4][32];
+};
 }

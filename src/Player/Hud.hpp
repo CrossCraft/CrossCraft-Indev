@@ -3,30 +3,31 @@
 #include <UI/FontRender.hpp>
 #include <Player/Player.hpp>
 
-namespace CrossCraft {
+namespace CrossCraft
+{
 
-    class Player;
+class Player;
 
-    class HUD {
+class HUD {
     public:
-        HUD();
+	HUD();
 
-        ~HUD();
+	~HUD();
 
-        void draw(Player *player, double dt);
+	void draw(Player *player, double dt);
 
     private:
-        auto draw_hearts(Player *player) -> void;
-        auto draw_air(Player *player) -> void;
+	auto draw_hearts(Player *player) -> void;
+	auto draw_air(Player *player) -> void;
 
-        RefPtr<FontRender> font_render;
+	RefPtr<FontRender> font_render;
 
-        ScopePtr<Graphics::G2D::Sprite> heartBG, heartHalf, heartFull;
-        ScopePtr<Graphics::G2D::Sprite> bubble, bubbleHalf;
-        ScopePtr<Graphics::G2D::Sprite> water_sprite, crosshair;
+	ScopePtr<Graphics::G2D::Sprite> heartBG, heartHalf, heartFull;
+	ScopePtr<Graphics::G2D::Sprite> bubble, bubbleHalf;
+	ScopePtr<Graphics::G2D::Sprite> water_sprite, crosshair;
 
-        double timer{};
-        double heartTimer{};
-        int fpsCount, currentFPS{};
-    };
+	double timer{};
+	double heartTimer{};
+	int fpsCount, currentFPS{};
+};
 }

@@ -7,50 +7,56 @@
 #include <Rendering/Primitive/Rectangle.hpp>
 #include <UI/FontRender.hpp>
 
-namespace CrossCraft {
-    using namespace Stardust_Celeste;
+namespace CrossCraft
+{
+using namespace Stardust_Celeste;
 
-    struct PassOnData {
-        float cX, cY;
-    };
+struct PassOnData {
+	float cX, cY;
+};
 
-    class InGameMenu : public Singleton {
+class InGameMenu : public Singleton {
     public:
-        InGameMenu();
+	InGameMenu();
 
-        ~InGameMenu();
+	~InGameMenu();
 
-        void draw();
+	void draw();
 
-        void toggle();
+	void toggle();
 
-        [[nodiscard]] inline bool is_open() const {
-            return open || is_dead;
-        }
+	[[nodiscard]] inline bool is_open() const
+	{
+		return open || is_dead;
+	}
 
-        static auto init() -> void;
+	static auto init() -> void;
 
-        static auto get() -> InGameMenu &;
+	static auto get() -> InGameMenu &;
 
-        static auto toggle_command(const std::any p) -> void {
-            get().toggle();
-        }
+	static auto toggle_command(const std::any p) -> void
+	{
+		get().toggle();
+	}
 
-        static auto left_click_command(std::any p) -> void;
+	static auto left_click_command(std::any p) -> void;
 
-        static auto right_click_command() -> void;
+	static auto right_click_command() -> void;
 
-        bool is_dead = false;
+	bool is_dead = false;
+
     private:
-        auto draw_button(const mathfu::Vector<float, 2>& mousePos, mathfu::Vector<float, 2> pos, const std::string& text,
-                         bool disabled) -> void;
+	auto draw_button(const mathfu::Vector<float, 2> &mousePos,
+			 mathfu::Vector<float, 2> pos, const std::string &text,
+			 bool disabled) -> void;
 
-        bool open;
+	bool open;
 
-        RefPtr<Graphics::G2D::Sprite> button_selected, button_unselected, button_disabled;
-        RefPtr<Graphics::G2D::Sprite> death_overlay;
-        RefPtr<Rendering::Primitive::Rectangle> background_rectangle;
+	RefPtr<Graphics::G2D::Sprite> button_selected, button_unselected,
+		button_disabled;
+	RefPtr<Graphics::G2D::Sprite> death_overlay;
+	RefPtr<Rendering::Primitive::Rectangle> background_rectangle;
 
-        RefPtr<FontRender> font_render = nullptr;
-    };
+	RefPtr<FontRender> font_render = nullptr;
+};
 }

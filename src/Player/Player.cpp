@@ -100,7 +100,8 @@ namespace CrossCraft {
                 BreakInformation::get().gBreakingPos = mathfu::Vector<int, 3>{static_cast<int>(out.x),
                                                                               static_cast<int>(out.y),
                                                                               static_cast<int>(out.z)};
-                CC_EventPacket_Create_PlayerDigging(out.x, out.y, out.z, 0, BREAK_START);
+                auto p = CC_EventPacket_Create_PlayerDigging(out.x, out.y, out.z, 0, BREAK_START);
+                CC_EventLoop_PushPacketOutbound(ELoop::get().client_event_loop, &p);
                 return;
             }
 
@@ -110,14 +111,18 @@ namespace CrossCraft {
                     BreakInformation::get().gBreakingPos.z != (int) out.z) {
                     BreakInformation::get().gBreaking = false;
                     BreakInformation::get().gBreakingTotal = 0.0f;
-                    CC_EventPacket_Create_PlayerDigging(out.x, out.y, out.z, 0, BREAK_ABORT);
+                    auto p = CC_EventPacket_Create_PlayerDigging(out.x, out.y, out.z, 0, BREAK_ABORT);
+                    CC_EventLoop_PushPacketOutbound(ELoop::get().client_event_loop, &p);
                     return;
                 }
 
-                CC_EventPacket_Create_PlayerDigging(out.x, out.y, out.z, 0, BREAK_DIG);
+                auto p2 = CC_EventPacket_Create_PlayerDigging(out.x, out.y, out.z, 0, BREAK_DIG);
+                CC_EventLoop_PushPacketOutbound(ELoop::get().client_event_loop, &p2);
+
 
                 if (BreakInformation::get().gBreakingTimer < 0.0f) {
-                    CC_EventPacket_Create_PlayerDigging(out.x, out.y, out.z, 0, BREAK_FINISH);
+                    auto p = CC_EventPacket_Create_PlayerDigging(out.x, out.y, out.z, 0, BREAK_FINISH);
+                    CC_EventLoop_PushPacketOutbound(ELoop::get().client_event_loop, &p);
 
                     BreakInformation::get().gBreaking = false;
                     BreakInformation::get().gBreakingTotal = 0.0f;
@@ -169,7 +174,8 @@ namespace CrossCraft {
                 if (itm.count == 0) {
                     itm.item_id = 0;
                 }
-                CC_EventPacket_Create_PlayerPlace(out.x, out.y, out.z, 0, id);
+                auto p = CC_EventPacket_Create_PlayerPlace(out.x, out.y, out.z, 0, id);
+                CC_EventLoop_PushPacketOutbound(ELoop::get().client_event_loop, &p);
             }
         }
     }

@@ -16,6 +16,11 @@ namespace CrossCraft {
 
         void draw();
 
+        inline static auto get() -> World & {
+            static World instance;
+            return instance;
+        }
+
         /// This function is called when a block is updated
         /// It updates the chunk that the block is in, and the 6 possible surrounding chunks
         /// This is done to ensure that the mesh is updated correctly

@@ -114,6 +114,9 @@ namespace CrossCraft {
         CC_EventLoop_RegisterHandler(ELoop::get().client_event_loop, CC_PACKET_TYPE_UPDATE_HEALTH, [](void* loop, EventPacket* packet) {
             Player::handle_health_update(HealthUpdate{&Player::get(), packet->data.update_health.health});
         });
+        CC_EventLoop_RegisterHandler(ELoop::get().client_event_loop, CC_PACKET_TYPE_BLOCK_CHANGE, [](void* loop, EventPacket* packet) {
+            World::get().handle_block_update(packet->data.block_change_sc.x, packet->data.block_change_sc.y, packet->data.block_change_sc.z);
+        });
 
         while(!gLoggedIn) {
             CC_Core_Update(1);
@@ -125,9 +128,6 @@ namespace CrossCraft {
 
         SC_APP_INFO("Game State Initialized");
         Rendering::RenderContext::get().set_mode_3D();
-
-        world = create_refptr<World>();
-        SC_APP_INFO("WORLD INITIALIZED");
 
         sky = create_refptr<Sky>();
     }
@@ -162,7 +162,7 @@ namespace CrossCraft {
         tick(dt);
 
         Player::get().update(dt);
-        world->update(dt);
+        World::get().update(dt);
         EntityManager::get().update(&Player::get(), dt);
 
         CC_Core_Update(dt);
@@ -176,13 +176,13 @@ namespace CrossCraft {
         while ((event = CC_Event_Poll()) != nullptr) {
             switch (event->type) {
                 case CC_EVENT_SET_BLOCK: {
-                    world->handle_block_update(event->data.set_block.x, event->data.set_block.y,
+                    World::get().handle_block_update(event->data.set_block.x, event->data.set_block.y,
                                                event->data.set_block.z);
                     break;
                 }
 
                 case CC_EVENT_SPAWN_ITEM: {
-                    world->handle_spawn_item(event->data.spawn_item.eid, event->data.spawn_item.x,
+                    World::get().handle_spawn_item(event->data.spawn_item.eid, event->data.spawn_item.x,
                                              event->data.spawn_item.y, event->data.spawn_item.z,
                                              event->data.spawn_item.vx, event->data.spawn_item.vy,
                                              event->data.spawn_item.vz, event->data.spawn_item.item);
@@ -218,7 +218,7 @@ namespace CrossCraft {
     void GameState::on_draw(Core::Application *app, double dt) {
         sky->draw(Player::get().position, tick_count);
 
-        world->draw();
+        World::get().draw();
 
         Inventory::get().draw_block_hand(Player::get().position, Player::get().rotation, dt);
 

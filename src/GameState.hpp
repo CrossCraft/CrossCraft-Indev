@@ -35,7 +35,6 @@ namespace CrossCraft {
         static auto on_action_right(std::any p) -> void;
 
         RefPtr<Sky> sky;
-        RefPtr<World> world;
         Utilities::Controller *kb_controller;
         Utilities::Controller *mb_controller;
         Utilities::Controller *psp_controller;

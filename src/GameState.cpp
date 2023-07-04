@@ -11,6 +11,7 @@
 #include <CC/eventpackets.h>
 #include <Chunk/ChunkMeta.hpp>
 #include <ELoop.hpp>
+#include "World/WorldTime.hpp"
 
 #if PSP
 #include <pspsdk.h>
@@ -136,6 +137,11 @@ void GameState::on_start()
 							   p.pitch) };
 		});
 	CC_EventLoop_RegisterHandler(
+		ELoop::get().client_event_loop, CC_PACKET_TYPE_TIME_UPDATE,
+		[](void* loop, EventPacket *packet) {
+			WorldTime::get().tickTime = packet->data.time_update.time;
+		});
+	CC_EventLoop_RegisterHandler(
 		ELoop::get().client_event_loop, CC_PACKET_TYPE_UPDATE_HEALTH,
 		[](void *loop, EventPacket *packet) {
 			Player::handle_health_update(HealthUpdate{
@@ -214,13 +220,6 @@ void GameState::handle_events(double dt)
 	CC_Event *event;
 	while ((event = CC_Event_Poll()) != nullptr) {
 		switch (event->type) {
-		case CC_EVENT_SET_BLOCK: {
-			World::get().handle_block_update(
-				event->data.set_block.x,
-				event->data.set_block.y,
-				event->data.set_block.z);
-			break;
-		}
 
 		case CC_EVENT_SPAWN_ITEM: {
 			World::get().handle_spawn_item(

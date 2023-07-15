@@ -12,6 +12,7 @@
 #include <Chunk/ChunkMeta.hpp>
 #include <ELoop.hpp>
 #include "World/WorldTime.hpp"
+#include <algorithm>
 
 #if PSP
 #include <pspsdk.h>
@@ -139,7 +140,25 @@ void GameState::on_start()
 	CC_EventLoop_RegisterHandler(
 		ELoop::get().client_event_loop, CC_PACKET_TYPE_TIME_UPDATE,
 		[](void* loop, EventPacket *packet) {
-			WorldTime::get().tickTime = packet->data.time_update.time;
+			WorldTime::get().tickTime = packet->data.time_update.time * 50;
+			auto time = WorldTime::get().tickTime % 24000;
+
+			SC_APP_INFO("Time: {}", time);
+
+			// Calculate light level.
+
+			if(time >= 0 && time < 12000) {
+				WorldTime::get().internalLightLevel = 15;
+			} else if (time >= 13670 && time < 22330) {
+				WorldTime::get().internalLightLevel = 4;
+			} else if (time >= 22330 && time < 24000) {
+				auto diff = time - 22330;
+				WorldTime::get().internalLightLevel = std::min<uint8_t>(diff / 160 + 4, 15);
+			} else if (time >= 12000 && time < 13670) {
+				auto diff = time - 12000;
+				WorldTime::get().internalLightLevel = std::max<uint8_t>(15 - (diff/ 160), 4);
+			}
+
 		});
 	CC_EventLoop_RegisterHandler(
 		ELoop::get().client_event_loop, CC_PACKET_TYPE_UPDATE_HEALTH,
@@ -265,7 +284,7 @@ float x = 0;
 
 void GameState::on_draw(Core::Application *app, double dt)
 {
-	sky->draw(dt, Player::get().position, tick_count);
+	sky->draw(dt, Player::get().position, WorldTime::get().tickTime);
 
 	World::get().draw();
 

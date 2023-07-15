@@ -17,6 +17,12 @@ class ChunkStack {
 	void generate();
 	void finalize();
 
+	inline void mark_dirty() {
+		for(auto &chunk : chunks) {
+			chunk->dirty = true;
+		}
+	}
+
 	void draw(ChunkMeshSelection selection);
 
 	std::array<ChunkMesh *, 4> chunks{};

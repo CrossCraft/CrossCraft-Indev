@@ -6,6 +6,7 @@ namespace CrossCraft
 {
 using namespace Stardust_Celeste;
 
+    extern mathfu::Vector<int, 3> preferredChunkPos;
 	void reset_chunk_frame();
 
 class ChunkMesh {

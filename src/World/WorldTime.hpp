@@ -9,6 +9,7 @@ struct WorldTime {
 	~WorldTime() = default;
 
 	uint64_t tickTime;
+	uint8_t internalLightLevel = 15;
 
 	inline static auto get() -> WorldTime &
 	{

@@ -7,6 +7,7 @@
 #include <Chunk/Frustum.hpp>
 #include <ModelRenderer.hpp>
 #include <Chunk/ChunkMeta.hpp>
+#include "WorldTime.hpp"
 
 bool firstRun = true;
 
@@ -112,6 +113,15 @@ void World::check_chunk_update()
 
 		update_chunks_list();
 	}
+
+	// Light levels
+	auto newLevel = WorldTime::get().internalLightLevel;
+	if(newLevel != lastLightLevel) {
+		lastLightLevel = newLevel;
+		for(auto &[val, chunk] : chunks) {
+			chunk->mark_dirty();
+		}
+	}
 }
 
 void World::update(double dt)
@@ -170,6 +180,9 @@ void World::handle_block_update(uint32_t x, uint32_t y, uint32_t z)
 {
 	std::vector<mathfu::Vector<int, 3> > chunks_to_update_vec;
 	chunks_to_update_vec.reserve(7);
+
+	auto pref = generate_chunk_vector(x, y, z);
+	preferredChunkPos = pref;
 
 	// This updates the chunk that the block is in, and checks the 6 possible surrounding chunks
 	chunks_to_update_vec.emplace_back(generate_chunk_vector(x, y, z));

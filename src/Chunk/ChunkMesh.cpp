@@ -2,10 +2,12 @@
 #include <Chunk/FaceConst.hpp>
 #include <Chunk/Frustum.hpp>
 #include <Chunk/ChunkMeta.hpp>
+#include "World/WorldTime.hpp"
 
 namespace CrossCraft
 {
 
+mathfu::Vector<int, 3> preferredChunkPos = mathfu::Vector<int, 3>(-1, -1, -1);
 static int chunksLastFrame = 0;
 void reset_chunk_frame() {
 	chunksLastFrame = 0;
@@ -145,7 +147,15 @@ void ChunkMesh::draw(CrossCraft::ChunkMeshSelection selection)
 	}
 
 	if (dirty && chunksLastFrame < CHUNKS_PER_FRAME) {
+		if(preferredChunkPos != mathfu::Vector<int, 3>(-1, -1, -1)) {
+			if(preferredChunkPos != mathfu::Vector<int, 3>(cX, cY, cZ)) {
+                return;
+            }
+	        preferredChunkPos = mathfu::Vector<int, 3>(-1, -1, -1);
+		}
+
 		chunksLastFrame++;
+
 		prepare_mesh();
 		generate_mesh();
 		finalize_mesh();
@@ -494,8 +504,11 @@ u32 ChunkMesh::calculateLighting(const WorldData *wd, uint32_t lightValue,
 	auto lv = wd->lightmap[index];
 
 	uint8_t sky_light = lv >> 4;
+	uint8_t curr_sky_val = WorldTime::get().internalLightLevel;
+	uint8_t sky_val = std::min(curr_sky_val, sky_light);
+
 	uint8_t block_light = lv & 0xF;
-	float result = std::max(block_light, sky_light);
+	float result = std::max(block_light, sky_val);
 
 	light += mathfu::Vector<float, 3>(result / 15.0f, result / 15.0f, result / 15.0f) * 0.75f;
 	if(lightValue == LIGHT_SIDE_X) {

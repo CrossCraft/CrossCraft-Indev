@@ -38,5 +38,6 @@ class World {
 	std::unordered_map<uint64_t, ChunkStack *> chunks;
 	mathfu::Vector<int, 2> player_chunk;
 	uint32_t terrainTexID;
+	uint8_t lastLightLevel = 0;
 };
 }

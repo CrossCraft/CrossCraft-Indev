@@ -24,9 +24,11 @@ bool checkChunkEmpty(int cX, int cY, int cZ)
 
 void ChunkMeta::generate()
 {
-	for (int x = 0; x < 32; x++) {
-		for (int z = 0; z < 32; z++) {
-			for (int y = 0; y < 4; y++) {
+    auto wd = CC_World_GetData();
+
+    for (int x = 0; x < wd->x/16; x++) {
+		for (int z = 0; z < wd->z/16; z++) {
+			for (int y = 0; y < wd->y/16; y++) {
 				data[x][y][z].isEmpty =
 					checkChunkEmpty(x, y, z);
 			}

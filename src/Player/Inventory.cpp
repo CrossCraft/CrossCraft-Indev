@@ -3,6 +3,7 @@
 #include <Player/Player.hpp>
 #include <Utilities/Input.hpp>
 #include <Player/InGameMenu.hpp>
+#include <Player/Crafting.hpp>
 
 #if BUILD_PLAT == BUILD_WINDOWS || BUILD_PLAT == BUILD_POSIX
 #include <GLFW/glfw3.h>
@@ -19,7 +20,7 @@ using namespace Stardust_Celeste::Utilities;
 
 Inventory::Inventory()
 {
-	for (int i = 9; i < 45; i++) {
+	for (int i = 9; i < 36; i++) {
 		item_array[i].item_id = i;
 		item_array[i].count = i;
 	}
@@ -118,7 +119,7 @@ auto Inventory::draw(double dt) -> void
 		} else {
 			ModelRenderer::get().draw_item_isometric(
 				item_array[0].item_id,
-				{ 143 + 153, 53 + (176 - 36 - 18), 12.0f });
+				{ 143 + 153 + 7, 53 + (176 - 36 - 18), 12.0f });
 		}
 
 		if (item_array[0].count > 1) {
@@ -255,6 +256,21 @@ auto Inventory::update() -> void
 	auto cX = Input::get_axis("Mouse", "X");
 	auto cY = Input::get_axis("Mouse", "Y");
 	mouse_pos = { cX * 480.0f, 272.0f + -cY * 272.0f };
+
+	Crafting::Recipe2x2 r2x2;
+	auto result = Crafting::get_recipe_array(std::array<item_t, 4>{
+		static_cast<unsigned short>(item_array[1].item_id), static_cast<unsigned short>(item_array[2].item_id),
+		static_cast<unsigned short>(item_array[3].item_id), static_cast<unsigned short>(item_array[4].item_id)},
+		r2x2
+	);
+
+	if(result) {
+		item_array[0].item_id = r2x2.result.item;
+		item_array[0].count = r2x2.result.count;
+	} else {
+		item_array[0].item_id = 0;
+		item_array[0].count = 0;
+	}
 }
 
 auto get_inventory_index(mathfu::Vector<int, 2> pd) -> int
@@ -322,9 +338,79 @@ auto Inventory::left_action(std::any p) -> void
 	if (idx == -1)
 		return;
 
-	SC_APP_INFO("INVENTORY SELECTED: {}", idx);
-
 	auto &inst = get();
+
+	auto consume_result = [](Inventory& inst) {
+		Crafting::Recipe2x2 r2x2;
+		auto result = Crafting::get_recipe_array(std::array<item_t, 4>{
+								 static_cast<unsigned short>(inst.item_array[1].item_id), static_cast<unsigned short>(inst.item_array[2].item_id),
+								 static_cast<unsigned short>(inst.item_array[3].item_id), static_cast<unsigned short>(inst.item_array[4].item_id)},
+							 r2x2
+		);
+
+		if(result) {
+			if(r2x2.type != Crafting::RecipeType::Shapeless) {
+				for(int j = 1; j < 5; j++) {
+					inst.item_array[j].count -= 1;
+					if(inst.item_array[j].count == 0)
+						inst.item_array[j].item_id = 0;
+				}
+
+				inst.item_array[0].item_id =
+					r2x2.result.item;
+				inst.item_array[0].count =
+					r2x2.result.count;
+			} else {
+				// Shapeless
+				for(int i = 0; i < 4; i++) {
+					if(r2x2.ingredients[i] == 0)
+						continue;
+
+					// Find the ingredients in order
+					auto ingredient = r2x2.ingredients[i];
+
+					for(int j = 1; j < 5; j++) {
+						if(inst.item_array[j].item_id == ingredient) {
+							inst.item_array[j].count--;
+
+							if(inst.item_array[j].count == 0) {
+								inst.item_array[j].item_id = 0;
+							}
+							break;
+						}
+					}
+				}
+
+				inst.item_array[0].item_id =
+					r2x2.result.item;
+				inst.item_array[0].count =
+					r2x2.result.count;
+			}
+		}
+	};
+
+	if(idx == 0) {
+		// This is the crafting result
+		if(inst.pickup_slot.item_id == 0 && inst.item_array[idx].item_id != 0) {
+			consume_result(inst);
+
+			inst.pickup_slot = inst.item_array[idx];
+			inst.item_array[idx] = { 0, 0, 0 };
+		} else if (inst.pickup_slot.item_id == inst.item_array[idx].item_id) {
+			consume_result(inst);
+
+			// Add them together
+			auto total =
+				inst.pickup_slot.count + inst.item_array[idx].count;
+			if (total < 64) { // Add fully
+				inst.pickup_slot.count += inst.item_array[idx].count;
+				inst.item_array[idx] = { 0, 0, 0 };
+			}
+		}
+
+		return;
+	}
+
 	if (inst.pickup_slot.item_id == 0 &&
 	    inst.item_array[idx].item_id != 0) {
 		inst.pickup_slot = inst.item_array[idx];
@@ -349,25 +435,6 @@ auto Inventory::left_action(std::any p) -> void
 			inst.pickup_slot = { 0, 0, 0 };
 		}
 	}
-
-	/*
-        auto ix = (pd.x - 168.0f) / 18.0f;
-
-        int extra_off = 0;
-        if(i >= 36) {
-            extra_off = -4;
-        }
-
-        Rendering::RenderContext::get().matrix_clear();
-        if (slot.item_id < 256) {
-            ModelRenderer::get().draw_block_isometric(slot.item_id, {168 + 18.0f * (float)(i % 9), 127.0f - 18.0f * (float)(i/9 - 1) + (float)extra_off, 12.0f});
-        } else {
-            ModelRenderer::get().draw_item_isometric(slot.item_id, {168 + 18.0f * (float)(i % 9), 127.0f - 18.0f * (float)(i/9 - 1) + (float)extra_off, 12.0f});
-        }
-
-
-        SC_APP_INFO("Left action: {} {}",pd.x, pd.y);
-         */
 }
 
 auto Inventory::right_action(std::any p) -> void

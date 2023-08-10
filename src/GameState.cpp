@@ -140,10 +140,8 @@ void GameState::on_start()
 	CC_EventLoop_RegisterHandler(
 		ELoop::get().client_event_loop, CC_PACKET_TYPE_TIME_UPDATE,
 		[](void* loop, EventPacket *packet) {
-			WorldTime::get().tickTime = packet->data.time_update.time * 50;
+			WorldTime::get().tickTime = packet->data.time_update.time;
 			auto time = WorldTime::get().tickTime % 24000;
-
-			SC_APP_INFO("Time: {}", time);
 
 			// Calculate light level.
 
